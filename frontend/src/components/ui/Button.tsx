@@ -5,10 +5,24 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?:
     "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
   size?: "default" | "sm" | "lg" | "icon";
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  fullWidth?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "default", size = "default", ...props }, ref) => {
+  (
+    {
+      className,
+      variant = "default",
+      size = "default",
+      leftIcon,
+      rightIcon,
+      fullWidth,
+      ...props
+    },
+    ref,
+  ) => {
     const baseStyles =
       "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
 
@@ -30,9 +44,29 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       icon: "h-10 w-10",
     };
 
-    const classes = cn(baseStyles, variants[variant], sizes[size], className);
+    const classes = cn(
+      baseStyles,
+      variants[variant],
+      sizes[size],
+      fullWidth && "w-full",
+      className,
+    );
 
-    return <button className={classes} ref={ref} {...props} />;
+    return (
+      <button className={classes} ref={ref} {...props}>
+        {leftIcon && (
+          <span className="mr-2" aria-hidden="true">
+            {leftIcon}
+          </span>
+        )}
+        {props.children}
+        {rightIcon && (
+          <span className="ml-2" aria-hidden="true">
+            {rightIcon}
+          </span>
+        )}
+      </button>
+    );
   },
 );
 

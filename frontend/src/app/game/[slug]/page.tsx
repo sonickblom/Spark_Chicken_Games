@@ -1,5 +1,3 @@
-"use client";
-
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -17,14 +15,21 @@ import {
   CheckCircle,
   Shield,
   Globe,
+  Download,
 } from "lucide-react";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { GameGrid } from "@/components/GameGrid";
 import { Button } from "@/components/ui/Button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/Card";
 import { getMockGame, getMockRelatedGames } from "@/lib/mock-data";
 import { formatNumber, formatDate } from "@/lib/utils";
-import type { Game } from "@/types";
 
 interface GamePageProps {
   params: Promise<{ slug: string }>;

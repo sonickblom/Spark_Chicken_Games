@@ -2,12 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Filter, X, ChevronDown, Grid, List, ArrowLeft } from "lucide-react";
+import { Filter, X, Grid, List, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Metadata } from "next";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { useRouter, useSearchParams, useParams } from "next/navigation";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { GameGrid } from "@/components/GameGrid";
 import { Button } from "@/components/ui/Button";
 import {
@@ -16,7 +15,7 @@ import {
   getMockCategory,
 } from "@/lib/mock-data";
 import { cn, formatNumber } from "@/lib/utils";
-import type { Game, Category, GameFilters, PaginatedResponse } from "@/types";
+import type { Game, Category, GameFilters } from "@/types";
 
 const sortOptions = [
   { value: "popular", label: "Mais Populares" },
@@ -29,72 +28,52 @@ const sortOptions = [
 
 const platforms = ["PC", "PlayStation", "Xbox", "Nintendo Switch", "Mobile"];
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-  const category = await getMockCategory(slug);
-
-  if (!category) {
-    return { title: "Categoria não encontrada" };
-  }
-
-  return {
-    title: `${category.name} | Spark Chicken Games`,
-    description: `Explore jogos da categoria ${category.name}. ${category.gameCount} jogos disponíveis.`,
-    openGraph: {
-      title: `${category.name} | Spark Chicken Games`,
-      description: `Explore jogos da categoria ${category.name}`,
-      type: "website",
-    },
-  };
-}
-
-export default function CategoryPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default function CategoryPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { slug } = params;
+  const { slug } = useParams();
+  const resolvedSlug = slug as string;
 
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
-  const [meta, setMeta] = useState<PaginatedResponse<Game>["meta"] | null>(
-    null,
-  );
+  const [meta, setMeta] = useState<{
+    total: number;
+    page: number;
+    pageSize: number;
+    totalPages: number;
+  } | null>(null);
   const [category, setCategory] = useState<Category | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filters, setFilters] = useState<GameFilters>({
     genre: [],
     platform: searchParams.getAll("platform"),
-    sortBy: (searchParams.get("sort") as GameFilters["sortBy"]) || "popular",
+    sortBy: (searchParams.get("sort") as GameFilters["sortBy"]) || "popularity",
     page: parseInt(searchParams.get("page") || "1"),
     limit: 20,
   });
 
   // Load categories and current category
   useEffect(() => {
-    Promise.all([mockCategories, getMockCategory(slug)]).then(([cats, cat]) => {
-      setCategories(cats);
+    getMockCategory(resolvedSlug).then((cat) => {
       setCategory(cat || null);
-      setCategoriesLoading(false);
     });
-  }, [slug]);
+    setCategories(mockCategories);
+  }, [resolvedSlug]);
 
   // Load games
   const loadGames = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await getMockGamesByCategory(slug, filters);
-      setGames(result.data);
-      setMeta(result.meta);
+      const result = await getMockGamesByCategory(resolvedSlug, filters);
+      setGames(result.items);
+      setMeta({
+        total: result.total,
+        page: result.page,
+        pageSize: result.pageSize,
+        totalPages: result.totalPages,
+      });
     } catch (error) {
       console.error("Erro ao carregar jogos:", error);
     } finally {
@@ -115,7 +94,7 @@ export default function CategoryPage({
       Object.entries(updated).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== "") {
           if (Array.isArray(value)) {
-            value.forEach((v) => params.append(key, v));
+            value.forEach((v) => params.append(key, String(v)));
           } else {
             params.set(key, String(value));
           }
@@ -129,10 +108,10 @@ export default function CategoryPage({
   );
 
   const clearFilters = useCallback(() => {
-    const cleared: GameFilters = { sortBy: "popular", page: 1, limit: 20 };
+    const cleared: GameFilters = { sortBy: "popularity", page: 1, limit: 20 };
     setFilters(cleared);
-    router.push(`/categories/${slug}`, { scroll: false });
-  }, [router, slug]);
+    router.push(`/categories/${resolvedSlug}`, { scroll: false });
+  }, [router, resolvedSlug]);
 
   const hasActiveFilters =
     (filters.genre?.length ?? 0) > 0 ||
@@ -141,13 +120,14 @@ export default function CategoryPage({
 
   if (!category) {
     return (
-      <div className="min-h-screen bg-cyber-dark flex items-center justify-center">
+      <div className="min-h-screen bg-cyber-dark">
         <Header />
-        <main className="pt-16 lg:pt-20">
-          <div className="mx-auto max-w-7xl px-4 text-center py-20">
+        <main id="main-content" className="pt-16 lg:pt-20">
+          <div className="mx-auto max-w-2xl px-4 py-16 text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
               className="space-y-4"
             >
               <h1 className="text-4xl font-bold font-mono text-cyber-neon neon-text-sm">
@@ -201,7 +181,7 @@ export default function CategoryPage({
                   {category.name}
                 </h1>
               </div>
-              <p className="text-lg text-cyber-text-muted max-w-2xl">
+              <p className="text-lg text-cyber-text-muted max-w-2xl mb-6">
                 {category.description}
               </p>
               <div className="mt-4 flex items-center gap-4 text-sm text-cyber-text-muted">
@@ -221,6 +201,7 @@ export default function CategoryPage({
               {/* Sidebar Filters */}
               <aside className="lg:w-64 flex-shrink-0">
                 <div className="sticky top-24 space-y-6">
+                  {/* Mobile Filter Toggle */}
                   <Button
                     variant="outline"
                     fullWidth
@@ -256,7 +237,7 @@ export default function CategoryPage({
                             </h3>
                             <div className="space-y-2 max-h-64 overflow-y-auto">
                               {categories
-                                .filter((c) => c.slug !== slug)
+                                .filter((c) => c.slug !== resolvedSlug)
                                 .map((cat) => (
                                   <label
                                     key={cat.id}
@@ -370,7 +351,10 @@ export default function CategoryPage({
                                     }
                                     onChange={() =>
                                       updateFilters({
-                                        priceRange: option.range,
+                                        priceRange: option.range as [
+                                          number,
+                                          number,
+                                        ],
                                       })
                                     }
                                     className="w-4 h-4 rounded border-cyber-dark-border bg-cyber-dark-surface text-cyber-neon focus:ring-cyber-neon focus:ring-2"
@@ -451,7 +435,10 @@ export default function CategoryPage({
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-cyber-text-muted">
                       {meta
-                        ? `Mostrando ${(meta.page - 1) * meta.limit + 1}–${Math.min(meta.page * meta.limit, meta.total)} de ${formatNumber(meta.total)} jogos`
+                        ? `Mostrando ${(meta.page - 1) * meta.limit + 1}–${Math.min(
+                            meta.page * meta.limit,
+                            meta.total,
+                          )} de ${formatNumber(meta.total)} jogos`
                         : "Carregando..."}
                     </span>
                     {hasActiveFilters && (
@@ -480,7 +467,7 @@ export default function CategoryPage({
                       </select>
                     </div>
 
-                    <div className="flex items-center gap-1 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg p-1">
+                    <div className="flex items-center gap-1 bg-cyber-dark-card border border-cyber-dark-border rounded-lg p-1">
                       <button
                         onClick={() => setViewMode("grid")}
                         className={cn(
@@ -511,24 +498,26 @@ export default function CategoryPage({
                   </div>
                 </div>
 
-                {/* Game Grid */}
+                {/* Games Grid */}
                 <GameGrid
                   games={games}
                   variant={viewMode === "list" ? "compact" : "default"}
                   isLoading={loading}
                   skeletonCount={8}
-                  emptyMessage={`Nenhum jogo encontrado em ${category.name}`}
+                  emptyMessage="Nenhum jogo encontrado com os filtros atuais"
                 />
 
                 {/* Pagination */}
                 {meta && meta.totalPages > 1 && (
-                  <div className="mt-10 flex items-center justify-center gap-2">
+                  <nav
+                    className="mt-8 flex items-center justify-center gap-2"
+                    aria-label="Paginação"
+                  >
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => updateFilters({ page: meta.page - 1 })}
                       disabled={meta.page === 1}
-                      leftIcon={<ChevronDown className="w-4 h-4 rotate-180" />}
                     >
                       Anterior
                     </Button>
@@ -536,7 +525,7 @@ export default function CategoryPage({
                       {Array.from(
                         { length: Math.min(5, meta.totalPages) },
                         (_, i) => {
-                          let pageNum;
+                          let pageNum: number;
                           if (meta.totalPages <= 5) {
                             pageNum = i + 1;
                           } else if (meta.page <= 3) {
@@ -567,11 +556,10 @@ export default function CategoryPage({
                       size="sm"
                       onClick={() => updateFilters({ page: meta.page + 1 })}
                       disabled={meta.page === meta.totalPages}
-                      rightIcon={<ChevronDown className="w-4 h-4" />}
                     >
                       Próxima
                     </Button>
-                  </div>
+                  </nav>
                 )}
               </div>
             </div>

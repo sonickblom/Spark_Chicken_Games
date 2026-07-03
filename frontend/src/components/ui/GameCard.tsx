@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { formatPlaytime } from "@/lib/utils";
 import { Game } from "@/types";
 
@@ -11,10 +12,12 @@ const GameCard = ({ game, onClick }: { game: Game; onClick?: () => void }) => {
       onClick={onClick}
     >
       <div className="relative w-full h-48 overflow-hidden">
-        <img
+        <Image
           src={game.thumbnail}
           alt={game.title}
-          className="w-full h-48 object-cover"
+          fill
+          className="object-cover"
+          sizes="100vw"
         />
         <div className="absolute top-0 left-0 right-0 bottom-0 bg-black bg-opacity-30" />
       </div>

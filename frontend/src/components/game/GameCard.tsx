@@ -96,7 +96,7 @@ const GameCard = ({ game, priority = false }: GameCardProps) => {
           </span>
         </div>
       </div>
-    </a>
+    </Link>
   );
 };
 

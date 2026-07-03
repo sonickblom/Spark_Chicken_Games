@@ -170,10 +170,11 @@ export function SearchBar({
                     }}
                     className="w-full px-4 py-3 text-left hover:bg-cyber-dark-surface transition-colors flex items-center gap-3 group"
                     role="option"
+                    aria-selected={false}
                   >
                     <div className="relative w-12 h-16 flex-shrink-0 rounded overflow-hidden">
                       <Image
-                        src={game.coverImage}
+                        src={game.thumbnail}
                         alt=""
                         fill
                         className="w-full h-full object-cover"
@@ -185,15 +186,11 @@ export function SearchBar({
                         {game.title}
                       </p>
                       <p className="text-xs text-cyber-text-muted truncate">
-                        {game.genre.slice(0, 2).join(" • ")}
+                        {game.category.name}
                       </p>
                     </div>
                     <div className="flex items-center gap-1 text-cyber-neon font-semibold">
-                      {game.isFree
-                        ? "Gratuito"
-                        : game.price > 0
-                          ? `R$ ${game.price.toFixed(2).replace(".", ",")}`
-                          : "Gratuito"}
+                      {game.isFree ? "Gratuito" : "Jogar"}
                     </div>
                   </button>
                 ))}
@@ -203,7 +200,7 @@ export function SearchBar({
                     onClick={() => onSearch(value)}
                     className="w-full px-4 py-3 text-center text-cyber-neon hover:bg-cyber-dark-surface transition-colors border-t border-cyber-dark-border"
                   >
-                    Ver todos os {suggestions.length} resultados para "{value}"
+                    Ver todos os {suggestions.length} resultados para {value}
                     <ChevronDown
                       className="w-4 h-4 ml-2 inline"
                       aria-hidden="true"

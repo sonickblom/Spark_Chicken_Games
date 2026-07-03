@@ -3,10 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Star, Tag, Calendar, Monitor, Gamepad2, Zap } from "lucide-react";
+import { Heart, Star, Calendar } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { cn, formatPrice, truncate } from "@/lib/utils";
+import { cn, formatNumber, formatPrice, truncate } from "@/lib/utils";
 import type { Game } from "@/types";
 
 interface GameCardProps {
@@ -30,7 +30,10 @@ export function GameCard({
 
   if (variant === "compact") {
     return (
-      <Link href={`/game/${game.slug}`} className="group flex gap-4 p-2 bg-cyber-dark-card/50 rounded-lg hover:bg-cyber-dark-card transition-all duration-300">
+      <Link
+        href={`/game/${game.slug}`}
+        className="group flex gap-4 p-2 bg-cyber-dark-card/50 rounded-lg hover:bg-cyber-dark-card transition-all duration-300"
+      >
         <div className="relative w-24 h-32 flex-shrink-0 rounded-lg overflow-hidden">
           <Image
             src={game.coverImage}
@@ -50,11 +53,17 @@ export function GameCard({
             <h3 className="font-semibold text-cyber-text group-hover:text-cyber-neon transition-colors truncate">
               {game.title}
             </h3>
-            <p className="text-xs text-cyber-text-muted mt-1 truncate">{game.shortDescription}</p>
+            <p className="text-xs text-cyber-text-muted mt-1 truncate">
+              {game.shortDescription}
+            </p>
             <div className="flex items-center gap-2 mt-2">
               <Star className="w-3 h-3 text-yellow-400" aria-hidden="true" />
-              <span className="text-sm text-cyber-text">{game.rating.toFixed(1)}</span>
-              <span className="text-xs text-cyber-text-muted">({formatNumber(game.reviewCount)})</span>
+              <span className="text-sm text-cyber-text">
+                {game.rating.toFixed(1)}
+              </span>
+              <span className="text-xs text-cyber-text-muted">
+                ({formatNumber(game.reviewCount)})
+              </span>
             </div>
           </div>
           <div className="flex items-center justify-between mt-2">
@@ -82,7 +91,10 @@ export function GameCard({
         transition={{ duration: 0.5 }}
         className="relative group"
       >
-        <Link href={`/game/${game.slug}`} className="block relative rounded-2xl overflow-hidden aspect-[16/9]">
+        <Link
+          href={`/game/${game.slug}`}
+          className="block relative rounded-2xl overflow-hidden aspect-[16/9]"
+        >
           <Image
             src={game.bannerImage || game.coverImage}
             alt={game.title}
@@ -112,8 +124,12 @@ export function GameCard({
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Star className="w-4 h-4 text-yellow-400" aria-hidden="true" />
-                <span className="font-medium text-cyber-text">{game.rating.toFixed(1)}</span>
-                <span className="text-cyber-text-muted text-sm">({formatNumber(game.reviewCount)})</span>
+                <span className="font-medium text-cyber-text">
+                  {game.rating.toFixed(1)}
+                </span>
+                <span className="text-cyber-text-muted text-sm">
+                  ({formatNumber(game.reviewCount)})
+                </span>
               </div>
               <div className="flex items-center gap-1 ml-auto">
                 {game.originalPrice && game.originalPrice > game.price ? (
@@ -149,13 +165,17 @@ export function GameCard({
             onToggleFavorite?.(game.id);
           }}
           className="absolute top-4 right-4 z-10 p-2 bg-cyber-dark/80 backdrop-blur rounded-full hover:bg-cyber-dark-surface transition-colors"
-          aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          aria-label={
+            isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"
+          }
           aria-pressed={isFavorite}
         >
           <Heart
             className={cn(
               "w-5 h-5 transition-all duration-300",
-              isFavorite ? "fill-red-500 text-red-500" : "text-cyber-text-muted"
+              isFavorite
+                ? "fill-red-500 text-red-500"
+                : "text-cyber-text-muted",
             )}
             aria-hidden="true"
           />
@@ -165,8 +185,16 @@ export function GameCard({
   }
 
   return (
-    <Card hover variant="default" padding="none" className="overflow-hidden flex flex-col h-full">
-      <Link href={`/game/${game.slug}`} className="block relative aspect-[3/4] overflow-hidden">
+    <Card
+      hover
+      variant="default"
+      padding="none"
+      className="overflow-hidden flex flex-col h-full"
+    >
+      <Link
+        href={`/game/${game.slug}`}
+        className="block relative aspect-[3/4] overflow-hidden"
+      >
         <Image
           src={game.coverImage}
           alt={game.title}
@@ -223,13 +251,17 @@ export function GameCard({
             onToggleFavorite?.(game.id);
           }}
           className="absolute top-3 right-3 z-10 p-2 bg-cyber-dark/80 backdrop-blur rounded-full hover:bg-cyber-dark-surface transition-colors"
-          aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          aria-label={
+            isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"
+          }
           aria-pressed={isFavorite}
         >
           <Heart
             className={cn(
               "w-5 h-5 transition-all duration-300",
-              isFavorite ? "fill-red-500 text-red-500" : "text-cyber-text-muted"
+              isFavorite
+                ? "fill-red-500 text-red-500"
+                : "text-cyber-text-muted",
             )}
             aria-hidden="true"
           />
@@ -258,8 +290,12 @@ export function GameCard({
         <div className="flex items-center gap-3 mb-3">
           <div className="flex items-center gap-1">
             <Star className="w-4 h-4 text-yellow-400" aria-hidden="true" />
-            <span className="font-medium text-cyber-text">{game.rating.toFixed(1)}</span>
-            <span className="text-cyber-text-muted text-xs">({formatNumber(game.reviewCount)})</span>
+            <span className="font-medium text-cyber-text">
+              {game.rating.toFixed(1)}
+            </span>
+            <span className="text-cyber-text-muted text-xs">
+              ({formatNumber(game.reviewCount)})
+            </span>
           </div>
           <div className="flex items-center gap-1 ml-auto text-cyber-text-muted text-xs">
             <Calendar className="w-3 h-3" aria-hidden="true" />
@@ -298,8 +334,3 @@ export function GameCard({
   );
 }
 
-function formatNumber(num: number): string {
-  if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
-  if (num >= 1000) return (num / 1000).toFixed(1) + "K";
-  return num.toString();
-}

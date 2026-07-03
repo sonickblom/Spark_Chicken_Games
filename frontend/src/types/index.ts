@@ -62,10 +62,14 @@ export interface SearchResult {
 export interface GameFilters {
   category?: string;
   tag?: string;
+  genre?: string[];
+  platform?: string[];
   sortBy?: "popularity" | "rating" | "newest" | "oldest" | "alphabetical";
   search?: string;
   page?: number;
   pageSize?: number;
+  limit?: number;
+  priceRange?: [number, number];
 }
 
 export interface ApiResponse<T> {

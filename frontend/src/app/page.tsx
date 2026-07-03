@@ -352,18 +352,18 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
+            <Link
               href="/games"
               className="px-8 py-4 text-lg font-bold bg-neon-green text-black rounded-lg hover:bg-neon-green/80 transition-colors w-full sm:w-auto"
             >
               Explorar Jogos
-            </a>
-            <a
+            </Link>
+            <Link
               href="/categories"
               className="px-8 py-4 text-lg font-medium bg-gray-800 text-white border border-gray-700 rounded-lg hover:border-neon-green/50 hover:bg-gray-700 transition-colors w-full sm:w-auto"
             >
               Ver Categorias
-            </a>
+            </Link>
           </div>
 
           <div className="mt-16 flex flex-wrap items-center justify-center gap-8 text-gray-400 text-sm">
@@ -519,7 +519,7 @@ export default function HomePage() {
                 <p className="text-sm text-gray-400 mt-1">
                   {category.gameCount} jogos
                 </p>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
@@ -534,7 +534,7 @@ export default function HomePage() {
             Junte-se a milhões de jogadores e descubra sua próxima aventura
             favorita. Sem downloads, sem espera, apenas diversão instantânea.
           </p>
-          <a
+          <Link
             href="/games"
             className="inline-flex items-center gap-2 px-8 py-4 text-lg font-bold bg-neon-green text-black rounded-lg hover:bg-neon-green/80 transition-colors"
           >
@@ -553,7 +553,7 @@ export default function HomePage() {
                 d="M13 7l5 5m0 0l-5 5m5-5H6"
               />
             </svg>
-          </a>
+          </Link>
         </div>
       </section>
     </div>

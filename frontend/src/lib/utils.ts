@@ -15,6 +15,14 @@ export function formatNumber(num: number): string {
   return num.toString();
 }
 
+export function formatPrice(price: number, currency = "BRL"): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency,
+    minimumFractionDigits: price % 1 === 0 ? 0 : 2,
+  }).format(price);
+}
+
 export function formatDate(date: string | Date): string {
   const d = new Date(date);
   return d.toLocaleDateString("pt-BR", {
