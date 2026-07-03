@@ -1,64 +1,42 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
+        neon: {
+          green: "#00FF41",
+          "green-dim": "#00CC33",
+        },
         cyber: {
-          neon: '#00FF41',
-          'neon-glow': '#00FF41',
-          'neon-dim': '#00CC33',
-          dark: '#0A0F0D',
-          'dark-surface': '#111815',
-          'dark-border': '#1A231D',
-          'dark-card': '#141D19',
-          gray: '#2A3A33',
-          'gray-light': '#3A4D44',
-          text: '#E8F5ED',
-          'text-muted': '#8A9E93',
+          dark: "#0A0A0F",
+          "dark-surface": "#11111A",
+          "dark-border": "#1E1E2E",
+          text: "#E0E0E0",
+          "text-muted": "#888899",
         },
       },
       fontFamily: {
-        sans: ['Montserrat', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
-      },
-      boxShadow: {
-        'neon': '0 0 10px #00FF41, 0 0 20px #00FF41, 0 0 40px #00FF41',
-        'neon-sm': '0 0 5px #00FF41, 0 0 10px #00FF41',
-        'neon-lg': '0 0 20px #00FF41, 0 0 40px #00FF41, 0 0 80px #00FF41',
-        'card': '0 4px 20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 255, 65, 0.1)',
+        mono: ["JetBrains Mono", "Fira Code", "monospace"],
+        sans: ["Inter", "system-ui", "sans-serif"],
       },
       animation: {
-        'pulse-neon': 'pulse-neon 2s ease-in-out infinite',
-        'scanline': 'scanline 8s linear infinite',
-        'glitch': 'glitch 3s ease-in-out infinite',
-        'float': 'float 6s ease-in-out infinite',
+        "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        wave: "wave 1.5s ease-in-out infinite",
       },
       keyframes: {
-        'pulse-neon': {
-          '0%, 100%': { boxShadow: '0 0 10px #00FF41, 0 0 20px #00FF41, 0 0 40px #00FF41' },
-          '50%': { boxShadow: '0 0 20px #00FF41, 0 0 40px #00FF41, 0 0 80px #00FF41' },
+        wave: {
+          "0%, 100%": { transform: "translateX(-100%)" },
+          "50%": { transform: "translateX(100%)" },
         },
-        'scanline': {
-          '0%': { transform: 'translateY(-100%)' },
-          '100%': { transform: 'translateY(100vh)' },
-        },
-        'glitch': {
-          '0%, 100%': { transform: 'translate(0)' },
-          '20%': { transform: 'translate(-2px, 2px)' },
-          '40%': { transform: 'translate(-2px, -2px)' },
-          '60%': { transform: 'translate(2px, 2px)' },
-          '80%': { transform: 'translate(2px, -2px)' },
-        },
-        'float': {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
-        },
+      },
+      backgroundImage: {
+        "grid-pattern":
+          "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='%2300FF41' stroke-opacity='0.1'%3e%3cpath d='M0 32V0M32 0H0'/%3e%3c/svg%3e\")",
       },
     },
   },

@@ -4,52 +4,23 @@ export interface Game {
   title: string;
   description: string;
   shortDescription: string;
+  thumbnail: string;
   coverImage: string;
-  bannerImage?: string;
-  screenshots: string[];
-  trailerUrl?: string;
-  genre: string[];
+  category: Category;
   tags: string[];
+  rating: number;
+  playCount: number;
+  releaseDate: string;
   developer: string;
   publisher: string;
-  releaseDate: string;
-  platforms: string[];
-  rating: number;
-  reviewCount: number;
-  price: number;
-  originalPrice?: number;
-  discount?: number;
-  isFree: boolean;
-  isEarlyAccess: boolean;
+  iframeUrl: string;
+  width: number;
+  height: number;
   isFeatured: boolean;
-  isNewRelease: boolean;
+  isNew: boolean;
   isPopular: boolean;
-  systemRequirements?: SystemRequirements;
-  languages: string[];
-  ageRating: string;
-  website?: string;
-  steamUrl?: string;
-  epicUrl?: string;
-  gogUrl?: string;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface SystemRequirements {
-  minimum: {
-    os: string;
-    processor: string;
-    memory: string;
-    graphics: string;
-    storage: string;
-  };
-  recommended: {
-    os: string;
-    processor: string;
-    memory: string;
-    graphics: string;
-    storage: string;
-  };
 }
 
 export interface Category {
@@ -58,31 +29,8 @@ export interface Category {
   name: string;
   description: string;
   icon: string;
-  image?: string;
   gameCount: number;
-  isFeatured: boolean;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
-
-export interface GameFilters {
-  search?: string;
-  genre?: string[];
-  tags?: string[];
-  platform?: string[];
-  priceRange?: [number, number];
-  rating?: number;
-  sortBy?: 'popular' | 'newest' | 'rating' | 'price-asc' | 'price-desc' | 'discount';
-  page?: number;
-  limit?: number;
+  color: string;
 }
 
 export interface User {
@@ -90,63 +38,67 @@ export interface User {
   username: string;
   email: string;
   avatar?: string;
-  bio?: string;
   favorites: string[];
-  recentlyPlayed: RecentlyPlayedGame[];
-  playtime: Record<string, number>;
-  achievements: UserAchievement[];
+  history: GameHistoryItem[];
   createdAt: string;
 }
 
-export interface RecentlyPlayedGame {
+export interface GameHistoryItem {
   gameId: string;
-  lastPlayed: string;
-  playtime: number;
+  gameTitle: string;
+  gameThumbnail: string;
+  playedAt: string;
+  duration: number;
 }
 
-export interface UserAchievement {
-  id: string;
-  gameId: string;
-  name: string;
-  description: string;
-  icon: string;
-  unlockedAt: string;
-  isSecret: boolean;
+export interface SearchResult {
+  games: Game[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
 
-export interface Review {
-  id: string;
-  gameId: string;
-  userId: string;
-  userName: string;
-  userAvatar?: string;
-  rating: number;
-  title: string;
-  content: string;
-  playtime: number;
-  helpful: number;
-  funny: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface NewsItem {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  coverImage: string;
-  author: string;
-  publishedAt: string;
-  tags: string[];
+export interface GameFilters {
+  category?: string;
+  tag?: string;
+  sortBy?: "popularity" | "rating" | "newest" | "oldest" | "alphabetical";
+  search?: string;
+  page?: number;
+  pageSize?: number;
 }
 
 export interface ApiResponse<T> {
+  data: T;
   success: boolean;
-  data?: T;
-  error?: {
-    code: string;
-    message: string;
-  };
+  message?: string;
+  error?: string;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface SEOProps {
+  title: string;
+  description: string;
+  image?: string;
+  url?: string;
+  type?: "website" | "article";
+}
+
+export interface GameEmbedProps {
+  game: Game;
+  width?: number;
+  height?: number;
+  allowFullscreen?: boolean;
+}
+
+export interface SkeletonProps {
+  className?: string;
+  animation?: "pulse" | "wave";
 }
