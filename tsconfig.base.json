@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@spark-chicken-games/backend": ["backend/src"],
+      "@spark-chicken-games/frontend": ["frontend/src"],
+      "@spark-chicken-games/shared": ["shared/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "build"]
+}
