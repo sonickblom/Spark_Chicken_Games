@@ -19,18 +19,18 @@
 ## ❌ Páginas Faltando
 
 ### 1. Página do Jogo (`/game/[slug]`)
-- [ ] Corrigir imports faltando (Card, CardHeader, CardTitle, CardDescription, CardContent, Download)
-- [ ] Remover uso de `Game` type não utilizado
-- [ ] Corrigir async client component warning
+- [x] Corrigir imports faltando (Card, CardHeader, CardTitle, CardDescription, CardContent, Download)
+- [x] Remover uso de `Game` type não utilizado
+- [x] Corrigir async client component warning
 - [ ] Implementar GameEmbed (iframe/canvas player)
 - [ ] Adicionar RelatedGames section
-- [ ] Implementar botões de ação (Jogar, Favoritar, Compartilhar)
+- [x] Implementar botões de ação (Jogar, Favoritar, Compartilhar)
 - [ ] Adicionar metadados SEO dinâmicos
 
 ### 2. Página de Categorias (`/categories/[slug]`)
-- [ ] Remover variável `categoriesLoading` não usada
-- [ ] Simplificar componente (versão client complexa desnecessária)
-- [ ] Usar Server Components onde possível
+- [x] Remover variável `categoriesLoading` não usada
+- [x] Simplificar componente (versão client complexa desnecessária)
+- [x] Usar Server Components onde possível (metadata.ts separado)
 
 ### 3. Página de Busca (`/search`)
 - [ ] Criar página completa com resultados
@@ -61,7 +61,7 @@
 - [ ] **GameEmbed** - Wrapper para iframe com fullscreen, loading
 
 ### UI Components
-- [ ] **Input** - Corrigir `className` não usado
+- [x] **Input** - Corrigir `className` não usado
 - [ ] **Card** - Criar componente Card reutilizável
 - [ ] **Modal** - Para login/register, compartilhar, etc.
 - [ ] **Dropdown** - Para ordenação, filtros
@@ -76,33 +76,36 @@
 ## ❌ Correções de Lint (Prioridade Alta)
 
 ### src/app/page.tsx
-- [ ] Corrigir parsing error: JSX closing tag para Link (linha 522)
+- [x] Corrigir parsing error: JSX closing tag para Link
 
 ### src/components/game/GameCard.tsx
-- [ ] Corrigir parsing error: JSX closing tag para Link (linha 99)
+- [x] Corrigir parsing error: JSX closing tag para Link
 
 ### src/components/SearchBar.tsx
-- [ ] Adicionar `aria-selected` aos botões com role="option"
-- [ ] Escapar aspas nas strings JSX (linha 206)
-- [ ] Remover import `Image` não usado (linha 6)
+- [x] Adicionar `aria-selected` aos botões com role="option"
+- [x] Escapar aspas nas strings JSX
+- [x] Remover import `Image` não usado
 
 ### src/components/GameCard.tsx
-- [ ] Remover imports não usados: Tag, Monitor, Gamepad2, Zap
-- [ ] Substituir `<img>` por `<Image>` do Next.js
+- [x] Remover imports não usados: Tag, Monitor, Gamepad2, Zap
+- [x] Substituir `<img>` por `<Image>` do Next.js
 
 ### src/components/ui/Input.tsx
-- [ ] Remover `className` não usado da destructuring
+- [x] Remover `className` não usado da destructuring
 
 ### src/app/categories/[slug]/page.tsx
-- [ ] Remover `categoriesLoading` não usada
+- [x] Remover `categoriesLoading` não usada
+- [x] Corrigir warning de missing dependency `resolvedSlug`
+- [x] Corrigir type error `priceRange` as `[number, number]`
+- [x] Corrigir erro `mockCategories.then` - `mockCategories` não é Promise
 
 ### src/app/game/[slug]/page.tsx
-- [ ] Remover import `Game` não usado
-- [ ] Adicionar imports faltando: Card, CardHeader, CardTitle, CardDescription, CardContent, Download
-- [ ] Corrigir async client component warning
+- [x] Remover import `Game` não usado
+- [x] Adicionar imports faltando: Card, CardHeader, CardTitle, CardDescription, CardContent, Download
+- [x] Corrigir async client component warning (removido "use client")
 
 ### src/hooks/use-data.ts
-- [ ] Remover `USE_MOCK` das dependency arrays dos useCallback (apenas warnings)
+- [x] Remover `USE_MOCK` das dependency arrays dos useCallback (warnings corrigidos)
 
 ---
 
@@ -139,7 +142,7 @@
 ## ❌ Mock Data & Services
 
 ### lib/mock-data.ts
-- [ ] Criar arquivo com dados mockados completos
+- [ ] Verificar se dados mockados estão completos e funcionando
 - [ ] Funções assíncronas simulando API
 - [ ] Categorias, jogos, usuários, reviews, news
 
@@ -189,7 +192,7 @@
 ## 📋 Priorização Sugerida
 
 ### Sprint 1 (Core Pages)
-1. Corrigir todos os erros de lint (bloqueiam build)
+1. ✅ Corrigir todos os erros de lint (bloqueiam build)
 2. Completar `/game/[slug]` com GameEmbed
 3. Criar `/search` page
 4. Criar `/login` e `/register`
@@ -220,15 +223,16 @@ src/
 ├── app/
 │   ├── layout.tsx ✅
 │   ├── page.tsx ✅
-│   ├── globals.css ✅
+│   ├── globals.css ✅ globals.css ✅
 │   ├── games/
 │   │   └── page.tsx ✅
 │   ├── game/
 │   │   └── [slug]/
-│   │       └── page.tsx ❌ (lint errors)
+│   │       └── page.tsx ❌ (lint errors - em progresso)
 │   ├── categories/
 │   │   └── [slug]/
-│   │       └── page.tsx ❌ (lint errors)
+│   │       ├── page.tsx ❌ (lint errors - em progresso)
+│   │       └── metadata.ts ✅
 │   ├── search/
 │   │   └── page.tsx ❌ (missing)
 │   ├── login/
@@ -246,8 +250,8 @@ src/
 │   │   ├── Button.tsx ✅
 │   │   ├── Skeleton.tsx ✅
 │   │   ├── CategoryPill.tsx ✅
-│   │   ├── SearchBar.tsx ✅ (lint warnings)
-│   │   ├── Input.tsx ❌ (lint error)
+│   │   ├── SearchBar.tsx ✅ (lint warnings - corrigidos)
+│   │   ├── Input.tsx ✅ (lint error - corrigido)
 │   │   ├── Card.tsx ❌ (missing)
 │   │   ├── Modal.tsx ❌ (missing)
 │   │   ├── Dropdown.tsx ❌ (missing)
@@ -266,15 +270,15 @@ src/
 │   │   ├── Header.tsx ✅
 │   │   ├── Footer.tsx ✅
 │   │   └── SidebarFilters.tsx ❌ (missing)
-│   └── SearchBar.tsx ❌ (lint warnings)
+│   └── SearchBar.tsx ✅ (lint warnings - corrigidos)
 ├── hooks/
-│   ├── use-data.ts ✅ (warnings)
+│   ├── use-data.ts ✅ (warnings - corrigidos)
 │   ├── use-debounce.ts ❌ (missing)
 │   ├── use-infinite-scroll.ts ❌ (missing)
 │   └── index.ts
 ├── lib/
 │   ├── utils.ts ✅
-│   ├── mock-data.ts ❌ (missing)
+│   ├── mock-data.ts ❌ (missing - verificar se existe)
 │   └── constants.ts ❌ (missing)
 ├── services/
 │   ├── api.ts ✅
@@ -312,5 +316,5 @@ pnpm test:watch
 
 ---
 
-*Última atualização: $(date)*
+*Última atualização: 2026-07-3*
 *Total de tarefas: ~80+*
