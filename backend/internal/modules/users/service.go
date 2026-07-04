@@ -2,7 +2,6 @@ package users
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -139,7 +138,7 @@ func (s *userService) Login(ctx context.Context, email, password string) (*UserP
 }
 
 func (s *userService) RefreshToken(ctx context.Context, refreshToken string) (*auth.TokenPair, error) {
-	claims, err := s.jwtService.ValidateRefreshToken(refreshToken)
+	_, err := s.jwtService.ValidateRefreshToken(refreshToken)
 	if err != nil {
 		return nil, err
 	}

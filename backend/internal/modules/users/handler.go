@@ -3,16 +3,14 @@ package users
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/kronos/spark-chicken-games/backend/internal/modules/users"
 	"github.com/kronos/spark-chicken-games/backend/internal/shared/response"
-	"github.com/kronos/spark-chicken-games/backend/internal/shared/validator"
 )
 
 type UserHandler struct {
-	userService users.UserService
+	userService UserService
 }
 
-func NewUserHandler(userService users.UserService) *UserHandler {
+func NewUserHandler(userService UserService) *UserHandler {
 	return &UserHandler{userService: userService}
 }
 
@@ -68,7 +66,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 		userUUID, _ = uuid.Parse(userID.(string))
 	}
 
-	input := users.UpdateUserInput{
+	input := UpdateUserInput{
 		Name:      req.Name,
 		Username:  req.Username,
 		Email:     req.Email,
@@ -186,7 +184,7 @@ func (h *UserHandler) AdminUpdateUser(c *gin.Context) {
 		return
 	}
 
-	input := users.UpdateUserInput{
+	input := UpdateUserInput{
 		Name:      req.Name,
 		Username:  req.Username,
 		Email:     req.Email,

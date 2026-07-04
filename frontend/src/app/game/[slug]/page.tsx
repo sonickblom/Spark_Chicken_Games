@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import {
   Star,
   Calendar,
@@ -29,8 +28,9 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/Card";
+import { MotionDiv } from "@/components/ui/Motion";
 import { getMockGame, getMockRelatedGames } from "@/lib/mock-data";
-import { formatNumber, formatDate } from "@/lib/utils";
+import { formatNumber, formatDate, formatPrice } from "@/lib/utils";
 
 interface GamePageProps {
   params: Promise<{ slug: string }>;
@@ -72,9 +72,11 @@ export default async function GamePage({ params }: GamePageProps) {
   }
 
   const hasDiscount = game.discount && game.discount > 0;
-  const platforms = game.platforms;
-  const genres = game.genre;
-  const tags = game.tags;
+  const platforms = game.platforms ?? [];
+  const genres = game.genre ?? [];
+  const tags = game.tags ?? [];
+  const languages = game.languages ?? [];
+  const screenshots = game.screenshots ?? [];
 
   return (
     <div className="min-h-screen bg-cyber-dark">
@@ -98,7 +100,7 @@ export default async function GamePage({ params }: GamePageProps) {
 
           <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12 lg:pb-20">
             <div className="max-w-3xl">
-              <motion.div
+              <MotionDiv
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
@@ -124,18 +126,18 @@ export default async function GamePage({ params }: GamePageProps) {
                     Acesso Antecipado
                   </span>
                 )}
-              </motion.div>
+              </MotionDiv>
 
-              <motion.h1
+              <MotionDiv
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.6 }}
                 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-mono text-cyber-text mb-4"
               >
                 {game.title}
-              </motion.h1>
+              </MotionDiv>
 
-              <motion.div
+              <MotionDiv
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
@@ -164,18 +166,18 @@ export default async function GamePage({ params }: GamePageProps) {
                   <Monitor className="w-5 h-5" aria-hidden="true" />
                   <span>{platforms.join(", ")}</span>
                 </div>
-              </motion.div>
+              </MotionDiv>
 
-              <motion.p
+              <MotionDiv
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
                 className="text-lg text-cyber-text-muted mb-8 max-w-2xl"
               >
                 {game.shortDescription}
-              </motion.p>
+              </MotionDiv>
 
-              <motion.div
+              <MotionDiv
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
@@ -222,7 +224,7 @@ export default async function GamePage({ params }: GamePageProps) {
                 >
                   <span className="hidden sm:inline">Compartilhar</span>
                 </Button>
-              </motion.div>
+              </MotionDiv>
             </div>
           </div>
         </section>
@@ -323,7 +325,7 @@ export default async function GamePage({ params }: GamePageProps) {
                       </div>
                     </div>
 
-                    {game.languages.length > 0 && (
+                    {languages.length > 0 && (
                       <div className="mb-6">
                         <h4 className="font-semibold text-cyber-text mb-3 flex items-center gap-2">
                           <Globe
@@ -333,7 +335,7 @@ export default async function GamePage({ params }: GamePageProps) {
                           Idiomas Disponíveis
                         </h4>
                         <div className="flex flex-wrap gap-2">
-                          {game.languages.map((lang) => (
+                          {languages.map((lang) => (
                             <span
                               key={lang}
                               className="px-3 py-1 bg-cyber-dark-surface border border-cyber-dark-border rounded-full text-sm text-cyber-text"
@@ -431,14 +433,14 @@ export default async function GamePage({ params }: GamePageProps) {
                 )}
 
                 {/* Screenshots */}
-                {game.screenshots.length > 0 && (
+                {screenshots.length > 0 && (
                   <Card padding="lg">
                     <CardHeader>
                       <CardTitle>Capturas de Tela</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        {game.screenshots.map((screenshot, index) => (
+                        {screenshots.map((screenshot, index) => (
                           <div
                             key={index}
                             className="relative aspect-video rounded-xl overflow-hidden group cursor-pointer"

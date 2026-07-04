@@ -11,33 +11,33 @@ import (
 )
 
 type Config struct {
-	App      AppConfig
-	Database DatabaseConfig
-	Redis    RedisConfig
-	JWT      JWTConfig
-	Server   ServerConfig
-	CORS     CORSConfig
-	RateLimit RateLimitConfig
+	App       AppConfig       `mapstructure:"app"`
+	Database  DatabaseConfig  `mapstructure:"database"`
+	Redis     RedisConfig     `mapstructure:"redis"`
+	JWT       JWTConfig       `mapstructure:"jwt"`
+	Server    ServerConfig    `mapstructure:"server"`
+	CORS      CORSConfig      `mapstructure:"cors"`
+	RateLimit RateLimitConfig `mapstructure:"ratelimit"`
 }
 
 type AppConfig struct {
-	Name        string
-	Environment string
-	Debug       bool
-	Version     string
+	Name        string `mapstructure:"name"`
+	Environment string `mapstructure:"environment"`
+	Debug       bool   `mapstructure:"debug"`
+	Version     string `mapstructure:"version"`
 }
 
 type DatabaseConfig struct {
-	Host            string
-	Port            int
-	User            string
-	Password        string
-	Name            string
-	SSLMode         string
-	MaxOpenConns    int
-	MaxIdleConns    int
-	ConnMaxLifetime time.Duration
-	ConnMaxIdleTime time.Duration
+	Host            string        `mapstructure:"host"`
+	Port            int           `mapstructure:"port"`
+	User            string        `mapstructure:"user"`
+	Password        string        `mapstructure:"password"`
+	Name            string        `mapstructure:"name"`
+	SSLMode         string        `mapstructure:"sslmode"`
+	MaxOpenConns    int           `mapstructure:"max_open_conns"`
+	MaxIdleConns    int           `mapstructure:"max_idle_conns"`
+	ConnMaxLifetime time.Duration `mapstructure:"conn_max_lifetime"`
+	ConnMaxIdleTime time.Duration `mapstructure:"conn_max_idle_time"`
 }
 
 func (d DatabaseConfig) DSN() string {
@@ -48,12 +48,12 @@ func (d DatabaseConfig) DSN() string {
 }
 
 type RedisConfig struct {
-	Host         string
-	Port         int
-	Password     string
-	DB           int
-	PoolSize     int
-	MinIdleConns int
+	Host         string `mapstructure:"host"`
+	Port         int    `mapstructure:"port"`
+	Password     string `mapstructure:"password"`
+	DB           int    `mapstructure:"db"`
+	PoolSize     int    `mapstructure:"pool_size"`
+	MinIdleConns int    `mapstructure:"min_idle_conns"`
 }
 
 func (r RedisConfig) Addr() string {
@@ -61,19 +61,19 @@ func (r RedisConfig) Addr() string {
 }
 
 type JWTConfig struct {
-	AccessSecret        string
-	RefreshSecret       string
-	AccessTokenExpiry   time.Duration
-	RefreshTokenExpiry  time.Duration
-	Issuer              string
+	AccessSecret       string        `mapstructure:"access_secret"`
+	RefreshSecret      string        `mapstructure:"refresh_secret"`
+	AccessTokenExpiry  time.Duration `mapstructure:"access_token_expiry"`
+	RefreshTokenExpiry time.Duration `mapstructure:"refresh_token_expiry"`
+	Issuer             string        `mapstructure:"issuer"`
 }
 
 type ServerConfig struct {
-	Host         string
-	Port         int
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
-	IdleTimeout  time.Duration
+	Host         string        `mapstructure:"host"`
+	Port         int           `mapstructure:"port"`
+	ReadTimeout  time.Duration `mapstructure:"read_timeout"`
+	WriteTimeout time.Duration `mapstructure:"write_timeout"`
+	IdleTimeout  time.Duration `mapstructure:"idle_timeout"`
 }
 
 func (s ServerConfig) Addr() string {
@@ -81,44 +81,45 @@ func (s ServerConfig) Addr() string {
 }
 
 type CORSConfig struct {
-	AllowedOrigins   []string
-	AllowedMethods   []string
-	AllowedHeaders   []string
-	ExposedHeaders   []string
-	AllowCredentials bool
-	MaxAge           int
+	AllowedOrigins   []string `mapstructure:"allowed_origins"`
+	AllowedMethods   []string `mapstructure:"allowed_methods"`
+	AllowedHeaders   []string `mapstructure:"allowed_headers"`
+	ExposedHeaders   []string `mapstructure:"exposed_headers"`
+	AllowCredentials bool     `mapstructure:"allow_credentials"`
+	MaxAge           int      `mapstructure:"max_age"`
 }
 
 type RateLimitConfig struct {
-	Enabled           bool
-	RequestsPerMinute int
-	Burst             int
+	Enabled           bool `mapstructure:"enabled"`
+	RequestsPerMinute int  `mapstructure:"requests_per_minute"`
+	Burst             int  `mapstructure:"burst"`
 }
 
 func Load() (*Config, error) {
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
+	v := viper.New()
+	v.SetConfigName("config")
+	v.SetConfigType("yaml")
 
 	// Search paths for config file
-	viper.AddConfigPath(".")
-	viper.AddConfigPath("./config")
-	viper.AddConfigPath("/etc/spark-chicken-games")
+	v.AddConfigPath(".")
+	v.AddConfigPath("./config")
+	v.AddConfigPath("/etc/spark-chicken-games")
 
 	// Also check for config in project root
 	if wd, err := os.Getwd(); err == nil {
-		viper.AddConfigPath(wd)
-		viper.AddConfigPath(filepath.Join(wd, "config"))
+		v.AddConfigPath(wd)
+		v.AddConfigPath(filepath.Join(wd, "config"))
 	}
 
 	// Environment variables
-	viper.SetEnvPrefix("SCG")
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	viper.AutomaticEnv()
+	v.SetEnvPrefix("SCG")
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	v.AutomaticEnv()
 
 	// Set defaults
-	setDefaults()
+	setDefaults(v)
 
-	if err := viper.ReadInConfig(); err != nil {
+	if err := v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 			return nil, fmt.Errorf("failed to read config: %w", err)
 		}
@@ -126,66 +127,66 @@ func Load() (*Config, error) {
 	}
 
 	var cfg Config
-	if err := viper.Unmarshal(&cfg); err != nil {
+	if err := v.Unmarshal(&cfg); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
 	return &cfg, nil
 }
 
-func setDefaults() {
+func setDefaults(v *viper.Viper) {
 	// App
-	viper.SetDefault("app.name", "spark-chicken-games")
-	viper.SetDefault("app.environment", "development")
-	viper.SetDefault("app.debug", true)
-	viper.SetDefault("app.version", "1.0.0")
+	v.SetDefault("app.name", "spark-chicken-games")
+	v.SetDefault("app.environment", "development")
+	v.SetDefault("app.debug", true)
+	v.SetDefault("app.version", "1.0.0")
 
 	// Database
-	viper.SetDefault("database.host", "localhost")
-	viper.SetDefault("database.port", 5432)
-	viper.SetDefault("database.user", "postgres")
-	viper.SetDefault("database.password", "postgres")
-	viper.SetDefault("database.name", "spark_chicken_games")
-	viper.SetDefault("database.sslmode", "disable")
-	viper.SetDefault("database.max_open_conns", 25)
-	viper.SetDefault("database.max_idle_conns", 5)
-	viper.SetDefault("database.conn_max_lifetime", "5m")
-	viper.SetDefault("database.conn_max_idle_time", "2m")
+	v.SetDefault("database.host", "localhost")
+	v.SetDefault("database.port", 5432)
+	v.SetDefault("database.user", "postgres")
+	v.SetDefault("database.password", "postgres")
+	v.SetDefault("database.name", "spark_chicken_games")
+	v.SetDefault("database.sslmode", "disable")
+	v.SetDefault("database.max_open_conns", 25)
+	v.SetDefault("database.max_idle_conns", 5)
+	v.SetDefault("database.conn_max_lifetime", "5m")
+	v.SetDefault("database.conn_max_idle_time", "2m")
 
 	// Redis
-	viper.SetDefault("redis.host", "localhost")
-	viper.SetDefault("redis.port", 6379)
-	viper.SetDefault("redis.password", "")
-	viper.SetDefault("redis.db", 0)
-	viper.SetDefault("redis.pool_size", 10)
-	viper.SetDefault("redis.min_idle_conns", 2)
+	v.SetDefault("redis.host", "localhost")
+	v.SetDefault("redis.port", 6379)
+	v.SetDefault("redis.password", "")
+	v.SetDefault("redis.db", 0)
+	v.SetDefault("redis.pool_size", 10)
+	v.SetDefault("redis.min_idle_conns", 2)
 
 	// JWT
-	viper.SetDefault("jwt.access_secret", "change-me-in-production-access-secret")
-	viper.SetDefault("jwt.refresh_secret", "change-me-in-production-refresh-secret")
-	viper.SetDefault("jwt.access_token_expiry", "15m")
-	viper.SetDefault("jwt.refresh_token_expiry", "168h") // 7 days
-	viper.SetDefault("jwt.issuer", "spark-chicken-games")
+	v.SetDefault("jwt.access_secret", "change-me-in-production-access-secret")
+	v.SetDefault("jwt.refresh_secret", "change-me-in-production-refresh-secret")
+	v.SetDefault("jwt.access_token_expiry", "15m")
+	v.SetDefault("jwt.refresh_token_expiry", "168h") // 7 days
+	v.SetDefault("jwt.issuer", "spark-chicken-games")
 
 	// Server
-	viper.SetDefault("server.host", "0.0.0.0")
-	viper.SetDefault("server.port", 8080)
-	viper.SetDefault("server.read_timeout", "10s")
-	viper.SetDefault("server.write_timeout", "10s")
-	viper.SetDefault("server.idle_timeout", "60s")
+	v.SetDefault("server.host", "0.0.0.0")
+	v.SetDefault("server.port", 8080)
+	v.SetDefault("server.read_timeout", "10s")
+	v.SetDefault("server.write_timeout", "10s")
+	v.SetDefault("server.idle_timeout", "60s")
 
 	// CORS
-	viper.SetDefault("cors.allowed_origins", []string{"http://localhost:3000"})
-	viper.SetDefault("cors.allowed_methods", []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"})
-	viper.SetDefault("cors.allowed_headers", []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"})
-	viper.SetDefault("cors.exposed_headers", []string{"Content-Length"})
-	viper.SetDefault("cors.allow_credentials", true)
-	viper.SetDefault("cors.max_age", 86400)
+	v.SetDefault("cors.allowed_origins", []string{"http://localhost:3000"})
+	v.SetDefault("cors.allowed_methods", []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"})
+	v.SetDefault("cors.allowed_headers", []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"})
+	v.SetDefault("cors.exposed_headers", []string{"Content-Length"})
+	v.SetDefault("cors.allow_credentials", true)
+	v.SetDefault("cors.max_age", 86400)
 
 	// Rate Limit
-	viper.SetDefault("ratelimit.enabled", true)
-	viper.SetDefault("ratelimit.requests_per_minute", 60)
-	viper.SetDefault("ratelimit.burst", 10)
+	v.SetDefault("ratelimit.enabled", true)
+	v.SetDefault("ratelimit.requests_per_minute", 60)
+	v.SetDefault("ratelimit.burst", 10)
 }
 
 func MustLoad() *Config {

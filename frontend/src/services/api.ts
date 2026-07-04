@@ -12,6 +12,8 @@ import {
   PaginatedResponse,
   GameFilters,
   GameHistoryItem,
+  NewsItem,
+  Review,
 } from "@/types";
 
 const API_BASE_URL =
@@ -110,8 +112,39 @@ class ApiService {
     return response.data;
   }
 
-  async getGamesByCategory(categorySlug: string, filters?: GameFilters): Promise<PaginatedResponse<Game>> {
-    const response = await this.client.get<PaginatedResponse<Game>>(`/categories/${categorySlug}/games`);
+  private createGameFilterParams(filters?: GameFilters) {
+    const params = new URLSearchParams();
+
+    if (!filters) return params;
+
+    if (filters.category) params.append("category", filters.category);
+    if (filters.tag) params.append("tag", filters.tag);
+    if (filters.sortBy) params.append("sortBy", filters.sortBy);
+    if (filters.search) params.append("search", filters.search);
+    if (filters.page) params.append("page", String(filters.page));
+    if (filters.pageSize) params.append("pageSize", String(filters.pageSize));
+    if (filters.limit) params.append("limit", String(filters.limit));
+    filters.tags?.forEach((tag) => params.append("tags", tag));
+    filters.genre?.forEach((genre) => params.append("genre", genre));
+    filters.platform?.forEach((platform) => params.append("platform", platform));
+    if (filters.rating) params.append("rating", String(filters.rating));
+    if (filters.priceRange) {
+      params.append("minPrice", String(filters.priceRange[0]));
+      params.append("maxPrice", String(filters.priceRange[1]));
+    }
+
+    return params;
+  }
+
+  async getGamesByCategory(
+    categorySlug: string,
+    filters?: GameFilters,
+  ): Promise<PaginatedResponse<Game>> {
+    const params = this.createGameFilterParams(filters);
+    const query = params.toString();
+    const response = await this.client.get<PaginatedResponse<Game>>(
+      `/categories/${categorySlug}/games${query ? `?${query}` : ""}`,
+    );
     return response.data;
   }
 
@@ -200,18 +233,24 @@ class ApiService {
     return response.data;
   }
 
-  async getReviews(gameId: string): Promise<any[]> {
-    const response = await this.client.get<any[]>(`/games/${gameId}/reviews`);
+  async getReviews(gameId: string): Promise<Review[]> {
+    const response = await this.client.get<Review[]>(`/games/${gameId}/reviews`);
     return response.data;
   }
 
-  async createReview(gameId: string, data: any): Promise<any> {
-    const response = await this.client.post<any>(`/games/${gameId}/reviews`, data);
+  async createReview(
+    gameId: string,
+    data: Omit<Review, "id" | "gameId" | "createdAt" | "updatedAt">,
+  ): Promise<Review> {
+    const response = await this.client.post<Review>(
+      `/games/${gameId}/reviews`,
+      data,
+    );
     return response.data;
   }
 
-  async getNews(limit = 10): Promise<any[]> {
-    const response = await this.client.get<any[]>(`/news?limit=${limit}`);
+  async getNews(limit = 10): Promise<NewsItem[]> {
+    const response = await this.client.get<NewsItem[]>(`/news?limit=${limit}`);
     return response.data;
   }
 }

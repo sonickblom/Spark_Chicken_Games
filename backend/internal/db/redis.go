@@ -1,4 +1,4 @@
-package redis
+package db
 
 import (
 	"context"
@@ -14,7 +14,7 @@ type Redis struct {
 	Client *redis.Client
 }
 
-func NewClient(cfg *config.RedisConfig) (*Redis, error) {
+func NewRedisClient(cfg *config.RedisConfig) (*Redis, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:         cfg.Addr(),
 		Password:     cfg.Password,
@@ -26,10 +26,11 @@ func NewClient(cfg *config.RedisConfig) (*Redis, error) {
 		WriteTimeout: 3 * time.Second,
 	})
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	if err := client.Ping(ctx).Err(); err != nil {
+	if err := pingRedisWithRetry(ctx, client); err != nil {
+		client.Close()
 		return nil, fmt.Errorf("failed to connect to Redis: %w", err)
 	}
 
@@ -165,4 +166,27 @@ func (r *Redis) Keys(ctx context.Context, pattern string) ([]string, error) {
 
 func (r *Redis) Scan(ctx context.Context, cursor uint64, match string, count int64) ([]string, uint64, error) {
 	return r.Client.Scan(ctx, cursor, match, count).Result()
+}
+
+func pingRedisWithRetry(ctx context.Context, client *redis.Client) error {
+	ticker := time.NewTicker(500 * time.Millisecond)
+	defer ticker.Stop()
+
+	var lastErr error
+	for {
+		if err := client.Ping(ctx).Err(); err != nil {
+			lastErr = err
+		} else {
+			return nil
+		}
+
+		select {
+		case <-ctx.Done():
+			if lastErr != nil {
+				return lastErr
+			}
+			return ctx.Err()
+		case <-ticker.C:
+		}
+	}
 }

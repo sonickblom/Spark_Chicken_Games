@@ -12,7 +12,7 @@ type Response struct {
 	Success   bool        `json:"success"`
 	Data      interface{} `json:"data,omitempty"`
 	Error     *ErrorInfo  `json:"error,omitempty"`
-	Meta      *Meta       `json:"meta,omitempty"`
+	Meta      interface{} `json:"meta,omitempty"`
 	Timestamp string      `json:"timestamp"`
 	RequestID string      `json:"request_id"`
 }
@@ -40,7 +40,7 @@ func Success(data interface{}) *Response {
 	}
 }
 
-func SuccessWithMeta(data interface{}, meta *Meta) *Response {
+func SuccessWithMeta(data interface{}, meta interface{}) *Response {
 	return &Response{
 		Success:   true,
 		Data:      data,
@@ -77,7 +77,7 @@ func WriteSuccess(w http.ResponseWriter, data interface{}, status ...int) {
 	Success(data).WriteJSON(w, statusCode)
 }
 
-func WriteSuccessWithMeta(w http.ResponseWriter, data interface{}, meta *Meta, status ...int) {
+func WriteSuccessWithMeta(w http.ResponseWriter, data interface{}, meta interface{}, status ...int) {
 	statusCode := http.StatusOK
 	if len(status) > 0 {
 		statusCode = status[0]
