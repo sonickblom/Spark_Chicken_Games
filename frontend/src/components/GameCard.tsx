@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { cn, formatNumber, formatPrice, truncate } from "@/lib/utils";
 import type { Game } from "@/types";
 
-interface GameCardProps {
+export interface GameCardProps {
   game: Game;
   variant?: "default" | "compact" | "featured";
   isFavorite?: boolean;
@@ -24,8 +24,8 @@ export function GameCard({
   onToggleFavorite,
   priority = false,
 }: GameCardProps) {
-  const genres = game.genre.slice(0, 3);
-  const platforms = game.platforms.slice(0, 4);
+  const genres = (game.genre ?? []).slice(0, 3);
+  const platforms = (game.platforms ?? []).slice(0, 4);
   const hasDiscount = game.discount && game.discount > 0;
 
   if (variant === "compact") {
@@ -68,13 +68,13 @@ export function GameCard({
           </div>
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center gap-1">
-              {game.originalPrice && game.originalPrice > game.price ? (
+              {game.originalPrice && game.originalPrice > (game.price ?? 0) ? (
                 <span className="text-xs text-cyber-text-muted line-through">
                   {formatPrice(game.originalPrice)}
                 </span>
               ) : null}
               <span className="font-semibold text-cyber-neon">
-                {game.isFree ? "Gratuito" : formatPrice(game.price)}
+                {game.isFree ? "Gratuito" : formatPrice(game.price ?? 0)}
               </span>
             </div>
           </div>
@@ -128,17 +128,17 @@ export function GameCard({
                   {game.rating.toFixed(1)}
                 </span>
                 <span className="text-cyber-text-muted text-sm">
-                  ({formatNumber(game.reviewCount)})
+                  ({formatNumber(game.reviewCount ?? 0)})
                 </span>
               </div>
               <div className="flex items-center gap-1 ml-auto">
-                {game.originalPrice && game.originalPrice > game.price ? (
+                {game.originalPrice && game.originalPrice > (game.price ?? 0) ? (
                   <span className="text-sm text-cyber-text-muted line-through">
                     {formatPrice(game.originalPrice)}
                   </span>
                 ) : null}
                 <span className="text-xl font-bold text-cyber-neon">
-                  {game.isFree ? "Gratuito" : formatPrice(game.price)}
+                  {game.isFree ? "Gratuito" : formatPrice(game.price ?? 0)}
                 </span>
               </div>
             </div>
@@ -294,12 +294,12 @@ export function GameCard({
               {game.rating.toFixed(1)}
             </span>
             <span className="text-cyber-text-muted text-xs">
-              ({formatNumber(game.reviewCount)})
+              ({formatNumber(game.reviewCount ?? 0)})
             </span>
           </div>
           <div className="flex items-center gap-1 ml-auto text-cyber-text-muted text-xs">
             <Calendar className="w-3 h-3" aria-hidden="true" />
-            <span>{new Date(game.releaseDate).getFullYear()}</span>
+            <span>{game.releaseDate ? new Date(game.releaseDate).getFullYear() : '—'}</span>
           </div>
         </div>
 
@@ -317,16 +317,16 @@ export function GameCard({
 
       <CardFooter className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          {game.originalPrice && game.originalPrice > game.price ? (
+          {game.originalPrice && game.originalPrice > (game.price ?? 0) ? (
             <span className="text-sm text-cyber-text-muted line-through">
               {formatPrice(game.originalPrice)}
             </span>
           ) : null}
           <span className="font-bold text-lg text-cyber-neon">
-            {game.isFree ? "Gratuito" : formatPrice(game.price)}
+            {game.isFree ? "Gratuito" : formatPrice(game.price ?? 0)}
           </span>
         </div>
-        <Button variant="outline" size="sm" asChild>
+        <Button variant="outline" size="sm">
           <Link href={`/game/${game.slug}`}>Ver Detalhes</Link>
         </Button>
       </CardFooter>

@@ -39,7 +39,7 @@ export function useGames(filters: GameFilters = {}) {
     } finally {
       setLoading(false);
     }
-  }, [filters, USE_MOCK]);
+  }, [filters]);
 
   useEffect(() => {
     fetchGames();
@@ -74,7 +74,7 @@ export function useGame(slug: string) {
     } finally {
       setLoading(false);
     }
-  }, [slug, USE_MOCK]);
+  }, [slug]);
 
   useEffect(() => {
     fetchGame();
@@ -109,7 +109,7 @@ export function useRelatedGames(gameId: string, limit = 6) {
     } finally {
       setLoading(false);
     }
-  }, [gameId, limit, USE_MOCK]);
+  }, [gameId, limit]);
 
   useEffect(() => {
     fetchRelated();
@@ -143,7 +143,7 @@ export function useCategories() {
     } finally {
       setLoading(false);
     }
-  }, [USE_MOCK]);
+  }, []);
 
   useEffect(() => {
     fetchCategories();
@@ -178,7 +178,7 @@ export function useCategory(slug: string) {
     } finally {
       setLoading(false);
     }
-  }, [slug, USE_MOCK]);
+  }, [slug]);
 
   useEffect(() => {
     fetchCategory();
@@ -213,7 +213,7 @@ export function useGamesByCategory(categorySlug: string, filters: GameFilters = 
     } finally {
       setLoading(false);
     }
-  }, [categorySlug, filters, USE_MOCK]);
+  }, [categorySlug, filters]);
 
   useEffect(() => {
     fetchGames();
@@ -248,7 +248,7 @@ export function useFeaturedGames(limit = 6) {
     } finally {
       setLoading(false);
     }
-  }, [limit, USE_MOCK]);
+  }, [limit]);
 
   useEffect(() => {
     fetchFeatured();
@@ -283,7 +283,7 @@ export function usePopularGames(limit = 10) {
     } finally {
       setLoading(false);
     }
-  }, [limit, USE_MOCK]);
+  }, [limit]);
 
   useEffect(() => {
     fetchPopular();
@@ -318,7 +318,7 @@ export function useNewReleases(limit = 10) {
     } finally {
       setLoading(false);
     }
-  }, [limit, USE_MOCK]);
+  }, [limit]);
 
   useEffect(() => {
     fetchNew();
@@ -345,7 +345,7 @@ export function useSearchGames(query: string, limit = 10) {
         const allGames = await getMockGames({ search: query, limit });
         result = allGames.data;
       } else {
-        result = await api.searchGames(query, limit);
+        result = (await api.searchGames(query, 1, limit)).games;
       }
       setData(result);
     } catch (err) {
@@ -357,7 +357,7 @@ export function useSearchGames(query: string, limit = 10) {
     } finally {
       setLoading(false);
     }
-  }, [query, limit, USE_MOCK]);
+  }, [query, limit]);
 
   useEffect(() => {
     const timeoutId = setTimeout(search, 300);
@@ -384,7 +384,7 @@ export function useAuth() {
     localStorage.setItem('user', JSON.stringify(result.user));
     setUser(result.user);
     return result;
-  }, [USE_MOCK]);
+  }, []);
 
   const register = useCallback(async (username: string, email: string, password: string) => {
     if (USE_MOCK) {
@@ -400,7 +400,7 @@ export function useAuth() {
     localStorage.setItem('user', JSON.stringify(result.user));
     setUser(result.user);
     return result;
-  }, [USE_MOCK]);
+  }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem('auth_token');
@@ -459,7 +459,7 @@ export function useFavorites() {
     } finally {
       setLoading(false);
     }
-  }, [favorites, USE_MOCK]);
+  }, [favorites]);
 
   const isFavorite = useCallback((gameId: string) => {
     return favorites.includes(gameId);
@@ -473,7 +473,7 @@ export function useFavorites() {
       const games = await api.getFavorites();
       setFavorites(games.map(g => g.id));
     }
-  }, [USE_MOCK]);
+  }, []);
 
   useEffect(() => {
     fetchFavorites();
@@ -491,7 +491,7 @@ export function useRecentlyPlayed() {
       return;
     }
     await api.addToRecentlyPlayed(gameId);
-  }, [USE_MOCK]);
+  }, []);
 
   const fetchRecentlyPlayed = useCallback(async () => {
     if (USE_MOCK) {
@@ -507,7 +507,7 @@ export function useRecentlyPlayed() {
       setGames(recentGames);
     }
     setLoading(false);
-  }, [USE_MOCK]);
+  }, []);
 
   useEffect(() => {
     fetchRecentlyPlayed();
@@ -543,7 +543,7 @@ export function useReviews(gameId: string) {
     } finally {
       setLoading(false);
     }
-  }, [gameId, USE_MOCK]);
+  }, [gameId]);
 
   const createReview = useCallback(async (data: { rating: number; title: string; content: string }) => {
     if (!gameId) throw new Error('Game ID required');
@@ -568,7 +568,7 @@ export function useReviews(gameId: string) {
     const review = await api.createReview(gameId, data);
     setData(prev => [review, ...prev]);
     return review;
-  }, [gameId, USE_MOCK]);
+  }, [gameId]);
 
   useEffect(() => {
     fetchReviews();
@@ -603,7 +603,7 @@ export function useNews(limit = 10) {
     } finally {
       setLoading(false);
     }
-  }, [limit, USE_MOCK]);
+  }, [limit]);
 
   useEffect(() => {
     fetchNews();

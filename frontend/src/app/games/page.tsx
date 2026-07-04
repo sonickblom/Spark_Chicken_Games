@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Metadata } from "next";
 import GameGrid from "@/components/game/GameGrid";
@@ -426,6 +428,7 @@ const sortOptions = [
 const GamesPage = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
+  const [isLoading] = React.useState(false);
   const [sortBy, setSortBy] =
     React.useState<GameFilters["sortBy"]>("popularity");
 
@@ -443,12 +446,12 @@ const GamesPage = () => {
     }
 
     if (selectedCategory !== "all") {
-      result = result.filter((game) => game.category.slug === selectedCategory);
+      result = result.filter((game) => game.category?.slug === selectedCategory);
     }
 
     switch (sortBy) {
       case "popularity":
-        result.sort((a, b) => b.playCount - a.playCount);
+        result.sort((a, b) => (b.playCount ?? 0) - (a.playCount ?? 0));
         break;
       case "rating":
         result.sort((a, b) => b.rating - a.rating);
@@ -457,14 +460,14 @@ const GamesPage = () => {
         result.sort(
           (a, b) =>
             new Date(b.releaseDate).getTime() -
-            new Date(a.releaseDate).getTime(),
+            new Date(a.releaseDate ?? 0).getTime(),
         );
         break;
       case "oldest":
         result.sort(
           (a, b) =>
-            new Date(a.releaseDate).getTime() -
-            new Date(b.releaseDate).getTime(),
+            new Date(a.releaseDate ?? 0).getTime() -
+            new Date(b.releaseDate ?? 0).getTime(),
         );
         break;
       case "alphabetical":

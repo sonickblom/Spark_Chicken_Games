@@ -11,6 +11,7 @@ import {
   ApiResponse,
   PaginatedResponse,
   GameFilters,
+  GameHistoryItem,
 } from "@/types";
 
 const API_BASE_URL =
@@ -77,17 +78,17 @@ class ApiService {
     return response.data;
   }
 
-  async getGameBySlug(slug: string): Promise<Game> {
+  async getGame(slug: string): Promise<Game> {
     const response = await this.client.get<Game>(`/games/${slug}`);
     return response.data;
   }
 
-  async getFeaturedGames(): Promise<Game[]> {
-    const response = await this.client.get<Game[]>("/games/featured");
+  async getFeaturedGames(limit = 10): Promise<Game[]> {
+    const response = await this.client.get<Game[]>(`/games/featured?limit=${limit}`);
     return response.data;
   }
 
-  async getNewGames(limit = 10): Promise<Game[]> {
+  async getNewReleases(limit = 10): Promise<Game[]> {
     const response = await this.client.get<Game[]>(`/games/new?limit=${limit}`);
     return response.data;
   }
@@ -104,8 +105,13 @@ class ApiService {
     return response.data;
   }
 
-  async getCategoryBySlug(slug: string): Promise<Category> {
+  async getCategory(slug: string): Promise<Category> {
     const response = await this.client.get<Category>(`/categories/${slug}`);
+    return response.data;
+  }
+
+  async getGamesByCategory(categorySlug: string, filters?: GameFilters): Promise<PaginatedResponse<Game>> {
+    const response = await this.client.get<PaginatedResponse<Game>>(`/categories/${categorySlug}/games`);
     return response.data;
   }
 
@@ -139,13 +145,11 @@ class ApiService {
   }
 
   async register(
-    username: string,
-    email: string,
-    password: string,
+    data: { username: string; email: string; password: string }
   ): Promise<{ user: User; token: string }> {
     const response = await this.client.post<{ user: User; token: string }>(
       "/auth/register",
-      { username, email, password },
+      data,
     );
     return response.data;
   }
@@ -181,9 +185,38 @@ class ApiService {
   async addToHistory(gameId: string): Promise<void> {
     await this.client.post(`/user/history/${gameId}`);
   }
+
+  async toggleFavorite(gameId: string): Promise<{ isFavorite: boolean }> {
+    const response = await this.client.post<{ isFavorite: boolean }>(`/user/favorites/toggle/${gameId}`);
+    return response.data;
+  }
+
+  async addToRecentlyPlayed(gameId: string): Promise<void> {
+    await this.client.post(`/user/recent/${gameId}`);
+  }
+
+  async getRecentlyPlayed(): Promise<Game[]> {
+    const response = await this.client.get<Game[]>("/user/recent");
+    return response.data;
+  }
+
+  async getReviews(gameId: string): Promise<any[]> {
+    const response = await this.client.get<any[]>(`/games/${gameId}/reviews`);
+    return response.data;
+  }
+
+  async createReview(gameId: string, data: any): Promise<any> {
+    const response = await this.client.post<any>(`/games/${gameId}/reviews`, data);
+    return response.data;
+  }
+
+  async getNews(limit = 10): Promise<any[]> {
+    const response = await this.client.get<any[]>(`/news?limit=${limit}`);
+    return response.data;
+  }
 }
 
-export const apiService = new ApiService();
+export const api = new ApiService();
 
 export type {
   Game,

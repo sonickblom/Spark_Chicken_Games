@@ -4,7 +4,7 @@ import { formatPlaytime } from "@/lib/utils";
 import { Game } from "@/types";
 
 const GameCard = ({ game, onClick }: { game: Game; onClick?: () => void }) => {
-  const playTime = formatPlaytime(game.playCount);
+  const playTime = formatPlaytime(game.playCount || 0);
 
   return (
     <div
@@ -13,7 +13,7 @@ const GameCard = ({ game, onClick }: { game: Game; onClick?: () => void }) => {
     >
       <div className="relative w-full h-48 overflow-hidden">
         <Image
-          src={game.thumbnail}
+          src={game.thumbnail || ''}
           alt={game.title}
           fill
           className="object-cover"

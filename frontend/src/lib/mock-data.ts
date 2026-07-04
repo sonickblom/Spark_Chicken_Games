@@ -516,10 +516,11 @@ export const mockUser: User = {
   avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CyberGamer2077',
   bio: 'Amante de RPGs e jogos indie. Sempre em busca da próxima grande aventura.',
   favorites: ['1', '2', '4', '8'],
+  history: [],
   recentlyPlayed: [
-    { gameId: '1', lastPlayed: '2024-01-28T20:30:00Z', playtime: 156 },
-    { gameId: '2', lastPlayed: '2024-01-27T18:45:00Z', playtime: 89 },
-    { gameId: '4', lastPlayed: '2024-01-26T22:15:00Z', playtime: 234 },
+    { gameId: '1', lastPlayed: '2024-01-28T20:30:00Z', duration: 156 },
+    { gameId: '2', lastPlayed: '2024-01-27T18:45:00Z', duration: 89 },
+    { gameId: '4', lastPlayed: '2024-01-26T22:15:00Z', duration: 234 },
   ],
   playtime: { '1': 156, '2': 89, '4': 234 },
   achievements: [
@@ -569,6 +570,7 @@ export const mockNews: NewsItem[] = [
     title: 'ELDEN RING: Shadow of the Erdtree Anunciado',
     excerpt: 'A expansão tão aguardada finalmente tem data de lançamento e novo trailer.',
     content: 'A FromSoftware e a Bandai Namco anunciaram oficialmente Shadow of the Erdtree, a grande expansão de ELDEN RING...',
+    imageUrl: 'https://images.unsplash.com/photo-1612931675003-1f1e0b7b5e0e?w=1200&h=600&fit=crop',
     coverImage: 'https://images.unsplash.com/photo-1612931675003-1f1e0b7b5e0e?w=1200&h=600&fit=crop',
     author: 'Equipe Spark Chicken Games',
     publishedAt: '2024-01-25T00:00:00Z',
@@ -580,6 +582,7 @@ export const mockNews: NewsItem[] = [
     title: 'Baldur\'s Gate 3 Patch 5 Chega com Novas Funcionalidades',
     excerpt: 'Modo honra, novas subclasses e melhorias de performance.',
     content: 'A Larian Studios lançou o Patch 5 para Baldur\'s Gate 3, trazendo o modo Honra, 12 novas subclasses...',
+    imageUrl: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1200&h=600&fit=crop',
     coverImage: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1200&h=600&fit=crop',
     author: 'Equipe Spark Chicken Games',
     publishedAt: '2024-01-22T00:00:00Z',
@@ -591,6 +594,7 @@ export const mockNews: NewsItem[] = [
     title: 'Steam Deck OLED Disponível no Brasil',
     excerpt: 'A nova versão do handheld da Valve chega com tela OLED e melhor bateria.',
     content: 'A Valve anunciou que o Steam Deck OLED está oficialmente disponível para compra no Brasil...',
+    imageUrl: 'https://images.unsplash.com/photo-1617703249748-8d3e8a6c4b3e?w=1200&h=600&fit=crop',
     coverImage: 'https://images.unsplash.com/photo-1617703249748-8d3e8a6c4b3e?w=1200&h=600&fit=crop',
     author: 'Equipe Spark Chicken Games',
     publishedAt: '2024-01-20T00:00:00Z',
@@ -606,26 +610,26 @@ export async function getMockGames(filters: GameFilters = {}): Promise<Paginated
     filtered = filtered.filter(g =>
       g.title.toLowerCase().includes(search) ||
       g.description.toLowerCase().includes(search) ||
-      g.genre.some(gen => gen.toLowerCase().includes(search)) ||
-      g.tags.some(tag => tag.toLowerCase().includes(search))
+      (g.genre ?? []).some(gen => gen.toLowerCase().includes(search)) ||
+      (g.tags ?? []).some(tag => tag.toLowerCase().includes(search))
     );
   }
 
   if (filters.genre && filters.genre.length > 0) {
     filtered = filtered.filter(g =>
-      filters.genre!.some(gen => g.genre.includes(gen))
+      filters.genre!.some(gen => (g.genre ?? []).includes(gen))
     );
   }
 
   if (filters.tags && filters.tags.length > 0) {
     filtered = filtered.filter(g =>
-      filters.tags!.some(tag => g.tags.includes(tag))
+      filters.tags!.some(tag => (g.tags ?? []).includes(tag))
     );
   }
 
   if (filters.priceRange) {
     const [min, max] = filters.priceRange;
-    filtered = filtered.filter(g => g.price >= min && g.price <= max);
+    filtered = filtered.filter(g => (g.price ?? 0) >= min && (g.price ?? 0) <= max);
   }
 
   if (filters.rating) {
@@ -634,23 +638,23 @@ export async function getMockGames(filters: GameFilters = {}): Promise<Paginated
 
   switch (filters.sortBy) {
     case 'newest':
-      filtered.sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime());
+      filtered.sort((a, b) => new Date(b.releaseDate ?? 0).getTime() - new Date(a.releaseDate ?? 0).getTime());
       break;
     case 'rating':
       filtered.sort((a, b) => b.rating - a.rating);
       break;
     case 'price-asc':
-      filtered.sort((a, b) => a.price - b.price);
+      filtered.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
       break;
     case 'price-desc':
-      filtered.sort((a, b) => b.price - a.price);
+      filtered.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
       break;
     case 'discount':
       filtered.sort((a, b) => (b.discount || 0) - (a.discount || 0));
       break;
     case 'popular':
     default:
-      filtered.sort((a, b) => b.reviewCount - a.reviewCount);
+      filtered.sort((a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0));
       break;
   }
 
@@ -662,12 +666,10 @@ export async function getMockGames(filters: GameFilters = {}): Promise<Paginated
 
   return {
     data: paginatedData,
-    meta: {
-      page,
-      limit,
-      total: filtered.length,
-      totalPages: Math.ceil(filtered.length / limit),
-    },
+    page: page,
+    pageSize: limit,
+    total: filtered.length,
+    totalPages: Math.ceil(filtered.length / limit),
   };
 }
 
@@ -680,7 +682,7 @@ export async function getMockRelatedGames(gameId: string, limit = 6): Promise<Ga
   if (!game) return [];
 
   return mockGamesData
-    .filter(g => g.id !== gameId && g.genre.some(gen => game.genre.includes(gen)))
+    .filter(g => g.id !== gameId && (g.genre ?? []).some(gen => (game.genre ?? []).includes(gen)))
     .slice(0, limit);
 }
 
@@ -695,7 +697,7 @@ export async function getMockCategory(slug: string): Promise<Category | null> {
 export async function getMockGamesByCategory(categorySlug: string, filters: GameFilters = {}): Promise<PaginatedResponse<Game>> {
   const category = mockCategories.find(c => c.slug === categorySlug);
   if (!category) {
-    return { data: [], meta: { page: 1, limit: 12, total: 0, totalPages: 0 } };
+    return { data: [], page: 1, pageSize: 12, total: 0, totalPages: 0 };
   }
 
   return getMockGames({ ...filters, genre: [category.name] });

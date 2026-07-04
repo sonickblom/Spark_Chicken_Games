@@ -3,6 +3,8 @@ import { Game } from '@/types';
 import GameCard from './GameCard';
 import Skeleton from '@/components/ui/Skeleton';
 
+import { cn } from "@/lib/utils";
+
 interface GameGridProps {
   games: Game[];
   className?: string;

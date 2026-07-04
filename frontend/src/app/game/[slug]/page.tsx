@@ -20,6 +20,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { GameGrid } from "@/components/GameGrid";
+import { GameEmbed } from "@/components/game/GameEmbed";
 import { Button } from "@/components/ui/Button";
 import {
   Card,
@@ -232,6 +233,15 @@ export default async function GamePage({ params }: GamePageProps) {
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Main Content */}
               <div className="lg:col-span-2 space-y-8">
+                {/* Game Player */}
+                {game.iframeUrl && (
+                  <GameEmbed 
+                    gameUrl={game.iframeUrl} 
+                    coverImage={game.coverImage || game.bannerImage} 
+                    title={game.title} 
+                  />
+                )}
+
                 {/* About Section */}
                 <Card padding="lg">
                   <CardHeader>

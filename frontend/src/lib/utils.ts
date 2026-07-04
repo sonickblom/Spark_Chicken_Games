@@ -180,7 +180,7 @@ export function debouncePromise<
       timeoutId = setTimeout(async () => {
         try {
           const result = await fn(...args);
-          resolve(result);
+          resolve(result as ReturnType<T>);
         } catch (error) {
           reject(error);
         } finally {

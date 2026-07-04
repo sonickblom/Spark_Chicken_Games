@@ -174,7 +174,7 @@ export function SearchBar({
                   >
                     <div className="relative w-12 h-16 flex-shrink-0 rounded overflow-hidden">
                       <Image
-                        src={game.thumbnail}
+                        src={game.thumbnail || ''}
                         alt=""
                         fill
                         className="w-full h-full object-cover"
@@ -186,7 +186,7 @@ export function SearchBar({
                         {game.title}
                       </p>
                       <p className="text-xs text-cyber-text-muted truncate">
-                        {game.category.name}
+                        {game.category?.name || 'Sem Categoria'}
                       </p>
                     </div>
                     <div className="flex items-center gap-1 text-cyber-neon font-semibold">

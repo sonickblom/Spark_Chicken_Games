@@ -67,7 +67,7 @@ export default function CategoryPage() {
     setLoading(true);
     try {
       const result = await getMockGamesByCategory(resolvedSlug, filters);
-      setGames(result.items);
+      setGames(result.data || result.items || []);
       setMeta({
         total: result.total,
         page: result.page,
@@ -79,7 +79,7 @@ export default function CategoryPage() {
     } finally {
       setLoading(false);
     }
-  }, [slug, filters]);
+  }, [resolvedSlug, filters]);
 
   useEffect(() => {
     loadGames();
