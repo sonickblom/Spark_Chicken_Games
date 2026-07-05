@@ -1,7 +1,7 @@
 # Spark Chicken Games - Makefile
 # Usage: make <target>
 
-.PHONY: help install dev dev-frontend dev-backend build lint test docker-up docker-down docker-logs docker-build docker-up-infra db-migrate db-studio start run-backend build-backend-bin clean
+.PHONY: help install dev dev-frontend dev-backend build build-frontend build-backend lint lint-fix test docker-up docker-up-infra docker-down docker-logs docker-logs-api docker-logs-infra docker-build docker-restart db-migrate db-studio db-generate start clean reset
 
 # Default target
 help:
@@ -62,11 +62,32 @@ dev-backend:
 	pnpm dev:backend
 
 # Docker commands (run from backend directory)
-docker-up:
-	cd backend && docker-compose up -d
+# ── Start (build + infra + run) ────────────────────────────────────────────
+
+start: docker-up-infra build-backend
+	@echo ""
+	@echo "  ╔══════════════════════════════════════════════╗"
+	@echo "  ║        ✦ Spark Chicken Games ✦             ║"
+	@echo "  ║                                            ║"
+	@echo "  ║  Backend:  http://localhost:8080            ║"
+	@echo "  ║  Frontend: http://localhost:3000            ║"
+	@echo "  ║                                            ║"
+	@echo "  ║  Pressione Ctrl+C para parar                ║"
+	@echo "  ╚══════════════════════════════════════════════╝"
+	@echo ""
+	# Run backend and frontend in parallel, kill both on exit
+	trap 'kill 0 2>/dev/null' EXIT; \
+	cd backend && ./bin/api & \
+	cd frontend && pnpm dev & \
+	wait
+
+# ── Docker ────────────────────────────────────────────────────────────────
 
 docker-up-infra:
 	cd backend && docker-compose up -d postgres redis
+
+docker-up:
+	cd backend && docker-compose up -d
 
 docker-down:
 	cd backend && docker-compose down
@@ -85,30 +106,6 @@ docker-build:
 
 docker-restart:
 	cd backend && docker-compose restart
-
-# Build backend binary (produces bin/api)
-build-backend-bin:
-	@echo "Building backend..."
-	cd backend && go build -o bin/api ./cmd/api
-
-# Run built backend binary (requires infra + build-backend-bin)
-run-backend:
-	@echo "Starting backend on :8080..."
-	cd backend && ./bin/api
-
-# Build + start everything (build backend + frontend, start Docker infra, run both)
-start: docker-up-infra build-backend-bin
-	@echo ""
-	@echo "========================================"
-	@echo "  Spark Chicken Games"
-	@echo "  Backend:  http://localhost:8080"
-	@echo "  Frontend: http://localhost:3000"
-	@echo "========================================"
-	@echo ""
-	@trap 'kill 0 2>/dev/null' EXIT; \
-		$(MAKE) -s run-backend & \
-		sleep 2 && pnpm dev:frontend & \
-		wait
 
 # Database commands
 db-migrate:

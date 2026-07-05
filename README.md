@@ -1,21 +1,12 @@
 # Spark Chicken Games 🎮
 
-Plataforma de jogos web de alta performance com acesso instantâneo, suporte offline e sincronização de progresso.
+Plataforma de jogos online com dashboard, leaderboards, matchmaking e mais.
 
 ## Stack
 
-| Camada    | Tecnologia                                         |
-| --------- | -------------------------------------------------- |
-| Frontend  | Next.js 15, React 18, TypeScript, Tailwind CSS     |
-| Backend   | Go 1.22, Gin, PostgreSQL, Redis                    |
-| Ferramentas | pnpm, Docker, Make                               |
-
-## Requisitos
-
-- [Go](https://go.dev/dl/) 1.22+
-- [Node.js](https://nodejs.org/) 20+
-- [pnpm](https://pnpm.io/installation) 9+
-- [Docker](https://docs.docker.com/get-docker/) + [Docker Compose](https://docs.docker.com/compose/install/)
+- **Frontend:** Next.js 15, React 18, Tailwind CSS, TypeScript
+- **Backend:** Go, Gin, PostgreSQL, Redis, Lipgloss (terminal styling)
+- **Ferramentas:** pnpm workspaces, Docker Compose
 
 ## Quick Start
 
@@ -23,113 +14,87 @@ Plataforma de jogos web de alta performance com acesso instantâneo, suporte off
 # 1. Instalar dependências
 make install
 
-# 2. Build + iniciar Docker infra + rodar servidores de desenvolvimento
+# 2. Rodar tudo (build + Docker infra + servidores)
 make start
 ```
 
 Isso vai:
-1. Buildar o backend (Go binary em `backend/bin/api`)
-2. Subir PostgreSQL e Redis via Docker
-3. Iniciar o backend em `http://localhost:8080`
-4. Iniciar o frontend em `http://localhost:3000`
+1. Buildar o backend (`go build -o bin/api ./cmd/api`)
+2. Subir PostgreSQL + Redis via Docker
+3. Rodar o backend (porta `8080`) e frontend (porta `3000`) simultaneamente
 
-> **Importante**: Na primeira execução, é necessário rodar as migrations do banco:
+> Para rodar apenas a infra-estrutura Docker sem o build:
 > ```bash
-> make db-migrate
+> make docker-up-infra
 > ```
 
 ## Comandos Disponíveis
 
 ### Desenvolvimento
 
-```bash
-make dev              # Frontend + backend em paralelo (dev mode)
-make dev-frontend     # Apenas frontend (Next.js em :3000)
-make dev-backend      # Apenas backend (Go/Gin em :8080)
-make start            # Build + Docker infra + dev servers
-```
-
-### Build
-
-```bash
-make build               # Frontend + backend
-make build-frontend      # Apenas frontend (next build)
-make build-backend       # Apenas backend (go build)
-make build-backend-bin   # Apenas Go binary (bin/api)
-```
+| Comando | Descrição |
+|---------|-----------|
+| `make install` | Instalar dependências (pnpm + Go modules) |
+| `make start` | Buildar + subir infra + rodar tudo |
+| `make dev` | Rodar frontend + backend em paralelo |
+| `make dev-frontend` | Rodar só frontend (Next.js em :3000) |
+| `make dev-backend` | Rodar só backend (Gin em :8080) |
 
 ### Docker
 
-```bash
-make docker-up           # Sobe PostgreSQL + Redis + API
-make docker-up-infra     # Sobe apenas PostgreSQL + Redis
-make docker-down         # Para todos os containers
-make docker-logs         # Logs de todos os containers
-make docker-logs-api     # Logs apenas da API
-make docker-logs-infra   # Logs apenas do PostgreSQL e Redis
-make docker-restart      # Reinicia todos os containers
-```
+| Comando | Descrição |
+|---------|-----------|
+| `make docker-up-infra` | Subir só PostgreSQL + Redis |
+| `make docker-up` | Subir todos containers (incluindo api) |
+| `make docker-down` | Parar todos containers |
+| `make docker-logs` | Seguir logs dos containers |
+| `make docker-build` | Buildar imagens Docker |
+
+### Build & Qualidade
+
+| Comando | Descrição |
+|---------|-----------|
+| `make build` | Buildar frontend + backend |
+| `make build-frontend` | Buildar só frontend |
+| `make build-backend` | Buildar só backend |
+| `make lint` | Rodar linters |
+| `make test` | Rodar testes |
 
 ### Banco de Dados
 
-```bash
-make db-migrate     # Executa migrations
-make db-studio      # Abre studio do banco
-make db-generate    # Gera código do banco
-```
-
-### Qualidade
-
-```bash
-make lint         # Executa linters
-make lint-fix     # Corrige issues de lint
-make test         # Executa testes
-```
+| Comando | Descrição |
+|---------|-----------|
+| `make db-migrate` | Rodar migrations |
+| `make db-studio` | Abrir studio do banco |
+| `make db-generate` | Gerar código do banco |
 
 ### Utilitários
 
-```bash
-make clean        # Remove build artifacts e node_modules
-make reset        # Clean + reinstala tudo
-```
+| Comando | Descrição |
+|---------|-----------|
+| `make clean` | Remover artefatos de build |
+| `make reset` | Clean + reinstall completo |
 
-## Estrutura do Projeto
+## Terminal & Logging
 
-```
-├── frontend/                # Next.js 15 (React 18, TypeScript)
-│   └── src/
-│       ├── app/             # App Router pages
-│       ├── components/      # Componentes React
-│       ├── hooks/           # Custom hooks
-│       ├── lib/             # Utilitários e mock data
-│       ├── services/        # API service (axios)
-│       ├── styles/          # Estilos globais
-│       └── types/           # Tipos TypeScript
-├── backend/                 # Go 1.22 + Gin
-│   ├── cmd/
-│   │   ├── api/             # Entrypoint da API
-│   │   └── migrate/         # CLI de migrations
-│   ├── internal/
-│   │   ├── auth/            # JWT, bcrypt
-│   │   ├── config/          # Config (YAML + env vars)
-│   │   ├── db/              # PostgreSQL + Redis
-│   │   ├── middleware/      # Auth, rate limit
-│   │   ├── modules/         # Módulos (handler → service → repository)
-│   │   ├── server/          # HTTP server, rotas, container DI
-│   │   └── shared/          # Response, errors, validation
-│   └── migrations/          # SQL migrations
-├── Makefile                 # Comandos do projeto
-└── package.json             # pnpm workspace root
-```
+O backend usa [Lipgloss](https://github.com/charmbracelet/lipgloss) para estilizar a saída do terminal:
+
+- **Banner inicial** com logo ASCII e informações do serviço
+- **Logs de requisições HTTP** com badges coloridos de status (🟢200, 🟡400, 🔴500)
+- **Debug de rotas do Gin** colorido por método HTTP
+- **Indicador de latência** visual com dots (·) proporcionais ao tempo de resposta
 
 ## Frontend → Backend
 
-O frontend se conecta ao backend via axios. A URL base é configurada pela variável de ambiente:
+- **API Base URL:** `http://localhost:8080/api/v1` (configurável via `NEXT_PUBLIC_API_URL`)
+- **CORS:** `http://localhost:3000` já permitido no `config.yaml`
+- **Autenticação:** JWT (access + refresh tokens)
+- **Respostas:** Padrão unificado `{ success, data, meta, error, timestamp, request_id }`
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
-```
+## Variáveis de Ambiente
 
-- O backend usa um wrapper de resposta padronizado: `{ success, data, meta, error, timestamp, request_id }`
-- O frontend converte automaticamente de `snake_case` (backend) para `camelCase` (TypeScript)
-- Autenticação via JWT armazenado no `localStorage` (chave: `auth_token`)
+Prefixo: `SCG_` (ex: `SCG_DATABASE_HOST`, `SCG_SERVER_PORT`)
+
+Frontend:
+- `NEXT_PUBLIC_API_URL` — URL base da API (default: `http://localhost:8080/api/v1`)
+- `NEXT_PUBLIC_USE_MOCK` — Usar dados mockados quando `true` (default: `false`)

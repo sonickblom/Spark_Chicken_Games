@@ -4,8 +4,7 @@ import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import { GameGrid } from "@/components/GameGrid";
 import { useSearchGames } from "@/hooks/use-data";
 
@@ -28,7 +27,6 @@ function SearchContent() {
 
   return (
     <div className="min-h-screen bg-cyber-dark">
-      <Header />
       <main className="pt-24 lg:pt-32 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -74,7 +72,6 @@ function SearchContent() {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

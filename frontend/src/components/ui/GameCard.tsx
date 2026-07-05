@@ -11,15 +11,21 @@ const GameCard = ({ game, onClick }: { game: Game; onClick?: () => void }) => {
       className="cursor-pointer hover:shadow-lg transition-shadow"
       onClick={onClick}
     >
-      <div className="relative w-full h-48 overflow-hidden">
-        <Image
-          src={game.thumbnail || ''}
-          alt={game.title}
-          fill
-          className="object-cover"
-          sizes="100vw"
-        />
-        <div className="absolute top-0 left-0 right-0 bottom-0 bg-black bg-opacity-30" />
+      <div className="relative w-full h-48 overflow-hidden bg-cyber-dark-surface">
+        {game.thumbnail ? (
+          <Image
+            src={game.thumbnail}
+            alt={game.title}
+            fill
+            className="object-cover"
+            sizes="100vw"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-cyber-text-muted text-sm">
+            Sem imagem
+          </div>
+        )}
+        <div className="absolute inset-0 bg-black/30" />
       </div>
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center">

@@ -22,19 +22,25 @@ const GameCard = ({ game, priority = false }: GameCardProps) => {
            border border-gray-700 hover:border-neon-green/50"
       aria-label={`Jogar ${game.title}`}
     >
-      <div className="relative aspect-video overflow-hidden">
-        <Image
-          src={game.thumbnail || ""}
-          alt={game.title}
-          fill
-          className={cn(
-            "object-cover transition-transform duration-500",
-            "group-hover:scale-105",
-          )}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          priority={priority}
-          loading={priority ? "eager" : "lazy"}
-        />
+      <div className="relative aspect-video overflow-hidden bg-cyber-dark-surface">
+        {game.thumbnail ? (
+          <Image
+            src={game.thumbnail}
+            alt={game.title}
+            fill
+            className={cn(
+              "object-cover transition-transform duration-500",
+              "group-hover:scale-105",
+            )}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            priority={priority}
+            loading={priority ? "eager" : "lazy"}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-cyber-text-muted text-sm">
+            Sem imagem
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         {game.isNew && (
           <span className="absolute top-2 left-2 px-2 py-1 text-xs font-bold bg-neon-green text-black rounded">

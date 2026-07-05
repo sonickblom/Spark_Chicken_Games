@@ -5,8 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Filter, X, Grid, List, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams, useParams } from "next/navigation";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { GameGrid } from "@/components/GameGrid";
 import { Button } from "@/components/ui/Button";
 import {
@@ -121,7 +119,6 @@ export default function CategoryPage() {
   if (!category) {
     return (
       <div className="min-h-screen bg-cyber-dark">
-        <Header />
         <main id="main-content" className="pt-16 lg:pt-20">
           <div className="mx-auto max-w-2xl px-4 py-16 text-center">
             <motion.div
@@ -144,15 +141,12 @@ export default function CategoryPage() {
             </motion.div>
           </div>
         </main>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-cyber-dark">
-      <Header />
-
       <main id="main-content" className="pt-16 lg:pt-20">
         {/* Category Header */}
         <section className="relative py-12 lg:py-16">
@@ -566,8 +560,6 @@ export default function CategoryPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 }
