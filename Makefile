@@ -1,11 +1,14 @@
 # Spark Chicken Games - Makefile
 # Usage: make <target>
 
-.PHONY: help install dev dev-frontend dev-backend build lint test docker-up docker-down docker-logs docker-build db-migrate db-studio clean
+.PHONY: help install dev dev-frontend dev-backend build lint test start docker-up docker-up-infra docker-down docker-logs docker-build db-migrate db-studio clean
 
 # Default target
 help:
 	@echo "Spark Chicken Games - Available Commands"
+	@echo ""
+	@echo "🚀 Start (build + docker + dev servers):"
+	@echo "  make start         Build everything, start Docker services, and run dev servers"
 	@echo ""
 	@echo "Development:"
 	@echo "  make install        Install all dependencies (pnpm + Go modules)"
@@ -18,6 +21,7 @@ help:
 	@echo "  make docker-down    Stop all Docker containers"
 	@echo "  make docker-logs    Follow logs from all containers"
 	@echo "  make docker-logs-api Follow only API logs"
+	@echo "  make docker-up-infra  Start only PostgreSQL + Redis (no API)"
 	@echo "  make docker-build   Build Docker images"
 	@echo "  make docker-restart Restart all containers"
 	@echo ""
@@ -57,6 +61,9 @@ dev-backend:
 docker-up:
 	cd backend && docker-compose up -d
 
+docker-up-infra:
+	cd backend && docker-compose up -d postgres redis
+
 docker-down:
 	cd backend && docker-compose down
 
@@ -90,7 +97,17 @@ build-frontend:
 	pnpm build:frontend
 
 build-backend:
-	pnpm build:backend
+	cd backend && go build -o bin/api ./cmd/api
+
+# Start everything (build + docker infra + dev servers)
+start: build-frontend build-backend docker-up-infra
+	@echo ""
+	@echo "🚀 Starting frontend (Next.js :3000) and backend (Go/Gin :8080)..."
+	@echo ""
+	@trap 'kill 0' EXIT; \
+	(cd frontend && pnpm dev) & \
+	(cd backend && ./bin/api) & \
+	wait
 
 # Linting
 lint:
