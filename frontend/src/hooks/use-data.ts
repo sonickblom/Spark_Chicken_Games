@@ -648,7 +648,9 @@ export function useNews(limit = 10) {
         const { mockNews } = await import("@/lib/mock-data");
         result = mockNews.slice(0, limit);
       } else {
-        result = await api.getNews(limit);
+        // Backend doesn't have news endpoint yet; use mock data
+        const { mockNews } = await import("@/lib/mock-data");
+        result = mockNews.slice(0, limit);
       }
       setData(result);
     } catch (err) {
