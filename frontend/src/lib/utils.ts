@@ -23,13 +23,19 @@ export function formatPrice(price: number, currency = "BRL"): string {
   }).format(price);
 }
 
-export function formatDate(date: string | Date): string {
+export function formatDate(
+  date: string | Date,
+  options?: Intl.DateTimeFormatOptions,
+): string {
   const d = new Date(date);
-  return d.toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
+  return d.toLocaleDateString(
+    "pt-BR",
+    options || {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    },
+  );
 }
 
 export function formatRelativeTime(date: string | Date): string {

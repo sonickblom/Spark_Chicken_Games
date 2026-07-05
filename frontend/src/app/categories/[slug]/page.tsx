@@ -435,8 +435,8 @@ export default function CategoryPage() {
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-cyber-text-muted">
                       {meta
-                        ? `Mostrando ${(meta.page - 1) * meta.limit + 1}–${Math.min(
-                            meta.page * meta.limit,
+                        ? `Mostrando ${(meta.page - 1) * meta.pageSize + 1}–${Math.min(
+                            meta.page * meta.pageSize,
                             meta.total,
                           )} de ${formatNumber(meta.total)} jogos`
                         : "Carregando..."}
@@ -539,7 +539,7 @@ export default function CategoryPage() {
                             <Button
                               key={pageNum}
                               variant={
-                                meta.page === pageNum ? "primary" : "ghost"
+                                meta.page === pageNum ? "default" : "ghost"
                               }
                               size="sm"
                               onClick={() => updateFilters({ page: pageNum })}

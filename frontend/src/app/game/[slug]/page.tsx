@@ -151,15 +151,16 @@ export default async function GamePage({ params }: GamePageProps) {
                   <span className="font-semibold text-cyber-text">
                     {game.rating.toFixed(1)}
                   </span>
-                  <span>({formatNumber(game.reviewCount)} avaliações)</span>
+                  <span>
+                    ({formatNumber(game.reviewCount ?? 0)} avaliações)
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="w-5 h-5" aria-hidden="true" />
                   <span>
-                    {formatDate(game.releaseDate, {
-                      month: "long",
-                      year: "numeric",
-                    })}
+                    {game.releaseDate
+                      ? formatDate(game.releaseDate)
+                      : "Data não disponível"}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -184,7 +185,9 @@ export default async function GamePage({ params }: GamePageProps) {
                 className="flex flex-wrap items-center gap-4"
               >
                 <div className="flex items-center gap-3">
-                  {game.originalPrice && game.originalPrice > game.price ? (
+                  {game.originalPrice &&
+                  game.price !== undefined &&
+                  game.originalPrice > game.price ? (
                     <>
                       <span className="text-xl text-cyber-text-muted line-through">
                         {formatPrice(game.originalPrice)}
@@ -195,7 +198,11 @@ export default async function GamePage({ params }: GamePageProps) {
                     </>
                   ) : (
                     <span className="text-3xl font-bold text-cyber-neon">
-                      {game.isFree ? "Gratuito" : formatPrice(game.price)}
+                      {game.isFree
+                        ? "Gratuito"
+                        : game.price !== undefined
+                          ? formatPrice(game.price)
+                          : "Preço não disponível"}
                     </span>
                   )}
                 </div>
@@ -237,10 +244,10 @@ export default async function GamePage({ params }: GamePageProps) {
               <div className="lg:col-span-2 space-y-8">
                 {/* Game Player */}
                 {game.iframeUrl && (
-                  <GameEmbed 
-                    gameUrl={game.iframeUrl} 
-                    coverImage={game.coverImage || game.bannerImage} 
-                    title={game.title} 
+                  <GameEmbed
+                    gameUrl={game.iframeUrl}
+                    coverImage={game.coverImage || game.bannerImage}
+                    title={game.title}
                   />
                 )}
 
@@ -287,12 +294,14 @@ export default async function GamePage({ params }: GamePageProps) {
                           Lançamento
                         </h4>
                         <p className="text-cyber-text-muted">
-                          {formatDate(game.releaseDate, {
-                            weekday: "long",
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                          })}
+                          {game.releaseDate
+                            ? formatDate(game.releaseDate, {
+                                weekday: "long",
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                              })
+                            : "Data não disponível"}
                         </p>
                       </div>
                     </div>
@@ -466,13 +475,19 @@ export default async function GamePage({ params }: GamePageProps) {
                 <Card padding="lg" className="sticky top-24">
                   <div className="text-center mb-6">
                     <div className="text-4xl font-bold text-cyber-neon mb-2">
-                      {game.isFree ? "Gratuito" : formatPrice(game.price)}
+                      {game.isFree
+                        ? "Gratuito"
+                        : game.price !== undefined
+                          ? formatPrice(game.price)
+                          : "Preço não disponível"}
                     </div>
-                    {game.originalPrice && game.originalPrice > game.price && (
-                      <p className="text-cyber-text-muted line-through">
-                        {formatPrice(game.originalPrice)}
-                      </p>
-                    )}
+                    {game.originalPrice &&
+                      game.price !== undefined &&
+                      game.originalPrice > game.price && (
+                        <p className="text-cyber-text-muted line-through">
+                          {formatPrice(game.originalPrice)}
+                        </p>
+                      )}
                     {hasDiscount && (
                       <span className="inline-block mt-2 px-3 py-1 bg-red-500 text-cyber-dark text-sm font-bold rounded-full">
                         Economize {game.discount}%

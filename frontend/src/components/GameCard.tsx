@@ -62,7 +62,7 @@ export function GameCard({
                 {game.rating.toFixed(1)}
               </span>
               <span className="text-xs text-cyber-text-muted">
-                ({formatNumber(game.reviewCount)})
+                ({formatNumber(game.reviewCount ?? 0)})
               </span>
             </div>
           </div>
@@ -132,7 +132,8 @@ export function GameCard({
                 </span>
               </div>
               <div className="flex items-center gap-1 ml-auto">
-                {game.originalPrice && game.originalPrice > (game.price ?? 0) ? (
+                {game.originalPrice &&
+                game.originalPrice > (game.price ?? 0) ? (
                   <span className="text-sm text-cyber-text-muted line-through">
                     {formatPrice(game.originalPrice)}
                   </span>
@@ -299,7 +300,11 @@ export function GameCard({
           </div>
           <div className="flex items-center gap-1 ml-auto text-cyber-text-muted text-xs">
             <Calendar className="w-3 h-3" aria-hidden="true" />
-            <span>{game.releaseDate ? new Date(game.releaseDate).getFullYear() : '—'}</span>
+            <span>
+              {game.releaseDate
+                ? new Date(game.releaseDate).getFullYear()
+                : "—"}
+            </span>
           </div>
         </div>
 
@@ -333,4 +338,3 @@ export function GameCard({
     </Card>
   );
 }
-

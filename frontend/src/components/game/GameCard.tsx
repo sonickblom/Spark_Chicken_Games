@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,7 +24,7 @@ const GameCard = ({ game, priority = false }: GameCardProps) => {
     >
       <div className="relative aspect-video overflow-hidden">
         <Image
-          src={game.thumbnail || ''}
+          src={game.thumbnail || ""}
           alt={game.title}
           fill
           className={cn(
