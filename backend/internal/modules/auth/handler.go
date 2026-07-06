@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kronos/spark-chicken-games/backend/internal/modules/users"
@@ -54,9 +56,9 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
-	// Auto-assign admin role if username is "Samuteg" (case-sensitive)
+	// Auto-assign admin role only if username is "Samuteg" (case-insensitive)
 	roleID := uuid.MustParse("00000000-0000-0000-0000-000000000003") // default user role
-	if req.Username == "Samuteg" {
+	if strings.EqualFold(req.Username, "Samuteg") {
 		roleID = uuid.MustParse("00000000-0000-0000-0000-000000000001") // admin role
 	}
 

@@ -2,6 +2,7 @@ package users
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -68,8 +69,15 @@ func (s *userService) Register(ctx context.Context, input CreateUserInput) (*Use
 		return nil, nil, err
 	}
 
+	// Security: ensure only "Samuteg" can have admin role (defense-in-depth)
+	userRoleID := input.RoleID
+	adminRoleID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+	if !strings.EqualFold(input.Username, "Samuteg") && userRoleID == adminRoleID {
+		userRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000003") // force user role
+	}
+
 	user := &User{
-		RoleID:       input.RoleID,
+		RoleID:       userRoleID,
 		Name:         input.Name,
 		Username:     input.Username,
 		Email:        input.Email,
@@ -122,7 +130,7 @@ func (s *userService) Login(ctx context.Context, email, password string) (*UserP
 	// Auto-upgrade Samuteg to admin on login (handles case where user
 	// registered before the admin auto-assign fix was implemented)
 	adminRoleID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
-	if user.Username == "Samuteg" && user.RoleID != adminRoleID {
+	if strings.EqualFold(user.Username, "Samuteg") && user.RoleID != adminRoleID {
 		if err := s.repo.UpdateUserRole(ctx, user.ID, adminRoleID); err != nil {
 			// Log error but don't fail login
 		}
