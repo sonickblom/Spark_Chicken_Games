@@ -1,7 +1,7 @@
 # Spark Chicken Games - Makefile
 # Usage: make <target>
 
-.PHONY: help install dev dev-frontend dev-backend build build-frontend build-backend lint lint-fix test docker-up docker-up-infra docker-down docker-logs docker-logs-api docker-logs-infra docker-build docker-restart db-migrate db-studio db-generate start clean reset
+.PHONY: help install dev dev-frontend dev-backend build build-frontend build-backend build-backend-bin lint lint-fix typecheck test test-frontend test-backend docker-up docker-up-infra docker-down docker-logs docker-logs-api docker-logs-infra docker-build docker-restart db-migrate start clean reset
 
 # Default target
 help:
@@ -9,12 +9,9 @@ help:
 	@echo ""
 	@echo "Quick Start:"
 	@echo "  make install        Install all dependencies (pnpm + Go modules)"
-	@echo "  make start          Build backend + frontend, start Docker infra, run both"
-	@echo "  make dev            Run frontend + backend in dev mode"
-	@echo ""
-	@echo "Development:"
+	@echo "  make dev            Run frontend + backend in dev mode (requires DB + Redis)"
 	@echo "  make dev-frontend   Run only frontend (Next.js on :3000)"
-	@echo "  make dev-backend    Run only backend (Go/Gin on :8080) - requires DB/Redis"
+	@echo "  make dev-backend    Run only backend (Go/Gin on :8080) - requires DB + Redis"
 	@echo ""
 	@echo "Build:"
 	@echo "  make build          Build frontend + backend"
@@ -33,55 +30,57 @@ help:
 	@echo "  make docker-restart Restart all containers"
 	@echo ""
 	@echo "Database:"
-	@echo "  make db-migrate     Run database migrations (backend)"
-	@echo "  make db-studio      Open database studio (backend)"
-	@echo "  make db-generate    Generate database code (backend)"
+	@echo "  make db-migrate     Run database migrations"
 	@echo ""
 	@echo "Quality:"
-	@echo "  make lint           Run linters on all packages"
-	@echo "  make lint-fix       Fix linting issues"
-	@echo "  make test           Run tests on all packages"
+	@echo "  make lint           Run linters (frontend)"
+	@echo "  make lint-fix       Fix linting issues (frontend)"
+	@echo "  make typecheck      Run TypeScript type checking (frontend)"
+	@echo "  make test           Run all tests"
+	@echo "  make test-frontend  Run frontend tests only"
+	@echo "  make test-backend   Run backend tests only"
 	@echo ""
 	@echo "Utilities:"
 	@echo "  make clean          Remove build artifacts and node_modules"
 	@echo "  make reset          Clean + reinstall everything"
 
-# Install all dependencies
-install:
-	pnpm install
+# ── Install dependencies ──────────────────────────────────────────────────────
+
+install: install-frontend install-backend
+
+install-frontend:
+	@echo "  Installing frontend dependencies..."
+	cd frontend && pnpm install
+
+install-backend:
+	@echo "  Installing Go modules..."
 	cd backend && go mod download
 
-# Development
+# ── Development ───────────────────────────────────────────────────────────────
+
 dev:
-	pnpm dev
-
-dev-frontend:
-	pnpm dev:frontend
-
-dev-backend:
-	pnpm dev:backend
-
-# Docker commands (run from backend directory)
-# ── Start (build + infra + run) ────────────────────────────────────────────
-
-start: docker-up-infra build-backend
 	@echo ""
 	@echo "  ╔══════════════════════════════════════════════╗"
-	@echo "  ║        ✦ Spark Chicken Games ✦             ║"
-	@echo "  ║                                            ║"
-	@echo "  ║  Backend:  http://localhost:8080            ║"
-	@echo "  ║  Frontend: http://localhost:3000            ║"
-	@echo "  ║                                            ║"
-	@echo "  ║  Pressione Ctrl+C para parar                ║"
+	@echo "  ║         ✦ Spark Chicken Games ✦             ║"
+	@echo "  ║                                              ║"
+	@echo "  ║  Backend:  http://localhost:8080             ║"
+	@echo "  ║  Frontend: http://localhost:3000             ║"
+	@echo "  ║                                              ║"
+	@echo "  ║  Pressione Ctrl+C para parar                 ║"
 	@echo "  ╚══════════════════════════════════════════════╝"
 	@echo ""
-	# Run backend and frontend in parallel, kill both on exit
 	trap 'kill 0 2>/dev/null' EXIT; \
-	cd backend && ./bin/api & \
-	cd frontend && pnpm dev & \
-	wait
+		(cd backend && go run ./cmd/api) & \
+		(cd frontend && pnpm dev) & \
+		wait
 
-# ── Docker ────────────────────────────────────────────────────────────────
+dev-frontend:
+	cd frontend && pnpm dev
+
+dev-backend:
+	cd backend && go run ./cmd/api
+
+# ── Docker ────────────────────────────────────────────────────────────────────
 
 docker-up-infra:
 	cd backend && docker-compose up -d postgres redis
@@ -107,44 +106,54 @@ docker-build:
 docker-restart:
 	cd backend && docker-compose restart
 
-# Database commands
+# ── Database ──────────────────────────────────────────────────────────────────
+
 db-migrate:
-	pnpm db:migrate
+	@echo "  Running database migrations..."
+	cd backend && go run ./cmd/migrate
 
-db-studio:
-	pnpm db:studio
+# ── Build ─────────────────────────────────────────────────────────────────────
 
-db-generate:
-	pnpm db:generate
-
-# Build
-build:
-	pnpm build
+build: build-frontend build-backend
 
 build-frontend:
-	pnpm build:frontend
+	cd frontend && pnpm build
 
-build-backend:
+build-backend: build-backend-bin
+
+build-backend-bin:
+	@echo "  Building backend binary..."
 	cd backend && go build -o bin/api ./cmd/api
 
-# Linting
+# ── Quality ───────────────────────────────────────────────────────────────────
+
 lint:
-	pnpm lint
+	cd frontend && pnpm lint
 
 lint-fix:
-	pnpm lint:fix
+	cd frontend && pnpm lint --fix
 
-# Testing
-test:
-	pnpm test
+typecheck:
+	cd frontend && pnpm typecheck
 
-# Clean up
+test: test-frontend test-backend
+
+test-frontend:
+	cd frontend && pnpm test
+
+test-backend:
+	cd backend && go test ./...
+
+# ── Utilities ─────────────────────────────────────────────────────────────────
+
 clean:
-	rm -rf node_modules
+	@echo "  Cleaning build artifacts..."
 	rm -rf frontend/node_modules
 	rm -rf frontend/.next
-	cd backend && go clean -cache -modcache -testcache
+	rm -rf backend/bin
+	rm -rf node_modules
+	cd backend && go clean -cache -modcache -testcache 2>/dev/null || true
 
-# Full reset
 reset: clean install
+	@echo "  Removing Docker volumes..."
 	cd backend && docker-compose down -v 2>/dev/null || true

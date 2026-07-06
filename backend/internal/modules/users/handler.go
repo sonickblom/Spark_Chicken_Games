@@ -216,3 +216,42 @@ func (h *UserHandler) AdminDeleteUser(c *gin.Context) {
 
 	response.WriteSuccess(c.Writer, gin.H{"message": "User deleted successfully"})
 }
+
+type UpdateRoleRequest struct {
+	RoleID string `json:"role_id" binding:"required"`
+}
+
+func (h *UserHandler) AdminUpdateUserRole(c *gin.Context) {
+	idStr := c.Param("id")
+	userID, err := uuid.Parse(idStr)
+	if err != nil {
+		response.WriteError(c.Writer, "INVALID_ID", "Invalid user ID", 400)
+		return
+	}
+
+	var req UpdateRoleRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.WriteError(c.Writer, "VALIDATION_ERROR", "Invalid request body", 422, err.Error())
+		return
+	}
+
+	roleID, err := uuid.Parse(req.RoleID)
+	if err != nil {
+		response.WriteError(c.Writer, "INVALID_ROLE_ID", "Invalid role ID", 400)
+		return
+	}
+
+	// Verify the role exists
+	roleName, err := h.userService.GetRoleNameByID(c.Request.Context(), roleID)
+	if err != nil {
+		response.WriteError(c.Writer, "ROLE_NOT_FOUND", "Role not found", 404)
+		return
+	}
+
+	if err := h.userService.UpdateUserRole(c.Request.Context(), userID, roleID); err != nil {
+		response.WriteError(c.Writer, "UPDATE_FAILED", err.Error(), 400)
+		return
+	}
+
+	response.WriteSuccess(c.Writer, gin.H{"message": "User role updated to " + roleName})
+}

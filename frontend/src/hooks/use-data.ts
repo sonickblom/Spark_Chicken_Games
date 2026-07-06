@@ -11,16 +11,6 @@ import type {
   NewsItem,
 } from "@/types";
 import { api } from "@/services/api";
-import {
-  getMockGames,
-  getMockGame,
-  getMockRelatedGames,
-  getMockCategories,
-  getMockCategory,
-  getMockGamesByCategory,
-} from "@/lib/mock-data";
-
-const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === "true";
 
 export function useGames(filters: GameFilters = {}) {
   const [data, setData] = useState<PaginatedResponse<Game> | null>(null);
@@ -31,19 +21,10 @@ export function useGames(filters: GameFilters = {}) {
     setLoading(true);
     setError(null);
     try {
-      let result: PaginatedResponse<Game>;
-      if (USE_MOCK) {
-        result = await getMockGames(filters);
-      } else {
-        result = await api.getGames(filters);
-      }
+      const result = await api.getGames(filters);
       setData(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao carregar jogos");
-      if (USE_MOCK) {
-        const result = await getMockGames(filters);
-        setData(result);
-      }
     } finally {
       setLoading(false);
     }
@@ -66,19 +47,10 @@ export function useGame(slug: string) {
     setLoading(true);
     setError(null);
     try {
-      let result: Game | null;
-      if (USE_MOCK) {
-        result = await getMockGame(slug);
-      } else {
-        result = await api.getGame(slug);
-      }
+      const result = await api.getGame(slug);
       setData(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao carregar jogo");
-      if (USE_MOCK) {
-        const result = await getMockGame(slug);
-        setData(result);
-      }
     } finally {
       setLoading(false);
     }
@@ -101,12 +73,7 @@ export function useRelatedGames(gameId: string, limit = 6) {
     setLoading(true);
     setError(null);
     try {
-      let result: Game[];
-      if (USE_MOCK) {
-        result = await getMockRelatedGames(gameId, limit);
-      } else {
-        result = await api.getRelatedGames(gameId, limit);
-      }
+      const result = await api.getRelatedGames(gameId, limit);
       setData(result);
     } catch (err) {
       setError(
@@ -114,10 +81,6 @@ export function useRelatedGames(gameId: string, limit = 6) {
           ? err.message
           : "Erro ao carregar jogos relacionados",
       );
-      if (USE_MOCK) {
-        const result = await getMockRelatedGames(gameId, limit);
-        setData(result);
-      }
     } finally {
       setLoading(false);
     }
@@ -139,21 +102,12 @@ export function useCategories() {
     setLoading(true);
     setError(null);
     try {
-      let result: Category[];
-      if (USE_MOCK) {
-        result = await getMockCategories();
-      } else {
-        result = await api.getCategories();
-      }
+      const result = await api.getCategories();
       setData(result);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Erro ao carregar categorias",
       );
-      if (USE_MOCK) {
-        const result = await getMockCategories();
-        setData(result);
-      }
     } finally {
       setLoading(false);
     }
@@ -176,21 +130,12 @@ export function useCategory(slug: string) {
     setLoading(true);
     setError(null);
     try {
-      let result: Category | null;
-      if (USE_MOCK) {
-        result = await getMockCategory(slug);
-      } else {
-        result = await api.getCategory(slug);
-      }
+      const result = await api.getCategory(slug);
       setData(result);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Erro ao carregar categoria",
       );
-      if (USE_MOCK) {
-        const result = await getMockCategory(slug);
-        setData(result);
-      }
     } finally {
       setLoading(false);
     }
@@ -216,12 +161,7 @@ export function useGamesByCategory(
     setLoading(true);
     setError(null);
     try {
-      let result: PaginatedResponse<Game>;
-      if (USE_MOCK) {
-        result = await getMockGamesByCategory(categorySlug, filters);
-      } else {
-        result = await api.getGamesByCategory(categorySlug, filters);
-      }
+      const result = await api.getGamesByCategory(categorySlug, filters);
       setData(result);
     } catch (err) {
       setError(
@@ -229,10 +169,6 @@ export function useGamesByCategory(
           ? err.message
           : "Erro ao carregar jogos da categoria",
       );
-      if (USE_MOCK) {
-        const result = await getMockGamesByCategory(categorySlug, filters);
-        setData(result);
-      }
     } finally {
       setLoading(false);
     }
@@ -254,13 +190,7 @@ export function useFeaturedGames(limit = 6) {
     setLoading(true);
     setError(null);
     try {
-      let result: Game[];
-      if (USE_MOCK) {
-        const { mockFeaturedGames } = await import("@/lib/mock-data");
-        result = mockFeaturedGames.slice(0, limit);
-      } else {
-        result = await api.getFeaturedGames(limit);
-      }
+      const result = await api.getFeaturedGames(limit);
       setData(result);
     } catch (err) {
       setError(
@@ -268,10 +198,6 @@ export function useFeaturedGames(limit = 6) {
           ? err.message
           : "Erro ao carregar jogos em destaque",
       );
-      if (USE_MOCK) {
-        const { mockFeaturedGames } = await import("@/lib/mock-data");
-        setData(mockFeaturedGames.slice(0, limit));
-      }
     } finally {
       setLoading(false);
     }
@@ -293,22 +219,12 @@ export function usePopularGames(limit = 10) {
     setLoading(true);
     setError(null);
     try {
-      let result: Game[];
-      if (USE_MOCK) {
-        const { mockPopularGames } = await import("@/lib/mock-data");
-        result = mockPopularGames.slice(0, limit);
-      } else {
-        result = await api.getPopularGames(limit);
-      }
+      const result = await api.getPopularGames(limit);
       setData(result);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Erro ao carregar jogos populares",
       );
-      if (USE_MOCK) {
-        const { mockPopularGames } = await import("@/lib/mock-data");
-        setData(mockPopularGames.slice(0, limit));
-      }
     } finally {
       setLoading(false);
     }
@@ -330,22 +246,12 @@ export function useNewReleases(limit = 10) {
     setLoading(true);
     setError(null);
     try {
-      let result: Game[];
-      if (USE_MOCK) {
-        const { mockNewReleases } = await import("@/lib/mock-data");
-        result = mockNewReleases.slice(0, limit);
-      } else {
-        result = await api.getNewReleases(limit);
-      }
+      const result = await api.getNewReleases(limit);
       setData(result);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Erro ao carregar lançamentos",
       );
-      if (USE_MOCK) {
-        const { mockNewReleases } = await import("@/lib/mock-data");
-        setData(mockNewReleases.slice(0, limit));
-      }
     } finally {
       setLoading(false);
     }
@@ -371,20 +277,10 @@ export function useSearchGames(query: string, limit = 10) {
     setLoading(true);
     setError(null);
     try {
-      let result: Game[];
-      if (USE_MOCK) {
-        const allGames = await getMockGames({ search: query, limit });
-        result = allGames.data;
-      } else {
-        result = (await api.searchGames(query, 1, limit)).games;
-      }
+      const result = (await api.searchGames(query, 1, limit)).games;
       setData(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro na busca");
-      if (USE_MOCK) {
-        const allGames = await getMockGames({ search: query, limit });
-        setData(allGames.data);
-      }
     } finally {
       setLoading(false);
     }
@@ -403,13 +299,6 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   const login = useCallback(async (email: string, password: string) => {
-    if (USE_MOCK) {
-      const { mockUser } = await import("@/lib/mock-data");
-      localStorage.setItem("auth_token", "mock-token");
-      localStorage.setItem("user", JSON.stringify(mockUser));
-      setUser(mockUser);
-      return { user: mockUser, token: "mock-token" };
-    }
     const result = await api.login(email, password);
     localStorage.setItem("auth_token", result.token);
     localStorage.setItem("user", JSON.stringify(result.user));
@@ -419,14 +308,6 @@ export function useAuth() {
 
   const register = useCallback(
     async (username: string, email: string, password: string) => {
-      if (USE_MOCK) {
-        const { mockUser } = await import("@/lib/mock-data");
-        const newUser = { ...mockUser, username, email };
-        localStorage.setItem("auth_token", "mock-token");
-        localStorage.setItem("user", JSON.stringify(newUser));
-        setUser(newUser);
-        return { user: newUser, token: "mock-token" };
-      }
       const result = await api.register({ username, email, password });
       localStorage.setItem("auth_token", result.token);
       localStorage.setItem("user", JSON.stringify(result.user));
@@ -475,20 +356,11 @@ export function useFavorites() {
     async (gameId: string) => {
       setLoading(true);
       try {
-        let result: { isFavorite: boolean };
-        if (USE_MOCK) {
-          const newFavorites = favorites.includes(gameId)
-            ? favorites.filter((id) => id !== gameId)
-            : [...favorites, gameId];
-          setFavorites(newFavorites);
-          result = { isFavorite: newFavorites.includes(gameId) };
+        const result = await api.toggleFavorite(gameId);
+        if (result.isFavorite) {
+          setFavorites((prev) => [...prev, gameId]);
         } else {
-          result = await api.toggleFavorite(gameId);
-          if (result.isFavorite) {
-            setFavorites((prev) => [...prev, gameId]);
-          } else {
-            setFavorites((prev) => prev.filter((id) => id !== gameId));
-          }
+          setFavorites((prev) => prev.filter((id) => id !== gameId));
         }
         return result;
       } finally {
@@ -506,13 +378,8 @@ export function useFavorites() {
   );
 
   const fetchFavorites = useCallback(async () => {
-    if (USE_MOCK) {
-      const { mockUser } = await import("@/lib/mock-data");
-      setFavorites(mockUser.favorites);
-    } else {
-      const games = await api.getFavorites();
-      setFavorites(games.map((g) => g.id));
-    }
+    const games = await api.getFavorites();
+    setFavorites(games.map((g) => g.id));
   }, []);
 
   useEffect(() => {
@@ -533,28 +400,12 @@ export function useRecentlyPlayed() {
   const [loading, setLoading] = useState(true);
 
   const addToRecentlyPlayed = useCallback(async (gameId: string) => {
-    if (USE_MOCK) {
-      return;
-    }
     await api.addToRecentlyPlayed(gameId);
   }, []);
 
   const fetchRecentlyPlayed = useCallback(async () => {
-    if (USE_MOCK) {
-      const { mockUser, mockGames } = await import("@/lib/mock-data");
-      const recent = mockUser.recentlyPlayed
-        .sort(
-          (a, b) =>
-            new Date(b.lastPlayed).getTime() - new Date(a.lastPlayed).getTime(),
-        )
-        .slice(0, 10)
-        .map((r) => mockGames.find((g) => g.id === r.gameId))
-        .filter(Boolean) as Game[];
-      setGames(recent);
-    } else {
-      const recentGames = await api.getRecentlyPlayed();
-      setGames(recentGames);
-    }
+    const recentGames = await api.getRecentlyPlayed();
+    setGames(recentGames);
     setLoading(false);
   }, []);
 
@@ -575,22 +426,12 @@ export function useReviews(gameId: string) {
     setLoading(true);
     setError(null);
     try {
-      let result: Review[];
-      if (USE_MOCK) {
-        const { mockReviews } = await import("@/lib/mock-data");
-        result = mockReviews.filter((r) => r.gameId === gameId);
-      } else {
-        result = await api.getReviews(gameId);
-      }
+      const result = await api.getReviews(gameId);
       setData(result);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Erro ao carregar avaliações",
       );
-      if (USE_MOCK) {
-        const { mockReviews } = await import("@/lib/mock-data");
-        setData(mockReviews.filter((r) => r.gameId === gameId));
-      }
     } finally {
       setLoading(false);
     }
@@ -599,24 +440,6 @@ export function useReviews(gameId: string) {
   const createReview = useCallback(
     async (data: { rating: number; title: string; content: string }) => {
       if (!gameId) throw new Error("Game ID required");
-      if (USE_MOCK) {
-        const newReview: Review = {
-          id: `rev-${Date.now()}`,
-          gameId,
-          userId: "current-user",
-          userName: "Você",
-          rating: data.rating,
-          title: data.title,
-          content: data.content,
-          playtime: 0,
-          helpful: 0,
-          funny: 0,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        setData((prev) => [newReview, ...prev]);
-        return newReview;
-      }
       const review = await api.createReview(
         gameId,
         data as Parameters<typeof api.createReview>[1],
@@ -643,24 +466,12 @@ export function useNews(limit = 10) {
     setLoading(true);
     setError(null);
     try {
-      let result: NewsItem[];
-      if (USE_MOCK) {
-        const { mockNews } = await import("@/lib/mock-data");
-        result = mockNews.slice(0, limit);
-      } else {
-        // Backend doesn't have news endpoint yet; use mock data
-        const { mockNews } = await import("@/lib/mock-data");
-        result = mockNews.slice(0, limit);
-      }
+      const result = (await api.getNews(limit)) as NewsItem[];
       setData(result);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Erro ao carregar notícias",
       );
-      if (USE_MOCK) {
-        const { mockNews } = await import("@/lib/mock-data");
-        setData(mockNews.slice(0, limit));
-      }
     } finally {
       setLoading(false);
     }

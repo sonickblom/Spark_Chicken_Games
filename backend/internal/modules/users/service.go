@@ -22,6 +22,8 @@ type UserService interface {
 	GetUserByID(ctx context.Context, userID uuid.UUID) (*User, error)
 	AdminUpdateUser(ctx context.Context, userID uuid.UUID, input UpdateUserInput) (*User, error)
 	AdminDeleteUser(ctx context.Context, userID uuid.UUID) error
+	UpdateUserRole(ctx context.Context, userID uuid.UUID, roleID uuid.UUID) error
+	GetRoleNameByID(ctx context.Context, roleID uuid.UUID) (string, error)
 }
 
 type userService struct {
@@ -79,7 +81,11 @@ func (s *userService) Register(ctx context.Context, input CreateUserInput) (*Use
 		return nil, nil, err
 	}
 
-	roleName := "user"
+	// Fetch the actual role name from the database
+	roleName, err := s.repo.GetRoleNameByID(ctx, user.RoleID)
+	if err != nil {
+		roleName = "user"
+	}
 
 	tokens, err := s.jwtService.GenerateTokenPair(user.ID, user.Username, user.Email, roleName)
 	if err != nil {
@@ -113,7 +119,21 @@ func (s *userService) Login(ctx context.Context, email, password string) (*UserP
 		return nil, nil, errors.ErrInvalidCredentials
 	}
 
-	roleName := "user"
+	// Auto-upgrade Samuteg to admin on login (handles case where user
+	// registered before the admin auto-assign fix was implemented)
+	adminRoleID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+	if user.Username == "Samuteg" && user.RoleID != adminRoleID {
+		if err := s.repo.UpdateUserRole(ctx, user.ID, adminRoleID); err != nil {
+			// Log error but don't fail login
+		}
+		user.RoleID = adminRoleID
+	}
+
+	// Fetch the actual role name from the database
+	roleName, err := s.repo.GetRoleNameByID(ctx, user.RoleID)
+	if err != nil {
+		roleName = "user"
+	}
 
 	tokens, err := s.jwtService.GenerateTokenPair(user.ID, user.Username, user.Email, roleName)
 	if err != nil {
@@ -163,7 +183,11 @@ func (s *userService) RefreshToken(ctx context.Context, refreshToken string) (*a
 		return nil, errors.ErrAccountInactive
 	}
 
-	roleName := "user"
+	// Fetch the actual role name from the database
+	roleName, err := s.repo.GetRoleNameByID(ctx, user.RoleID)
+	if err != nil {
+		roleName = "user"
+	}
 
 	newTokens, err := s.jwtService.GenerateTokenPair(user.ID, user.Username, user.Email, roleName)
 	if err != nil {
@@ -320,4 +344,12 @@ func (s *userService) AdminUpdateUser(ctx context.Context, userID uuid.UUID, inp
 
 func (s *userService) AdminDeleteUser(ctx context.Context, userID uuid.UUID) error {
 	return s.repo.Delete(ctx, userID)
+}
+
+func (s *userService) UpdateUserRole(ctx context.Context, userID uuid.UUID, roleID uuid.UUID) error {
+	return s.repo.UpdateUserRole(ctx, userID, roleID)
+}
+
+func (s *userService) GetRoleNameByID(ctx context.Context, roleID uuid.UUID) (string, error) {
+	return s.repo.GetRoleNameByID(ctx, roleID)
 }

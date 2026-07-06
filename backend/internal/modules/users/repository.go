@@ -24,14 +24,14 @@ type User struct {
 }
 
 type UserProfile struct {
-	ID        uuid.UUID  `json:"id" db:"id"`
-	Name      string     `json:"name" db:"name"`
-	Username  string     `json:"username" db:"username"`
-	Email     string     `json:"email" db:"email"`
-	AvatarURL *string    `json:"avatar_url,omitempty" db:"avatar_url"`
-	Bio       *string    `json:"bio,omitempty" db:"bio"`
-	RoleName  string     `json:"role_name" db:"role_name"`
-	CreatedAt time.Time  `json:"created_at" db:"created_at"`
+	ID        uuid.UUID `json:"id" db:"id"`
+	Name      string    `json:"name" db:"name"`
+	Username  string    `json:"username" db:"username"`
+	Email     string    `json:"email" db:"email"`
+	AvatarURL *string   `json:"avatar_url,omitempty" db:"avatar_url"`
+	Bio       *string   `json:"bio,omitempty" db:"bio"`
+	RoleName  string    `json:"role_name" db:"role_name"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
 }
 
 type CreateUserInput struct {
@@ -43,12 +43,12 @@ type CreateUserInput struct {
 }
 
 type UpdateUserInput struct {
-	Name     *string    `json:"name,omitempty" validate:"omitempty,min=2,max=100"`
-	Username *string    `json:"username,omitempty" validate:"omitempty,min=3,max=50,alphanum"`
-	Email    *string    `json:"email,omitempty" validate:"omitempty,email"`
-	AvatarURL *string   `json:"avatar_url,omitempty" validate:"omitempty,url"`
-	Bio      *string    `json:"bio,omitempty" validate:"omitempty,max=500"`
-	IsActive *bool      `json:"is_active,omitempty"`
+	Name      *string `json:"name,omitempty" validate:"omitempty,min=2,max=100"`
+	Username  *string `json:"username,omitempty" validate:"omitempty,min=3,max=50,alphanum"`
+	Email     *string `json:"email,omitempty" validate:"omitempty,email"`
+	AvatarURL *string `json:"avatar_url,omitempty" validate:"omitempty,url"`
+	Bio       *string `json:"bio,omitempty" validate:"omitempty,max=500"`
+	IsActive  *bool   `json:"is_active,omitempty"`
 }
 
 type UserRepository interface {
@@ -63,6 +63,8 @@ type UserRepository interface {
 	List(ctx context.Context, offset, limit int) ([]*User, int64, error)
 	ExistsByEmail(ctx context.Context, email string) (bool, error)
 	ExistsByUsername(ctx context.Context, username string) (bool, error)
+	GetRoleNameByID(ctx context.Context, roleID uuid.UUID) (string, error)
+	UpdateUserRole(ctx context.Context, userID uuid.UUID, roleID uuid.UUID) error
 }
 
 type userRepository struct {
@@ -212,4 +214,17 @@ func (r *userRepository) ExistsByUsername(ctx context.Context, username string) 
 	var exists bool
 	err := r.db.QueryRow(ctx, query, username).Scan(&exists)
 	return exists, err
+}
+
+func (r *userRepository) GetRoleNameByID(ctx context.Context, roleID uuid.UUID) (string, error) {
+	query := `SELECT name FROM roles WHERE id = $1`
+	var name string
+	err := r.db.QueryRow(ctx, query, roleID).Scan(&name)
+	return name, err
+}
+
+func (r *userRepository) UpdateUserRole(ctx context.Context, userID uuid.UUID, roleID uuid.UUID) error {
+	query := `UPDATE users SET role_id = $2, updated_at = NOW() WHERE id = $1`
+	_, err := r.db.Exec(ctx, query, userID, roleID)
+	return err
 }

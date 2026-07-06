@@ -3,71 +3,86 @@
 import { useMemo, useState } from "react";
 import GameGrid from "@/components/game/GameGrid";
 import SearchBar from "@/components/ui/SearchBar";
-import CategoryPill from "@/components/ui/CategoryPill";
-import { mockCategories, mockGames } from "@/lib/mock-data";
-import type { GameFilters } from "@/types";
+import { useUploadedGames } from "@/hooks/use-uploaded-games";
+import type { UploadedGameData } from "@/hooks/use-uploaded-games";
 
 const sortOptions: Array<{
-  value: NonNullable<GameFilters["sortBy"]>;
+  value: "popularity" | "rating" | "newest" | "oldest" | "alphabetical";
   label: string;
 }> = [
   { value: "popularity", label: "Mais Populares" },
-  { value: "rating", label: "Melhor Avaliados" },
   { value: "newest", label: "Mais Recentes" },
   { value: "oldest", label: "Mais Antigos" },
   { value: "alphabetical", label: "A-Z" },
 ];
 
+function mapGame(game: UploadedGameData) {
+  return {
+    id: game.id,
+    slug: game.slug,
+    title: game.title,
+    description: game.description,
+    shortDescription: game.description,
+    thumbnail: "",
+    coverImage: "",
+    category: {
+      id: "upload",
+      slug: "upload",
+      name: "Upload",
+      description: "",
+      icon: "🎮",
+      gameCount: 0,
+    },
+    tags: ["HTML", "Web"],
+    rating: 0,
+    playCount: game.playCount,
+    releaseDate: game.createdAt,
+    developer: "Spark Chicken Games",
+    publisher: "Spark Chicken Games",
+    iframeUrl: game.embedUrl || game.url,
+    width: 800,
+    height: 600,
+    isFeatured: true,
+    isNew: false,
+    isPopular: game.playCount > 0,
+    createdAt: game.createdAt,
+    updatedAt: game.updatedAt,
+  };
+}
+
 export function GamesClient() {
+  const { games, loading } = useUploadedGames();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [sortBy, setSortBy] =
-    useState<NonNullable<GameFilters["sortBy"]>>("popularity");
+  const [sortBy, setSortBy] = useState<
+    "popularity" | "rating" | "newest" | "oldest" | "alphabetical"
+  >("popularity");
 
   const filteredGames = useMemo(() => {
-    let result = [...mockGames];
+    let result = [...games];
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
         (game) =>
           game.title.toLowerCase().includes(query) ||
-          game.shortDescription.toLowerCase().includes(query) ||
-          (game.genre ?? []).some((genre) =>
-            genre.toLowerCase().includes(query),
-          ) ||
-          (game.tags ?? []).some((tag) => tag.toLowerCase().includes(query)),
-      );
-    }
-
-    if (selectedCategory !== "all") {
-      result = result.filter((game) =>
-        (game.genre ?? []).some(
-          (genre) => genre.toLowerCase() === selectedCategory.toLowerCase(),
-        ),
+          game.description.toLowerCase().includes(query),
       );
     }
 
     switch (sortBy) {
       case "popularity":
-      case "popular":
-        result.sort((a, b) => (b.playCount ?? 0) - (a.playCount ?? 0));
-        break;
-      case "rating":
-        result.sort((a, b) => b.rating - a.rating);
+        result.sort((a, b) => b.playCount - a.playCount);
         break;
       case "newest":
         result.sort(
           (a, b) =>
-            new Date(b.releaseDate ?? b.createdAt).getTime() -
-            new Date(a.releaseDate ?? a.createdAt).getTime(),
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         );
         break;
       case "oldest":
         result.sort(
           (a, b) =>
-            new Date(a.releaseDate ?? a.createdAt).getTime() -
-            new Date(b.releaseDate ?? b.createdAt).getTime(),
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
         );
         break;
       case "alphabetical":
@@ -75,8 +90,19 @@ export function GamesClient() {
         break;
     }
 
-    return result;
-  }, [searchQuery, selectedCategory, sortBy]);
+    return result.map(mapGame);
+  }, [searchQuery, sortBy, games]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-neon-green border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-500">Carregando jogos...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black">
@@ -88,7 +114,9 @@ export function GamesClient() {
                 Catálogo de Jogos
               </h1>
               <p className="text-gray-400 mt-2">
-                Explore nossa biblioteca completa de jogos
+                {games.length > 0
+                  ? `${games.length} jogo(s) disponíveis`
+                  : "Explore nossa biblioteca completa de jogos"}
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
@@ -102,7 +130,7 @@ export function GamesClient() {
               <select
                 value={sortBy}
                 onChange={(event) =>
-                  setSortBy(event.target.value as NonNullable<GameFilters["sortBy"]>)
+                  setSortBy(event.target.value as typeof sortBy)
                 }
                 className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-green"
                 aria-label="Ordenar por"
@@ -116,49 +144,39 @@ export function GamesClient() {
             </div>
           </div>
 
-          <div
-            className="flex flex-wrap gap-2"
-            role="group"
-            aria-label="Filtrar por categoria"
-          >
-            <CategoryPill
-              category={{
-                id: "all",
-                slug: "all",
-                name: "Todos",
-                description: "",
-                icon: "",
-                gameCount: mockGames.length,
-              }}
-              isActive={selectedCategory === "all"}
-              onClick={() => setSelectedCategory("all")}
-            />
-            {mockCategories.map((category) => (
-              <CategoryPill
-                key={category.id}
-                category={category}
-                isActive={selectedCategory === category.slug}
-                onClick={() => setSelectedCategory(category.slug)}
-              />
-            ))}
+          <div className="flex items-center gap-3 text-sm text-gray-500 mb-6">
+            <span>{filteredGames.length} resultado(s)</span>
           </div>
-        </div>
-      </section>
 
-      <section className="py-12 bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-6">
-            <p className="text-gray-400">
-              {filteredGames.length}{" "}
-              {filteredGames.length === 1
-                ? "jogo encontrado"
-                : "jogos encontrados"}
-            </p>
-          </div>
-          <GameGrid
-            games={filteredGames}
-            emptyMessage="Nenhum jogo encontrado com os filtros atuais"
-          />
+          {filteredGames.length > 0 ? (
+            <GameGrid games={filteredGames} />
+          ) : (
+            <div className="text-center py-20">
+              <svg
+                className="w-16 h-16 mx-auto text-gray-700 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              <p className="text-gray-400 text-lg font-medium mb-2">
+                {searchQuery
+                  ? `Nenhum resultado para "${searchQuery}"`
+                  : "Nenhum jogo disponível"}
+              </p>
+              <p className="text-gray-600 text-sm">
+                {searchQuery
+                  ? "Tente outros termos de busca"
+                  : "Faça upload de jogos na página de admin"}
+              </p>
+            </div>
+          )}
         </div>
       </section>
     </div>

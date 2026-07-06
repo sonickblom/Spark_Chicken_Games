@@ -15,7 +15,9 @@ Plataforma de jogos online com dashboard, leaderboards, matchmaking e mais.
 make install
 
 # 2. Rodar tudo (build + Docker infra + servidores)
-make start
+make docker-up-infra   # Sobe PostgreSQL + Redis
+make db-migrate        # Roda as migrations (cria tabelas + seed do role "user")
+make dev               # Roda backend + frontend
 ```
 
 Isso vai:
@@ -97,4 +99,3 @@ Prefixo: `SCG_` (ex: `SCG_DATABASE_HOST`, `SCG_SERVER_PORT`)
 
 Frontend:
 - `NEXT_PUBLIC_API_URL` — URL base da API (default: `http://localhost:8080/api/v1`)
-- `NEXT_PUBLIC_USE_MOCK` — Usar dados mockados quando `true` (default: `false`)

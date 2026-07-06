@@ -26,27 +26,23 @@ const (
 // Each is a rounded box with the status code inside.
 
 func statusBadgeStyle(status int) lipgloss.Style {
-	var bg, fg string
+	var fg string
 	switch {
 	case status >= 500:
-		bg, fg = CyberRed, White
+		fg = CyberRed
 	case status >= 400:
-		bg, fg = CyberOrange, White
+		fg = CyberOrange
 	case status >= 300:
-		bg, fg = CyberCyan, CyberDark
+		fg = CyberCyan
 	case status >= 200:
-		bg, fg = NeonGreen, CyberDark
+		fg = NeonGreen
 	default:
-		bg, fg = CyberGray, White
+		fg = CyberGray
 	}
 
 	return lipgloss.NewStyle().
-		Background(lipgloss.Color(bg)).
 		Foreground(lipgloss.Color(fg)).
-		Bold(true).
-		Padding(0, 1).
-		Width(4).
-		Align(lipgloss.Center)
+		Bold(true)
 }
 
 func StatusBadge(status int) string {

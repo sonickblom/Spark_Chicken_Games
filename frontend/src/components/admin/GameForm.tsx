@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Input, Textarea } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { cn, slugify } from "@/lib/utils";
 import type { Game } from "@/types";
@@ -63,7 +62,9 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
@@ -72,9 +73,7 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
       // Auto-generate slug from title
-      ...(name === "title" && !isEditing
-        ? { slug: slugify(value) }
-        : {}),
+      ...(name === "title" && !isEditing ? { slug: slugify(value) } : {}),
     }));
 
     // Clear error on change
@@ -147,9 +146,7 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       console.log(
-        isEditing
-          ? "Jogo atualizado com sucesso!"
-          : "Jogo criado com sucesso!",
+        isEditing ? "Jogo atualizado com sucesso!" : "Jogo criado com sucesso!",
         processedData,
       );
 
@@ -175,8 +172,18 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
       {/* Basic Information */}
       <section className="rounded-xl bg-gray-900/30 border border-gray-800 p-6">
         <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-          <svg className="w-5 h-5 text-neon-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-5 h-5 text-neon-green"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
           Informações Básicas
         </h2>
@@ -189,7 +196,10 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
               value={form.title}
               onChange={handleChange}
               placeholder="Ex: Cyber Quest"
-              className={cn(inputClass, errors.title && "border-red-400 ring-1 ring-red-400/50")}
+              className={cn(
+                inputClass,
+                errors.title && "border-red-400 ring-1 ring-red-400/50",
+              )}
             />
             {errors.title && <p className={errorClass}>{errors.title}</p>}
           </div>
@@ -201,7 +211,10 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
               value={form.slug}
               onChange={handleChange}
               placeholder="cyber-quest"
-              className={cn(inputClass, errors.slug && "border-red-400 ring-1 ring-red-400/50")}
+              className={cn(
+                inputClass,
+                errors.slug && "border-red-400 ring-1 ring-red-400/50",
+              )}
             />
             {errors.slug && <p className={errorClass}>{errors.slug}</p>}
           </div>
@@ -224,9 +237,15 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
               value={form.shortDescription}
               onChange={handleChange}
               placeholder="Uma descrição breve para cards e listagens"
-              className={cn(inputClass, errors.shortDescription && "border-red-400 ring-1 ring-red-400/50")}
+              className={cn(
+                inputClass,
+                errors.shortDescription &&
+                  "border-red-400 ring-1 ring-red-400/50",
+              )}
             />
-            {errors.shortDescription && <p className={errorClass}>{errors.shortDescription}</p>}
+            {errors.shortDescription && (
+              <p className={errorClass}>{errors.shortDescription}</p>
+            )}
           </div>
 
           <div className="md:col-span-2">
@@ -237,9 +256,15 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
               onChange={handleChange}
               rows={5}
               placeholder="Descrição detalhada do jogo..."
-              className={cn(inputClass, "resize-y min-h-[120px]", errors.description && "border-red-400 ring-1 ring-red-400/50")}
+              className={cn(
+                inputClass,
+                "resize-y min-h-[120px]",
+                errors.description && "border-red-400 ring-1 ring-red-400/50",
+              )}
             />
-            {errors.description && <p className={errorClass}>{errors.description}</p>}
+            {errors.description && (
+              <p className={errorClass}>{errors.description}</p>
+            )}
           </div>
 
           <div>
@@ -265,7 +290,9 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
           </div>
 
           <div>
-            <label className={labelClass}>Gêneros (separados por vírgula)</label>
+            <label className={labelClass}>
+              Gêneros (separados por vírgula)
+            </label>
             <input
               name="genre"
               value={form.genre}
@@ -287,7 +314,9 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
           </div>
 
           <div>
-            <label className={labelClass}>Plataformas (separadas por vírgula)</label>
+            <label className={labelClass}>
+              Plataformas (separadas por vírgula)
+            </label>
             <input
               name="platforms"
               value={form.platforms}
@@ -298,7 +327,9 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
           </div>
 
           <div>
-            <label className={labelClass}>Idiomas (separados por vírgula)</label>
+            <label className={labelClass}>
+              Idiomas (separados por vírgula)
+            </label>
             <input
               name="languages"
               value={form.languages}
@@ -331,8 +362,18 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
       {/* Media */}
       <section className="rounded-xl bg-gray-900/30 border border-gray-800 p-6">
         <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-          <svg className="w-5 h-5 text-neon-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          <svg
+            className="w-5 h-5 text-neon-green"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
           </svg>
           Mídia
         </h2>
@@ -345,9 +386,14 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
               value={form.coverImage}
               onChange={handleChange}
               placeholder="https://exemplo.com/imagem-capa.jpg"
-              className={cn(inputClass, errors.coverImage && "border-red-400 ring-1 ring-red-400/50")}
+              className={cn(
+                inputClass,
+                errors.coverImage && "border-red-400 ring-1 ring-red-400/50",
+              )}
             />
-            {errors.coverImage && <p className={errorClass}>{errors.coverImage}</p>}
+            {errors.coverImage && (
+              <p className={errorClass}>{errors.coverImage}</p>
+            )}
             {form.coverImage && (
               <div className="mt-2 rounded-lg overflow-hidden border border-gray-700 max-w-sm">
                 <img
@@ -396,7 +442,9 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
           </div>
 
           <div className="md:col-span-2">
-            <label className={labelClass}>URLs de Screenshots (uma por linha)</label>
+            <label className={labelClass}>
+              URLs de Screenshots (uma por linha)
+            </label>
             <textarea
               name="screenshots"
               value={form.screenshots}
@@ -412,8 +460,18 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
       {/* Pricing & Status */}
       <section className="rounded-xl bg-gray-900/30 border border-gray-800 p-6">
         <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-          <svg className="w-5 h-5 text-neon-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-5 h-5 text-neon-green"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
           Preço e Status
         </h2>
@@ -435,7 +493,9 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
                 className="w-4 h-4 rounded border-gray-600 bg-gray-800 text-neon-green focus:ring-neon-green"
               />
               <div>
-                <span className="text-sm font-medium text-white">Jogo Gratuito</span>
+                <span className="text-sm font-medium text-white">
+                  Jogo Gratuito
+                </span>
                 <p className="text-xs text-gray-500">Disponível sem custo</p>
               </div>
             </label>
@@ -451,7 +511,10 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
               disabled={form.isFree}
               min={0}
               step="0.01"
-              className={cn(inputClass, form.isFree && "opacity-50 cursor-not-allowed")}
+              className={cn(
+                inputClass,
+                form.isFree && "opacity-50 cursor-not-allowed",
+              )}
             />
           </div>
 
@@ -471,10 +534,26 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
           {[
-            { name: "isFeatured", label: "Destaque", desc: "Mostrar na página inicial" },
-            { name: "isNewRelease", label: "Novo Lançamento", desc: "Marcar como novo" },
-            { name: "isPopular", label: "Popular", desc: "Destacar como popular" },
-            { name: "isEarlyAccess", label: "Acesso Antecipado", desc: "Jogo em desenvolvimento" },
+            {
+              name: "isFeatured",
+              label: "Destaque",
+              desc: "Mostrar na página inicial",
+            },
+            {
+              name: "isNewRelease",
+              label: "Novo Lançamento",
+              desc: "Marcar como novo",
+            },
+            {
+              name: "isPopular",
+              label: "Popular",
+              desc: "Destacar como popular",
+            },
+            {
+              name: "isEarlyAccess",
+              label: "Acesso Antecipado",
+              desc: "Jogo em desenvolvimento",
+            },
           ].map((field) => (
             <label
               key={field.name}
@@ -483,12 +562,16 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
               <input
                 type="checkbox"
                 name={field.name}
-                checked={(form as Record<string, unknown>)[field.name] as boolean}
+                checked={
+                  (form as Record<string, unknown>)[field.name] as boolean
+                }
                 onChange={handleChange}
                 className="mt-0.5 w-4 h-4 rounded border-gray-600 bg-gray-800 text-neon-green focus:ring-neon-green"
               />
               <div>
-                <span className="text-sm font-medium text-white">{field.label}</span>
+                <span className="text-sm font-medium text-white">
+                  {field.label}
+                </span>
                 <p className="text-xs text-gray-500">{field.desc}</p>
               </div>
             </label>
@@ -499,8 +582,18 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
       {/* Links */}
       <section className="rounded-xl bg-gray-900/30 border border-gray-800 p-6">
         <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-          <svg className="w-5 h-5 text-neon-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+          <svg
+            className="w-5 h-5 text-neon-green"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+            />
           </svg>
           Links
         </h2>
@@ -557,16 +650,27 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
       )}
 
       <div className="flex items-center gap-4 pt-4 border-t border-gray-800">
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="min-w-[180px]"
-        >
+        <Button type="submit" disabled={isSubmitting} className="min-w-[180px]">
           {isSubmitting ? (
             <span className="flex items-center gap-2">
-              <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              <svg
+                className="animate-spin w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                />
               </svg>
               Salvando...
             </span>

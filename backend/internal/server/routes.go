@@ -61,6 +61,7 @@ func (s *Server) routes() *gin.Engine {
 			admin.GET("/users/:id", deps.users.GetUserByID)
 			admin.PATCH("/users/:id", deps.users.AdminUpdateUser)
 			admin.DELETE("/users/:id", deps.users.AdminDeleteUser)
+			admin.PATCH("/users/:id/role", deps.users.AdminUpdateUserRole)
 
 			admin.POST("/ads", deps.ads.Create)
 			admin.GET("/ads", deps.ads.List)

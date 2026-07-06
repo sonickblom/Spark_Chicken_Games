@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useAuth } from "@/hooks/use-data";
+import { useAuthContext } from "@/lib/auth-context";
 import {
   formatDate,
   formatPlaytime,
@@ -10,7 +10,7 @@ import {
 } from "@/lib/utils";
 
 export function ProfileClient() {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, loading } = useAuthContext();
 
   if (loading) {
     return (

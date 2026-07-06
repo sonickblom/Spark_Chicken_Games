@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useAuth } from "@/hooks/use-data";
+import { useAuthContext } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
 
 interface HeaderProps {
@@ -10,7 +10,7 @@ interface HeaderProps {
 }
 
 const Header = ({ className = "" }: HeaderProps) => {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuthContext();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -115,6 +115,13 @@ const Header = ({ className = "" }: HeaderProps) => {
                       onClick={() => setDropdownOpen(false)}
                     >
                       Meu Perfil
+                    </Link>
+                    <Link
+                      href="/admin"
+                      className="block px-4 py-2 text-sm text-neon-green hover:bg-gray-800 hover:text-white transition-colors"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Admin
                     </Link>
                     <hr className="my-1 border-gray-700" />
                     <button
