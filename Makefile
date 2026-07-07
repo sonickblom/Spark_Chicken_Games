@@ -62,7 +62,7 @@ install: install-frontend install-backend
 
 install-frontend:
 	@echo "  Installing frontend dependencies..."
-	cd frontend && pnpm install
+	cd frontend && CI=true pnpm install
 
 install-backend:
 	@echo "  Installing Go modules..."
