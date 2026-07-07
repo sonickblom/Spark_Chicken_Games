@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 88%;
+    --neon-green: 120 100% 50%;
+    --neon-green-dim: 120 100% 40%;
+  }
+
+  * {
+    @apply border-gray-800;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-black text-white antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    @apply bg-neon-green text-black;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-700 rounded-full hover:bg-gray-600;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-600;
+  }
+
+  ::-webkit-scrollbar-corner {
+    @apply bg-gray-900;
+  }
+}
+
+@layer components {
+  .btn-neon {
+    @apply inline-flex items-center justify-center px-6 py-3 font-bold text-black bg-neon-green rounded-lg
+           hover:bg-neon-green/80 hover:shadow-[0_0_20px_rgba(0,255,65,0.4)] transition-all duration-300
+           focus:outline-none focus:ring-2 focus:ring-neon-green focus:ring-offset-2 focus:ring-offset-black;
+  }
+
+  .btn-neon-outline {
+    @apply inline-flex items-center justify-center px-6 py-3 font-bold text-neon-green border-2 border-neon-green rounded-lg
+           hover:bg-neon-green/10 hover:shadow-[0_0_20px_rgba(0,255,65,0.2)] transition-all duration-300
+           focus:outline-none focus:ring-2 focus:ring-neon-green focus:ring-offset-2 focus:ring-offset-black;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-6 py-3 font-medium text-gray-300 rounded-lg
+           hover:text-neon-green hover:bg-gray-800 transition-all duration-300
+           focus:outline-none focus:ring-2 focus:ring-neon-green focus:ring-offset-2 focus:ring-offset-black;
+  }
+
+  .input-neon {
+    @apply w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white
+           placeholder:text-gray-500
+           focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent
+           transition-all duration-200;
+  }
+
+  .card-neon {
+    @apply bg-gray-900 border border-gray-800 rounded-xl overflow-hidden
+           hover:border-neon-green/50 hover:shadow-[0_0_30px_rgba(0,255,65,0.1)] transition-all duration-500;
+  }
+
+  .text-gradient-neon {
+    @apply bg-gradient-to-r from-neon-green to-neon-green-dim bg-clip-text text-transparent;
+  }
+
+  .glow-neon {
+    @apply shadow-[0_0_20px_rgba(0,255,65,0.3)];
+  }
+
+  .animate-in {
+    animation: animateIn 0.5s ease-out forwards;
+  }
+
+  @keyframes animateIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .animation-delay-500 {
+    animation-delay: 500ms;
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+}

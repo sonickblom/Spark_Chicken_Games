@@ -1,0 +1,30 @@
+[
+  {
+    "id": "uploaded-snake-001",
+    "slug": "snake",
+    "title": "Snake Game",
+    "description": "Clássico jogo da cobrinha com visual neon. Coma a comida, cresça e não bata em você mesmo!",
+    "files": [
+      "index.html"
+    ],
+    "mainFile": "index.html",
+    "createdAt": "2026-07-05T00:00:00.000Z",
+    "updatedAt": "2026-07-05T00:00:00.000Z",
+    "playCount": 1,
+    "size": 8234
+  },
+  {
+    "id": "uploaded-pong-002",
+    "slug": "pong",
+    "title": "Pong Game",
+    "description": "Pong clássico com estilo neon. Jogador 1 usa W/S, Jogador 2 usa setas. Primeiro a 5 pontos vence!",
+    "files": [
+      "index.html"
+    ],
+    "mainFile": "index.html",
+    "createdAt": "2026-07-05T00:00:01.000Z",
+    "updatedAt": "2026-07-05T00:00:01.000Z",
+    "playCount": 1,
+    "size": 7845
+  }
+]

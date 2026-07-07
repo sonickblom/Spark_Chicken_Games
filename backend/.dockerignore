@@ -1,0 +1,10 @@
+.git
+.agents
+.codex
+tmp
+dist
+bin
+coverage.out
+*.log
+Dockerfile
+docker-compose.yml
