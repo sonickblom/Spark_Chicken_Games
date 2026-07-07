@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getUploadedGame, getGameUrl } from "@/lib/game-storage";
 import GamePlayer from "./GamePlayer";
+import AdminLink from "./AdminLink";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -46,12 +47,7 @@ export default async function PlayGamePage({ params }: PageProps) {
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <Link
-              href="/admin"
-              className="text-sm text-gray-400 hover:text-neon-green transition-colors"
-            >
-              Admin
-            </Link>
+            <AdminLink />
             <Link
               href="/games"
               className="px-3 py-1.5 text-sm border border-gray-700 text-gray-300 rounded-lg hover:border-neon-green/50 transition-colors"

@@ -116,13 +116,15 @@ const Header = ({ className = "" }: HeaderProps) => {
                     >
                       Meu Perfil
                     </Link>
-                    <Link
-                      href="/admin"
-                      className="block px-4 py-2 text-sm text-neon-green hover:bg-gray-800 hover:text-white transition-colors"
-                      onClick={() => setDropdownOpen(false)}
-                    >
-                      Admin
-                    </Link>
+                    {user.username === "Samuteg" && (
+                      <Link
+                        href="/admin"
+                        className="block px-4 py-2 text-sm text-neon-green hover:bg-gray-800 hover:text-white transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        Admin
+                      </Link>
+                    )}
                     <hr className="my-1 border-gray-700" />
                     <button
                       onClick={() => {

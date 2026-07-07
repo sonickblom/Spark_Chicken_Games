@@ -4,34 +4,41 @@ import React, { useState, useEffect, useCallback } from "react";
 import { api } from "@/services/api";
 import type { User } from "@/types";
 
-// Known role UUIDs from the database
-const ROLES = {
-  admin: "00000000-0000-0000-0000-000000000001",
-  moderator: "00000000-0000-0000-0000-000000000002",
-  user: "00000000-0000-0000-0000-000000000003",
-};
-
-const ROLE_LABELS: Record<string, string> = {
-  [ROLES.admin]: "Admin",
-  [ROLES.moderator]: "Moderador",
-  [ROLES.user]: "Usuário",
-};
-
-const ROLE_COLORS: Record<string, string> = {
-  [ROLES.admin]:
-    "bg-purple-500/10 text-purple-400 border-purple-500/30",
-  [ROLES.moderator]:
-    "bg-blue-500/10 text-blue-400 border-blue-500/30",
-  [ROLES.user]: "bg-gray-500/10 text-gray-400 border-gray-500/30",
-};
-
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
+  const [roles, setRoles] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  // Role color map (by role name)
+  const ROLE_COLORS: Record<string, string> = {
+    admin: "bg-purple-500/10 text-purple-400 border-purple-500/30",
+    moderator: "bg-blue-500/10 text-blue-400 border-blue-500/30",
+    user: "bg-gray-500/10 text-gray-400 border-gray-500/30",
+  };
+
+  const ROLE_LABELS: Record<string, string> = {
+    admin: "Admin",
+    moderator: "Moderador",
+    user: "Usuário",
+  };
+
+  const fetchRoles = useCallback(async () => {
+    try {
+      const rolesList = await api.getRoles();
+      const roleMap: Record<string, string> = {};
+      for (const r of rolesList) {
+        roleMap[r.id] = r.name;
+      }
+      setRoles(roleMap);
+    } catch {
+      // Fallback: keep roles empty, will use roleName from user profile
+      setRoles({});
+    }
+  }, []);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -49,14 +56,26 @@ export default function AdminUsersPage() {
   }, []);
 
   useEffect(() => {
+    fetchRoles();
     fetchUsers();
-  }, [fetchUsers]);
+  }, [fetchRoles, fetchUsers]);
 
   const handleToggleAdmin = async (user: User) => {
     if (!user.id) return;
 
-    const isCurrentlyAdmin = user.roleId === ROLES.admin;
-    const newRoleId = isCurrentlyAdmin ? ROLES.user : ROLES.admin;
+    const adminRoleId = Object.keys(roles).find((k) => roles[k] === "admin");
+    const userRoleId = Object.keys(roles).find((k) => roles[k] === "user");
+
+    if (!adminRoleId || !userRoleId) {
+      setError(
+        "Não foi possível determinar os papéis disponíveis. Tente recarregar a página.",
+      );
+      return;
+    }
+
+    const currentRoleName = roles[user.roleId || ""] || user.roleName || "user";
+    const isCurrentlyAdmin = currentRoleName === "admin";
+    const newRoleId = isCurrentlyAdmin ? userRoleId : adminRoleId;
     const action = isCurrentlyAdmin ? "remover" : "conceder";
 
     if (
@@ -77,7 +96,9 @@ export default function AdminUsersPage() {
       await fetchUsers();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Erro ao atualizar papel do usuário",
+        err instanceof Error
+          ? err.message
+          : "Erro ao atualizar papel do usuário",
       );
     } finally {
       setUpdatingUserId(null);
@@ -148,8 +169,8 @@ export default function AdminUsersPage() {
           <div>
             <p className="text-sm text-gray-300">
               <strong className="text-white">Apenas Samuteg</strong> pode
-              gerenciar administradores. Clique no botão ao lado do usuário
-              para conceder ou remover acesso de admin.
+              gerenciar administradores. Clique no botão ao lado do usuário para
+              conceder ou remover acesso de admin.
             </p>
           </div>
         </div>
@@ -208,11 +229,12 @@ export default function AdminUsersPage() {
               <tbody className="divide-y divide-gray-800">
                 {filteredUsers.map((user) => {
                   const isSamuteg = user.username === "Samuteg";
-                  const roleId = user.roleId || "";
-                  const roleLabel =
-                    ROLE_LABELS[roleId] || user.roleName || "Desconhecido";
+                  const roleName =
+                    roles[user.roleId || ""] || user.roleName || "user";
+                  const roleLabel = ROLE_LABELS[roleName] || roleName;
                   const roleColor =
-                    ROLE_COLORS[roleId] || "bg-gray-500/10 text-gray-400 border-gray-500/30";
+                    ROLE_COLORS[roleName] ||
+                    "bg-gray-500/10 text-gray-400 border-gray-500/30";
                   const isUpdating = updatingUserId === user.id;
 
                   return (
@@ -264,7 +286,7 @@ export default function AdminUsersPage() {
                             onClick={() => handleToggleAdmin(user)}
                             disabled={isUpdating}
                             className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
-                              roleId === ROLES.admin
+                              roleName === "admin"
                                 ? "border-red-500/30 text-red-400 hover:bg-red-500/10"
                                 : "border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
                             } disabled:opacity-50 disabled:cursor-not-allowed`}
@@ -274,7 +296,7 @@ export default function AdminUsersPage() {
                                 <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin" />
                                 Alterando...
                               </>
-                            ) : roleId === ROLES.admin ? (
+                            ) : roleName === "admin" ? (
                               <>
                                 <svg
                                   className="w-3.5 h-3.5"
@@ -351,16 +373,33 @@ export default function AdminUsersPage() {
           Mostrando {filteredUsers.length} de {users.length} usuário(s)
           {" · "}
           <span className="text-purple-400">
-            {users.filter((u) => u.roleId === ROLES.admin).length} admin(s)
+            {
+              users.filter((u) => {
+                const roleName = roles[u.roleId || ""] || u.roleName || "user";
+                return roleName === "admin";
+              }).length
+            }{" "}
+            admin(s)
           </span>
           {" · "}
           <span className="text-blue-400">
-            {users.filter((u) => u.roleId === ROLES.moderator).length}{" "}
+            {
+              users.filter((u) => {
+                const roleName = roles[u.roleId || ""] || u.roleName || "user";
+                return roleName === "moderator";
+              }).length
+            }{" "}
             moderador(es)
           </span>
           {" · "}
           <span className="text-gray-400">
-            {users.filter((u) => u.roleId === ROLES.user).length} usuário(s)
+            {
+              users.filter((u) => {
+                const roleName = roles[u.roleId || ""] || u.roleName || "user";
+                return roleName === "user";
+              }).length
+            }{" "}
+            usuário(s)
           </span>
         </div>
       )}

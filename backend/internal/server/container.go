@@ -1,6 +1,10 @@
 package server
 
 import (
+	"context"
+	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 	jwtauth "github.com/kronos/spark-chicken-games/backend/internal/auth"
 	"github.com/kronos/spark-chicken-games/backend/internal/config"
 	"github.com/kronos/spark-chicken-games/backend/internal/db"
@@ -16,15 +20,40 @@ import (
 	progressmodule "github.com/kronos/spark-chicken-games/backend/internal/modules/progress"
 	recommendationsmodule "github.com/kronos/spark-chicken-games/backend/internal/modules/recommendations"
 	reviewsmodule "github.com/kronos/spark-chicken-games/backend/internal/modules/reviews"
+	rolesmodule "github.com/kronos/spark-chicken-games/backend/internal/modules/roles"
 	sessionsmodule "github.com/kronos/spark-chicken-games/backend/internal/modules/sessions"
 	tagsmodule "github.com/kronos/spark-chicken-games/backend/internal/modules/tags"
 	usersmodule "github.com/kronos/spark-chicken-games/backend/internal/modules/users"
+
+	"github.com/rs/zerolog/log"
 )
+
+func verifyRoles(ctx context.Context, pool *pgxpool.Pool) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	rows, err := pool.Query(ctx, "SELECT id, name FROM roles ORDER BY name")
+	if err != nil {
+		log.Warn().Err(err).Msg("could not verify roles (database not ready yet)")
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id string
+		var name string
+		if err := rows.Scan(&id, &name); err != nil {
+			continue
+		}
+		log.Info().Str("role", name).Str("uuid", id).Msg("role loaded")
+	}
+}
 
 type container struct {
 	jwt *jwtauth.JWTService
 
 	auth            *authmodule.AuthHandler
+	userService     usersmodule.UserService
 	users           *usersmodule.UserHandler
 	games           *gamesmodule.GameHandler
 	categories      *categoriesmodule.CategoryHandler
@@ -39,6 +68,7 @@ type container struct {
 	sessions        *sessionsmodule.SessionHandler
 	recommendations *recommendationsmodule.RecommendationHandler
 	ads             *adsmodule.AdHandler
+	roles           *rolesmodule.RoleHandler
 }
 
 func newContainer(cfg *config.Config, database *db.DB, redisClient *db.Redis) *container {
@@ -67,9 +97,15 @@ func newContainer(cfg *config.Config, database *db.DB, redisClient *db.Redis) *c
 	recommendationRepo := recommendationsmodule.NewRecommendationRepository(database.Pool)
 	adRepo := adsmodule.NewAdRepository(database.Pool)
 
+	// Log roles at startup for debugging
+	go verifyRoles(context.Background(), database.Pool)
+
+	roleHandler := rolesmodule.NewRoleHandler(database.Pool)
+
 	return &container{
 		jwt: jwtService,
 
+		userService:     userService,
 		auth:            authmodule.NewAuthHandler(userService),
 		users:           usersmodule.NewUserHandler(userService),
 		games:           gamesmodule.NewGameHandler(gamesmodule.NewGameService(gameRepo)),
@@ -85,5 +121,6 @@ func newContainer(cfg *config.Config, database *db.DB, redisClient *db.Redis) *c
 		sessions:        sessionsmodule.NewSessionHandler(sessionsmodule.NewSessionService(sessionRepo)),
 		recommendations: recommendationsmodule.NewRecommendationHandler(recommendationsmodule.NewRecommendationService(recommendationRepo)),
 		ads:             adsmodule.NewAdHandler(adsmodule.NewAdService(adRepo)),
+		roles:           roleHandler,
 	}
 }

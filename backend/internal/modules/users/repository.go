@@ -11,6 +11,7 @@ import (
 type User struct {
 	ID           uuid.UUID  `json:"id" db:"id"`
 	RoleID       uuid.UUID  `json:"role_id" db:"role_id"`
+	RoleName     string     `json:"role_name,omitempty" db:"role_name"`
 	Name         string     `json:"name" db:"name"`
 	Username     string     `json:"username" db:"username"`
 	Email        string     `json:"email" db:"email"`
@@ -64,7 +65,9 @@ type UserRepository interface {
 	ExistsByEmail(ctx context.Context, email string) (bool, error)
 	ExistsByUsername(ctx context.Context, username string) (bool, error)
 	GetRoleNameByID(ctx context.Context, roleID uuid.UUID) (string, error)
+	GetRoleIDByName(ctx context.Context, roleName string) (uuid.UUID, error)
 	UpdateUserRole(ctx context.Context, userID uuid.UUID, roleID uuid.UUID) error
+	GetUserRoleName(ctx context.Context, userID uuid.UUID) (string, error)
 }
 
 type userRepository struct {
@@ -179,7 +182,7 @@ func (r *userRepository) List(ctx context.Context, offset, limit int) ([]*User, 
 		return nil, 0, err
 	}
 
-	query := `SELECT id, role_id, name, username, email, password_hash, avatar_url, bio, is_active, last_login_at, created_at, updated_at FROM users ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+	query := `SELECT u.id, u.role_id, COALESCE(r.name, '') as role_name, u.name, u.username, u.email, u.password_hash, u.avatar_url, u.bio, u.is_active, u.last_login_at, u.created_at, u.updated_at FROM users u LEFT JOIN roles r ON u.role_id = r.id ORDER BY u.created_at DESC LIMIT $1 OFFSET $2`
 	rows, err := r.db.Query(ctx, query, limit, offset)
 	if err != nil {
 		return nil, 0, err
@@ -190,7 +193,7 @@ func (r *userRepository) List(ctx context.Context, offset, limit int) ([]*User, 
 	for rows.Next() {
 		user := &User{}
 		err := rows.Scan(
-			&user.ID, &user.RoleID, &user.Name, &user.Username, &user.Email,
+			&user.ID, &user.RoleID, &user.RoleName, &user.Name, &user.Username, &user.Email,
 			&user.PasswordHash, &user.AvatarURL, &user.Bio, &user.IsActive,
 			&user.LastLoginAt, &user.CreatedAt, &user.UpdatedAt,
 		)
@@ -223,8 +226,22 @@ func (r *userRepository) GetRoleNameByID(ctx context.Context, roleID uuid.UUID) 
 	return name, err
 }
 
+func (r *userRepository) GetRoleIDByName(ctx context.Context, roleName string) (uuid.UUID, error) {
+	query := `SELECT id FROM roles WHERE name = $1`
+	var id uuid.UUID
+	err := r.db.QueryRow(ctx, query, roleName).Scan(&id)
+	return id, err
+}
+
 func (r *userRepository) UpdateUserRole(ctx context.Context, userID uuid.UUID, roleID uuid.UUID) error {
 	query := `UPDATE users SET role_id = $2, updated_at = NOW() WHERE id = $1`
 	_, err := r.db.Exec(ctx, query, userID, roleID)
 	return err
+}
+
+func (r *userRepository) GetUserRoleName(ctx context.Context, userID uuid.UUID) (string, error) {
+	query := `SELECT r.name FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = $1`
+	var name string
+	err := r.db.QueryRow(ctx, query, userID).Scan(&name)
+	return name, err
 }

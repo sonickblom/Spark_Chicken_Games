@@ -23,7 +23,7 @@ func (s *Server) routes() *gin.Engine {
 	router.Use(limiter.Middleware())
 
 	deps := newContainer(s.cfg, s.db, s.redis)
-	authRequired := authmiddleware.AuthMiddleware(deps.jwt)
+	authRequired := authmiddleware.AuthMiddleware(deps.jwt, deps.userService)
 	authOptional := authmiddleware.OptionalAuthMiddleware(deps.jwt)
 	adminRequired := []gin.HandlerFunc{authRequired, authmiddleware.RequireAdmin()}
 	adminHandlers := func(handler gin.HandlerFunc) []gin.HandlerFunc {
@@ -187,6 +187,11 @@ func (s *Server) routes() *gin.Engine {
 			ads.GET("/active", deps.ads.GetActive)
 			ads.POST("/:id/impression", deps.ads.RecordImpression)
 			ads.POST("/:id/click", deps.ads.RecordClick)
+		}
+
+		roles := v1.Group("/roles")
+		{
+			roles.GET("", deps.roles.List)
 		}
 	}
 

@@ -469,6 +469,16 @@ class ApiService {
     // Backend doesn't have a news endpoint yet; return empty array
     return [];
   }
+
+  // ── Roles ────────────────────────────────────────────────────────────
+
+  async getRoles(): Promise<{ id: string; name: string }[]> {
+    const res = await this.client.get("/roles");
+    const data = unwrap(
+      res as AxiosResponse<ApiResponseWrapper<Record<string, unknown>>>,
+    ) as Record<string, unknown>;
+    return (data.roles as { id: string; name: string }[]) || [];
+  }
 }
 
 export const api = new ApiService();

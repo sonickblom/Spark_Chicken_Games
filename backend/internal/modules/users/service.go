@@ -25,6 +25,8 @@ type UserService interface {
 	AdminDeleteUser(ctx context.Context, userID uuid.UUID) error
 	UpdateUserRole(ctx context.Context, userID uuid.UUID, roleID uuid.UUID) error
 	GetRoleNameByID(ctx context.Context, roleID uuid.UUID) (string, error)
+	GetRoleIDByName(ctx context.Context, roleName string) (uuid.UUID, error)
+	GetUserRoleName(ctx context.Context, userID uuid.UUID) (string, error)
 }
 
 type userService struct {
@@ -71,9 +73,15 @@ func (s *userService) Register(ctx context.Context, input CreateUserInput) (*Use
 
 	// Security: ensure only "Samuteg" can have admin role (defense-in-depth)
 	userRoleID := input.RoleID
-	adminRoleID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+	adminRoleID, err := s.GetRoleIDByName(ctx, "admin")
+	if err != nil {
+		adminRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000001") // fallback hardcoded
+	}
 	if !strings.EqualFold(input.Username, "Samuteg") && userRoleID == adminRoleID {
-		userRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000003") // force user role
+		userRoleID, err = s.GetRoleIDByName(ctx, "user")
+		if err != nil {
+			userRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000003") // fallback hardcoded
+		}
 	}
 
 	user := &User{
@@ -129,7 +137,10 @@ func (s *userService) Login(ctx context.Context, email, password string) (*UserP
 
 	// Auto-upgrade Samuteg to admin on login (handles case where user
 	// registered before the admin auto-assign fix was implemented)
-	adminRoleID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+	adminRoleID, lookupErr := s.GetRoleIDByName(ctx, "admin")
+	if lookupErr != nil {
+		adminRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000001") // fallback hardcoded
+	}
 	if strings.EqualFold(user.Username, "Samuteg") && user.RoleID != adminRoleID {
 		if err := s.repo.UpdateUserRole(ctx, user.ID, adminRoleID); err != nil {
 			// Log error but don't fail login
@@ -360,4 +371,12 @@ func (s *userService) UpdateUserRole(ctx context.Context, userID uuid.UUID, role
 
 func (s *userService) GetRoleNameByID(ctx context.Context, roleID uuid.UUID) (string, error) {
 	return s.repo.GetRoleNameByID(ctx, roleID)
+}
+
+func (s *userService) GetRoleIDByName(ctx context.Context, roleName string) (uuid.UUID, error) {
+	return s.repo.GetRoleIDByName(ctx, roleName)
+}
+
+func (s *userService) GetUserRoleName(ctx context.Context, userID uuid.UUID) (string, error) {
+	return s.repo.GetUserRoleName(ctx, userID)
 }

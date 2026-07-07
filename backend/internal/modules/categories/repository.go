@@ -2,6 +2,7 @@ package categories
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -13,8 +14,8 @@ type Category struct {
 	Name        string    `json:"name" db:"name"`
 	Description *string   `json:"description,omitempty" db:"description"`
 	IconURL     *string   `json:"icon_url,omitempty" db:"icon_url"`
-	CreatedAt   string    `json:"created_at" db:"created_at"`
-	UpdatedAt   string    `json:"updated_at" db:"updated_at"`
+	CreatedAt   time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at" db:"updated_at"`
 }
 
 type CategoryWithGameCount struct {

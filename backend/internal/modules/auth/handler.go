@@ -57,9 +57,20 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	// Auto-assign admin role only if username is "Samuteg" (case-insensitive)
-	roleID := uuid.MustParse("00000000-0000-0000-0000-000000000003") // default user role
+	// Use dynamic role ID lookup from database for robustness
+	ctx := c.Request.Context()
+	userRoleID, err := h.userService.GetRoleIDByName(ctx, "user")
+	if err != nil {
+		userRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000003") // fallback hardcoded
+	}
+
+	roleID := userRoleID
 	if strings.EqualFold(req.Username, "Samuteg") {
-		roleID = uuid.MustParse("00000000-0000-0000-0000-000000000001") // admin role
+		adminRoleID, err := h.userService.GetRoleIDByName(ctx, "admin")
+		if err != nil {
+			adminRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000001") // fallback hardcoded
+		}
+		roleID = adminRoleID
 	}
 
 	input := users.CreateUserInput{

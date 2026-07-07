@@ -69,7 +69,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (token && storedUser) {
       try {
         const parsed = JSON.parse(storedUser);
-        setUser(parsed);
+        // Try to fetch fresh user data from backend to get updated role
+        try {
+          const freshUser = await api.getCurrentUser();
+          localStorage.setItem("user", JSON.stringify(freshUser));
+          setUser(freshUser);
+          setLoading(false);
+          return;
+        } catch {
+          // Backend unavailable, use cached user
+          setUser(parsed);
+        }
       } catch {
         localStorage.removeItem("auth_token");
         localStorage.removeItem("user");

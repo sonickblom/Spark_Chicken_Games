@@ -2,6 +2,7 @@ package tags
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -11,7 +12,7 @@ type Tag struct {
 	ID        uuid.UUID `json:"id" db:"id"`
 	Slug      string    `json:"slug" db:"slug"`
 	Name      string    `json:"name" db:"name"`
-	CreatedAt string    `json:"created_at" db:"created_at"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
 }
 
 type TagWithGameCount struct {
