@@ -59,8 +59,12 @@ export interface User {
   id: string;
   username: string;
   email: string;
+  name?: string;
   avatar?: string;
   bio?: string;
+  roleId?: string;
+  roleName?: string;
+  isActive?: boolean;
   favorites: string[];
   history: GameHistoryItem[];
   achievements?: Achievement[];
@@ -95,7 +99,16 @@ export interface GameFilters {
   tags?: string[];
   genre?: string[];
   platform?: string[];
-  sortBy?: "popularity" | "rating" | "newest" | "oldest" | "alphabetical" | "price-asc" | "price-desc" | "discount" | "popular";
+  sortBy?:
+    | "popularity"
+    | "rating"
+    | "newest"
+    | "oldest"
+    | "alphabetical"
+    | "price-asc"
+    | "price-desc"
+    | "discount"
+    | "popular";
   search?: string;
   page?: number;
   pageSize?: number;

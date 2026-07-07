@@ -172,21 +172,27 @@ export function SearchBar({
                     role="option"
                     aria-selected={false}
                   >
-                    <div className="relative w-12 h-16 flex-shrink-0 rounded overflow-hidden">
-                      <Image
-                        src={game.thumbnail || ''}
-                        alt=""
-                        fill
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
+                    <div className="relative w-12 h-16 flex-shrink-0 rounded overflow-hidden bg-cyber-dark-surface">
+                      {game.thumbnail ? (
+                        <Image
+                          src={game.thumbnail}
+                          alt=""
+                          fill
+                          className="object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-cyber-text-muted text-xs">
+                          Sem imagem
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-cyber-text truncate group-hover:text-cyber-neon transition-colors">
                         {game.title}
                       </p>
                       <p className="text-xs text-cyber-text-muted truncate">
-                        {game.category?.name || 'Sem Categoria'}
+                        {game.category?.name || "Sem Categoria"}
                       </p>
                     </div>
                     <div className="flex items-center gap-1 text-cyber-neon font-semibold">

@@ -1,18 +1,18 @@
 package users
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/kronos/spark-chicken-games/backend/internal/modules/users"
 	"github.com/kronos/spark-chicken-games/backend/internal/shared/response"
-	"github.com/kronos/spark-chicken-games/backend/internal/shared/validator"
 )
 
 type UserHandler struct {
-	userService users.UserService
+	userService UserService
 }
 
-func NewUserHandler(userService users.UserService) *UserHandler {
+func NewUserHandler(userService UserService) *UserHandler {
 	return &UserHandler{userService: userService}
 }
 
@@ -68,7 +68,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 		userUUID, _ = uuid.Parse(userID.(string))
 	}
 
-	input := users.UpdateUserInput{
+	input := UpdateUserInput{
 		Name:      req.Name,
 		Username:  req.Username,
 		Email:     req.Email,
@@ -133,12 +133,19 @@ func (h *UserHandler) DeleteAccount(c *gin.Context) {
 
 // Admin endpoints
 func (h *UserHandler) ListUsers(c *gin.Context) {
-	offset := 0
-	limit := 20
-	// Parse pagination params
-	// ... pagination logic
+	page := 1
+	pageSize := 20
 
-	usersList, total, err := h.userService.ListUsers(c.Request.Context(), offset, limit)
+	if p, err := parseIntParam(c.Query("page")); err == nil && p > 0 {
+		page = p
+	}
+	if ps, err := parseIntParam(c.Query("page_size")); err == nil && ps > 0 && ps <= 100 {
+		pageSize = ps
+	}
+
+	offset := (page - 1) * pageSize
+
+	usersList, total, err := h.userService.ListUsers(c.Request.Context(), offset, pageSize)
 	if err != nil {
 		response.WriteError(c.Writer, "LIST_FAILED", err.Error(), 500)
 		return
@@ -147,12 +154,22 @@ func (h *UserHandler) ListUsers(c *gin.Context) {
 	response.WriteSuccess(c.Writer, gin.H{
 		"users": usersList,
 		"pagination": gin.H{
-			"page":        1,
-			"page_size":   limit,
+			"page":        page,
+			"page_size":   pageSize,
 			"total_items": total,
-			"total_pages": (total + int64(limit) - 1) / int64(limit),
+			"total_pages": (total + int64(pageSize) - 1) / int64(pageSize),
 		},
 	})
+}
+
+// parseIntParam attempts to parse an integer from a string query parameter.
+func parseIntParam(s string) (int, error) {
+	if s == "" {
+		return 0, fmt.Errorf("empty")
+	}
+	var n int
+	_, err := fmt.Sscanf(s, "%d", &n)
+	return n, err
 }
 
 func (h *UserHandler) GetUserByID(c *gin.Context) {
@@ -186,7 +203,7 @@ func (h *UserHandler) AdminUpdateUser(c *gin.Context) {
 		return
 	}
 
-	input := users.UpdateUserInput{
+	input := UpdateUserInput{
 		Name:      req.Name,
 		Username:  req.Username,
 		Email:     req.Email,
@@ -217,4 +234,43 @@ func (h *UserHandler) AdminDeleteUser(c *gin.Context) {
 	}
 
 	response.WriteSuccess(c.Writer, gin.H{"message": "User deleted successfully"})
+}
+
+type UpdateRoleRequest struct {
+	RoleID string `json:"role_id" binding:"required"`
+}
+
+func (h *UserHandler) AdminUpdateUserRole(c *gin.Context) {
+	idStr := c.Param("id")
+	userID, err := uuid.Parse(idStr)
+	if err != nil {
+		response.WriteError(c.Writer, "INVALID_ID", "Invalid user ID", 400)
+		return
+	}
+
+	var req UpdateRoleRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.WriteError(c.Writer, "VALIDATION_ERROR", "Invalid request body", 422, err.Error())
+		return
+	}
+
+	roleID, err := uuid.Parse(req.RoleID)
+	if err != nil {
+		response.WriteError(c.Writer, "INVALID_ROLE_ID", "Invalid role ID", 400)
+		return
+	}
+
+	// Verify the role exists
+	roleName, err := h.userService.GetRoleNameByID(c.Request.Context(), roleID)
+	if err != nil {
+		response.WriteError(c.Writer, "ROLE_NOT_FOUND", "Role not found", 404)
+		return
+	}
+
+	if err := h.userService.UpdateUserRole(c.Request.Context(), userID, roleID); err != nil {
+		response.WriteError(c.Writer, "UPDATE_FAILED", err.Error(), 400)
+		return
+	}
+
+	response.WriteSuccess(c.Writer, gin.H{"message": "User role updated to " + roleName})
 }

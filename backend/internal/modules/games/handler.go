@@ -1,55 +1,56 @@
 package games
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/kronos/spark-chicken-games/backend/internal/modules/games"
 	"github.com/kronos/spark-chicken-games/backend/internal/shared/pagination"
 	"github.com/kronos/spark-chicken-games/backend/internal/shared/response"
 	"github.com/kronos/spark-chicken-games/backend/internal/shared/validator"
 )
 
 type GameHandler struct {
-	gameService games.GameService
+	gameService GameService
 }
 
-func NewGameHandler(gameService games.GameService) *GameHandler {
+func NewGameHandler(gameService GameService) *GameHandler {
 	return &GameHandler{gameService: gameService}
 }
 
 type CreateGameRequest struct {
-	Slug            string     `json:"slug" binding:"required,min=3,max=100"`
-	Title           string     `json:"title" binding:"required,min=3,max=200"`
-	Description     string     `json:"description" binding:"required"`
-	ShortDescription *string   `json:"short_description,omitempty" binding:"omitempty,max=500"`
-	ThumbnailURL    *string    `json:"thumbnail_url,omitempty" binding:"omitempty,url"`
-	BannerURL       *string    `json:"banner_url,omitempty" binding:"omitempty,url"`
-	GameURL         string     `json:"game_url" binding:"required,url"`
-	EmbedURL        *string    `json:"embed_url,omitempty" binding:"omitempty,url"`
-	Platform        *string    `json:"platform,omitempty" binding:"omitempty,max=50"`
-	Status          string     `json:"status" binding:"required,oneof=draft published archived hidden"`
-	IsFeatured      bool       `json:"is_featured"`
-	IsNew           bool       `json:"is_new"`
-	IsPopular       bool       `json:"is_popular"`
-	CategoryIDs     []uuid.UUID `json:"category_ids,omitempty"`
-	TagIDs          []uuid.UUID `json:"tag_ids,omitempty"`
+	Slug             string      `json:"slug" binding:"required,min=3,max=100"`
+	Title            string      `json:"title" binding:"required,min=3,max=200"`
+	Description      string      `json:"description" binding:"required"`
+	ShortDescription *string     `json:"short_description,omitempty" binding:"omitempty,max=500"`
+	ThumbnailURL     *string     `json:"thumbnail_url,omitempty" binding:"omitempty,url"`
+	BannerURL        *string     `json:"banner_url,omitempty" binding:"omitempty,url"`
+	GameURL          string      `json:"game_url" binding:"required,url"`
+	EmbedURL         *string     `json:"embed_url,omitempty" binding:"omitempty,url"`
+	Platform         *string     `json:"platform,omitempty" binding:"omitempty,max=50"`
+	Status           string      `json:"status" binding:"required,oneof=draft published archived hidden"`
+	IsFeatured       bool        `json:"is_featured"`
+	IsNew            bool        `json:"is_new"`
+	IsPopular        bool        `json:"is_popular"`
+	CategoryIDs      []uuid.UUID `json:"category_ids,omitempty"`
+	TagIDs           []uuid.UUID `json:"tag_ids,omitempty"`
 }
 
 type UpdateGameRequest struct {
-	Title           *string     `json:"title,omitempty" binding:"omitempty,min=3,max=200"`
-	Description     *string     `json:"description,omitempty"`
-	ShortDescription *string    `json:"short_description,omitempty" binding:"omitempty,max=500"`
-	ThumbnailURL    *string     `json:"thumbnail_url,omitempty" binding:"omitempty,url"`
-	BannerURL       *string     `json:"banner_url,omitempty" binding:"omitempty,url"`
-	GameURL         *string     `json:"game_url,omitempty" binding:"omitempty,url"`
-	EmbedURL        *string     `json:"embed_url,omitempty" binding:"omitempty,url"`
-	Platform        *string     `json:"platform,omitempty" binding:"omitempty,max=50"`
-	Status          *string     `json:"status,omitempty" binding:"omitempty,oneof=draft published archived hidden"`
-	IsFeatured      *bool       `json:"is_featured,omitempty"`
-	IsNew           *bool       `json:"is_new,omitempty"`
-	IsPopular       *bool       `json:"is_popular,omitempty"`
-	CategoryIDs     []uuid.UUID  `json:"category_ids,omitempty"`
-	TagIDs          []uuid.UUID  `json:"tag_ids,omitempty"`
+	Title            *string     `json:"title,omitempty" binding:"omitempty,min=3,max=200"`
+	Description      *string     `json:"description,omitempty"`
+	ShortDescription *string     `json:"short_description,omitempty" binding:"omitempty,max=500"`
+	ThumbnailURL     *string     `json:"thumbnail_url,omitempty" binding:"omitempty,url"`
+	BannerURL        *string     `json:"banner_url,omitempty" binding:"omitempty,url"`
+	GameURL          *string     `json:"game_url,omitempty" binding:"omitempty,url"`
+	EmbedURL         *string     `json:"embed_url,omitempty" binding:"omitempty,url"`
+	Platform         *string     `json:"platform,omitempty" binding:"omitempty,max=50"`
+	Status           *string     `json:"status,omitempty" binding:"omitempty,oneof=draft published archived hidden"`
+	IsFeatured       *bool       `json:"is_featured,omitempty"`
+	IsNew            *bool       `json:"is_new,omitempty"`
+	IsPopular        *bool       `json:"is_popular,omitempty"`
+	CategoryIDs      []uuid.UUID `json:"category_ids,omitempty"`
+	TagIDs           []uuid.UUID `json:"tag_ids,omitempty"`
 }
 
 func (h *GameHandler) Create(c *gin.Context) {
@@ -64,22 +65,22 @@ func (h *GameHandler) Create(c *gin.Context) {
 		return
 	}
 
-	input := games.CreateGameInput{
-		Slug:            req.Slug,
-		Title:           req.Title,
-		Description:     req.Description,
+	input := CreateGameInput{
+		Slug:             req.Slug,
+		Title:            req.Title,
+		Description:      req.Description,
 		ShortDescription: req.ShortDescription,
-		ThumbnailURL:    req.ThumbnailURL,
-		BannerURL:       req.BannerURL,
-		GameURL:         req.GameURL,
-		EmbedURL:        req.EmbedURL,
-		Platform:        req.Platform,
-		Status:          req.Status,
-		IsFeatured:      req.IsFeatured,
-		IsNew:           req.IsNew,
-		IsPopular:       req.IsPopular,
-		CategoryIDs:     req.CategoryIDs,
-		TagIDs:          req.TagIDs,
+		ThumbnailURL:     req.ThumbnailURL,
+		BannerURL:        req.BannerURL,
+		GameURL:          req.GameURL,
+		EmbedURL:         req.EmbedURL,
+		Platform:         req.Platform,
+		Status:           req.Status,
+		IsFeatured:       req.IsFeatured,
+		IsNew:            req.IsNew,
+		IsPopular:        req.IsPopular,
+		CategoryIDs:      req.CategoryIDs,
+		TagIDs:           req.TagIDs,
 	}
 
 	game, err := h.gameService.Create(c.Request.Context(), input)
@@ -92,7 +93,7 @@ func (h *GameHandler) Create(c *gin.Context) {
 }
 
 func (h *GameHandler) GetByID(c *gin.Context) {
-	idStr := c.Param("id")
+	idStr := gameIDParam(c)
 	id, err := uuid.Parse(idStr)
 	if err != nil {
 		response.WriteError(c.Writer, "INVALID_ID", "Invalid game ID", 400)
@@ -120,7 +121,7 @@ func (h *GameHandler) GetBySlug(c *gin.Context) {
 }
 
 func (h *GameHandler) Update(c *gin.Context) {
-	idStr := c.Param("id")
+	idStr := gameIDParam(c)
 	id, err := uuid.Parse(idStr)
 	if err != nil {
 		response.WriteError(c.Writer, "INVALID_ID", "Invalid game ID", 400)
@@ -133,21 +134,21 @@ func (h *GameHandler) Update(c *gin.Context) {
 		return
 	}
 
-	input := games.UpdateGameInput{
-		Title:           req.Title,
-		Description:     req.Description,
+	input := UpdateGameInput{
+		Title:            req.Title,
+		Description:      req.Description,
 		ShortDescription: req.ShortDescription,
-		ThumbnailURL:    req.ThumbnailURL,
-		BannerURL:       req.BannerURL,
-		GameURL:         req.GameURL,
-		EmbedURL:        req.EmbedURL,
-		Platform:        req.Platform,
-		Status:          req.Status,
-		IsFeatured:      req.IsFeatured,
-		IsNew:           req.IsNew,
-		IsPopular:       req.IsPopular,
-		CategoryIDs:     req.CategoryIDs,
-		TagIDs:          req.TagIDs,
+		ThumbnailURL:     req.ThumbnailURL,
+		BannerURL:        req.BannerURL,
+		GameURL:          req.GameURL,
+		EmbedURL:         req.EmbedURL,
+		Platform:         req.Platform,
+		Status:           req.Status,
+		IsFeatured:       req.IsFeatured,
+		IsNew:            req.IsNew,
+		IsPopular:        req.IsPopular,
+		CategoryIDs:      req.CategoryIDs,
+		TagIDs:           req.TagIDs,
 	}
 
 	game, err := h.gameService.Update(c.Request.Context(), id, input)
@@ -160,7 +161,7 @@ func (h *GameHandler) Update(c *gin.Context) {
 }
 
 func (h *GameHandler) Delete(c *gin.Context) {
-	idStr := c.Param("id")
+	idStr := gameIDParam(c)
 	id, err := uuid.Parse(idStr)
 	if err != nil {
 		response.WriteError(c.Writer, "INVALID_ID", "Invalid game ID", 400)
@@ -178,12 +179,12 @@ func (h *GameHandler) Delete(c *gin.Context) {
 func (h *GameHandler) List(c *gin.Context) {
 	params := pagination.ParseParams(c)
 
-	filters := games.GameFilters{
-		Search:     params.Search,
-		SortBy:     params.SortBy,
-		SortDesc:   params.SortDesc,
-		Page:       params.Page,
-		PageSize:   params.PageSize,
+	filters := GameFilters{
+		Search:   params.Search,
+		SortBy:   params.SortBy,
+		SortDesc: params.SortDesc,
+		Page:     params.Page,
+		PageSize: params.PageSize,
 	}
 
 	// Parse optional filters
@@ -281,7 +282,7 @@ func (h *GameHandler) GetPopular(c *gin.Context) {
 }
 
 func (h *GameHandler) PlayGame(c *gin.Context) {
-	idStr := c.Param("id")
+	idStr := gameIDParam(c)
 	id, err := uuid.Parse(idStr)
 	if err != nil {
 		response.WriteError(c.Writer, "INVALID_ID", "Invalid game ID", 400)
@@ -296,12 +297,9 @@ func (h *GameHandler) PlayGame(c *gin.Context) {
 	response.WriteSuccess(c.Writer, gin.H{"message": "Play count incremented"})
 }
 
-import (
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"github.com/kronos/spark-chicken-games/backend/internal/modules/games"
-	"github.com/kronos/spark-chicken-games/backend/internal/shared/pagination"
-	"github.com/kronos/spark-chicken-games/backend/internal/shared/response"
-	"github.com/kronos/spark-chicken-games/backend/internal/shared/validator"
-	"strconv"
-)
+func gameIDParam(c *gin.Context) string {
+	if id := c.Param("id"); id != "" {
+		return id
+	}
+	return c.Param("game_id")
+}

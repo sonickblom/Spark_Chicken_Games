@@ -2,7 +2,6 @@ package games
 
 import (
 	"context"
-	"errors"
 
 	"github.com/google/uuid"
 	"github.com/kronos/spark-chicken-games/backend/internal/shared/errors"

@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { getMockCategory } from "@/lib/mock-data";
 
 export async function generateMetadata({
   params,
@@ -7,19 +6,17 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const category = await getMockCategory(slug);
 
-  if (!category) {
-    return { title: "Categoria não encontrada" };
-  }
+  const names: Record<string, string> = {
+    all: "Todos os Jogos",
+    recent: "Recém Adicionados",
+    popular: "Mais Jogados",
+  };
+
+  const name = names[slug] || slug;
 
   return {
-    title: `${category.name} | Spark Chicken Games`,
-    description: `Explore jogos da categoria ${category.name}. ${category.gameCount} jogos disponíveis.`,
-    openGraph: {
-      title: `${category.name} | Spark Chicken Games`,
-      description: `Explore jogos da categoria ${category.name}`,
-      type: "website",
-    },
+    title: `${name} | Latency Zero`,
+    description: `Explore jogos da categoria ${name}`,
   };
 }

@@ -1,266 +1,164 @@
-# TODO List - Spark Chicken Games Backend
+# Spark Chicken Games Backend - TODO
 
-## ✅ Completed
-- [x] Project structure (modular monolith with clean architecture)
-- [x] Go module with dependencies
-- [x] Config management (viper + YAML + env vars)
-- [x] Database connection (pgxpool)
-- [x] Redis connection
-- [x] Shared packages:
-  - [x] Response handling (standardized JSON)
-  - [x] Error definitions & HTTP status mapping
-  - [x] Validator (go-playground/validator)
-  - [x] Pagination (offset + cursor)
-- [x] Migrations (23 files):
-  - [x] 000_updated_at_function
-  - [x] 001_roles
-  - [x] 002_users
-  - [x] 003_refresh_tokens
-  - [x] 004_auth_sessions
-  - [x] 005_games
-  - [x] 006_categories
-  - [x] 007_tags
-  - [x] 008_game_categories
-  - [x] 009_game_tags
-  - [x] 010_favorites
-  - [x] 011_play_history
-  - [x] 012_user_game_progress
-  - [x] 013_game_sessions (old)
-  - [x] 014_session_players (old)
-  - [x] 015_matchmaking_queue
-  - [x] 016_analytics_events
-  - [x] 017_game_views
-  - [x] 018_leaderboards
-  - [x] 019_achievements
-  - [x] 020_user_achievements
-  - [x] 021_reviews
-  - [x] 022_ads_placements
-  - [x] 023_game_sessions (new with constraints)
-  - [x] 024_session_players (new)
-- [x] Auth module:
-  - [x] JWT service (access + refresh tokens, rotation)
-  - [x] Password hashing (bcrypt)
-  - [x] Auth middleware (required + optional + role-based)
-- [x] Middleware:
-  - [x] CORS
-  - [x] Rate limiting (Redis + in-memory fallback)
-  - [x] Request logging (zerolog)
-- [x] Users module:
-  - [x] Repository (CRUD + profile + queries)
-  - [x] Service (register, login, refresh, logout, profile, password, admin)
-  - [x] Handler (auth endpoints + user profile + admin)
-- [x] Games module:
-  - [x] Repository (CRUD + relations + featured/new/popular + play count + rating)
-  - [x] Service (business logic)
-  - [x] Handler (CRUD + list with filters + featured/new/popular + play)
+Status: completed for the current backend wiring pass.
 
----
+## Completed
 
-## 🔄 In Progress / Need to Complete
+- [x] Modular monolith structure using handler -> service -> repository layers.
+- [x] Go module dependencies and lockfile.
+- [x] Configuration loading with YAML, defaults, and `SCG_*` environment variables.
+- [x] PostgreSQL connection pool.
+- [x] Redis client and cache helpers.
+- [x] Shared response, errors, validation, and pagination packages.
+- [x] Database migrations through `025_seed_development_data.up.sql`.
+- [x] Custom migration runner in `internal/db/migrations.go`.
+- [x] Migration CLI entrypoint: `cmd/migrate/main.go`.
+- [x] API entrypoint: `cmd/api/main.go`.
+- [x] HTTP server setup: `internal/server/server.go`.
+- [x] Dependency injection container: `internal/server/container.go`.
+- [x] Route registration: `internal/server/routes.go`.
+- [x] Health endpoints: `GET /health`, `GET /ready`.
+- [x] Docker support: `Dockerfile`, `docker-compose.yml`, `.dockerignore`.
+- [x] Reference configuration: `config.example.yaml`.
+- [x] Development seed data for categories, tags, and a demo game.
+- [x] Fixed role seed UUIDs to match the auth registration default role.
 
-### Categories Module
-- [ ] Repository
-- [ ] Service
-- [ ] Handler
+## Completed Modules
 
-### Tags Module
-- [ ] Repository
-- [ ] Service
-- [ ] Handler
+- [x] Auth: register, login, refresh, logout, current user.
+- [x] Users: profile, password change, account deletion, admin CRUD.
+- [x] Games: CRUD, listing, filters, featured, new, popular, play count.
+- [x] Categories: CRUD, slug lookup, listing with game counts.
+- [x] Tags: CRUD, slug lookup, listing with game counts.
+- [x] Favorites: add, remove, list, check, count.
+- [x] History: record play, list, stats, delete.
+- [x] Progress: save, get, update, delete, list.
+- [x] Reviews: create, get, update, delete, list by game, average rating.
+- [x] Leaderboards: global, game leaderboard, user rank, score submission.
+- [x] Analytics: platform, game, user, top games.
+- [x] Matchmaking: join queue, leave queue, status, match attempt.
+- [x] Sessions: create, get, room lookup, list, join, leave, start, end, participants.
+- [x] Recommendations: personalized, similar, trending, new releases.
+- [x] Ads: admin CRUD, active ads, impressions, clicks, stats.
 
-### Favorites Module
-- [ ] Repository
-- [ ] Service
-- [ ] Handler
-
-### History Module (Play History)
-- [ ] Repository
-- [ ] Service
-- [ ] Handler
-
-### Progress Module (User Game Progress)
-- [ ] Repository
-- [ ] Service
-- [ ] Handler
-
-### Reviews Module
-- [ ] Repository
-- [ ] Service
-- [ ] Handler
-
-### Leaderboards Module
-- [ ] Repository
-- [ ] Service
-- [ ] Handler
-
-### Analytics Module
-- [ ] Repository
-- [ ] Service
-- [ ] Handler
-
-### Matchmaking Module
-- [ ] Repository
-- [ ] Service
-- [ ] Handler
-
-### Sessions Module (Game Sessions)
-- [ ] Repository
-- [ ] Service
-- [ ] Handler
-
-### Recommendations Module
-- [ ] Repository
-- [ ] Service
-- [ ] Handler
-
-### Ads Module
-- [ ] Repository
-- [ ] Service
-- [ ] Handler
-
----
-
-## 🏗️ Infrastructure & Integration
-
-### Main Application Wiring
-- [ ] `cmd/api/main.go` - Entry point
-- [ ] `internal/server/server.go` - HTTP server setup
-- [ ] `internal/server/routes.go` - Route registration (all modules)
-- [ ] Dependency injection / container
-- [ ] Health check endpoints (`/health`, `/ready`)
-- [ ] Swagger/OpenAPI docs generation (swaggo)
-
-### Database
-- [ ] Migration runner (golang-migrate or custom)
-- [ ] Seed data for development
-
-### Docker
-- [ ] `Dockerfile` (multi-stage build)
-- [ ] `docker-compose.yml` (api, postgres, redis)
-- [ ] `.dockerignore`
-
-### Testing
-- [ ] Integration tests for auth
-- [ ] Integration tests for games
-- [ ] Integration tests for categories
-- [ ] Test helpers / fixtures
-
-### Configuration
-- [ ] `config.example.yaml` for reference
-- [ ] Environment-specific configs
-
----
-
-## 📋 API Endpoints Checklist (from requirements)
+## Registered API Endpoints
 
 ### Auth
-- [x] POST `/api/v1/auth/register`
-- [x] POST `/api/v1/auth/login`
-- [x] POST `/api/v1/auth/refresh`
-- [x] POST `/api/v1/auth/logout`
-- [x] GET `/api/v1/auth/me`
+
+- [x] `POST /api/v1/auth/register`
+- [x] `POST /api/v1/auth/login`
+- [x] `POST /api/v1/auth/refresh`
+- [x] `POST /api/v1/auth/logout`
+- [x] `GET /api/v1/auth/me`
 
 ### Users
-- [x] GET `/api/v1/users/me` (profile)
-- [x] PATCH `/api/v1/users/me` (update profile)
-- [x] POST `/api/v1/users/me/password` (change password)
-- [x] DELETE `/api/v1/users/me` (delete account)
-- [ ] Admin: GET `/api/v1/admin/users` (list)
-- [ ] Admin: GET `/api/v1/admin/users/:id`
-- [ ] Admin: PATCH `/api/v1/admin/users/:id`
-- [ ] Admin: DELETE `/api/v1/admin/users/:id`
 
-### Games (Catalog)
-- [x] POST `/api/v1/games` (admin)
-- [x] GET `/api/v1/games` (list with pagination, filters, search)
-- [x] GET `/api/v1/games/featured`
-- [x] GET `/api/v1/games/new`
-- [x] GET `/api/v1/games/popular`
-- [x] GET `/api/v1/games/:id` (by ID)
-- [x] GET `/api/v1/games/slug/:slug` (by slug)
-- [x] PATCH `/api/v1/games/:id` (admin)
-- [x] DELETE `/api/v1/games/:id` (admin)
-- [x] POST `/api/v1/games/:id/play` (increment play count)
+- [x] `GET /api/v1/users/me`
+- [x] `PATCH /api/v1/users/me`
+- [x] `POST /api/v1/users/me/password`
+- [x] `DELETE /api/v1/users/me`
+- [x] `GET /api/v1/admin/users`
+- [x] `GET /api/v1/admin/users/:id`
+- [x] `PATCH /api/v1/admin/users/:id`
+- [x] `DELETE /api/v1/admin/users/:id`
 
-### Categories
-- [ ] GET `/api/v1/categories`
-- [ ] GET `/api/v1/categories/:id`
-- [ ] GET `/api/v1/categories/slug/:slug`
-- [ ] POST `/api/v1/categories` (admin)
-- [ ] PATCH `/api/v1/categories/:id` (admin)
-- [ ] DELETE `/api/v1/categories/:id` (admin)
+### Games, Reviews, Leaderboards, Matchmaking
 
-### Tags
-- [ ] GET `/api/v1/tags`
-- [ ] GET `/api/v1/tags/:id`
-- [ ] POST `/api/v1/tags` (admin)
-- [ ] PATCH `/api/v1/tags/:id` (admin)
-- [ ] DELETE `/api/v1/tags/:id` (admin)
+- [x] `GET /api/v1/games`
+- [x] `GET /api/v1/games/featured`
+- [x] `GET /api/v1/games/new`
+- [x] `GET /api/v1/games/popular`
+- [x] `GET /api/v1/games/slug/:slug`
+- [x] `GET /api/v1/games/:game_id`
+- [x] `POST /api/v1/games`
+- [x] `PATCH /api/v1/games/:game_id`
+- [x] `DELETE /api/v1/games/:game_id`
+- [x] `POST /api/v1/games/:game_id/play`
+- [x] `GET /api/v1/games/:game_id/reviews`
+- [x] `GET /api/v1/games/:game_id/reviews/average`
+- [x] `POST /api/v1/games/:game_id/reviews`
+- [x] `GET /api/v1/reviews/:id`
+- [x] `PATCH /api/v1/reviews/:id`
+- [x] `DELETE /api/v1/reviews/:id`
+- [x] `GET /api/v1/games/:game_id/leaderboard`
+- [x] `POST /api/v1/games/:game_id/leaderboard`
+- [x] `GET /api/v1/leaderboards`
+- [x] `GET /api/v1/leaderboards/me/rank`
+- [x] `POST /api/v1/games/:game_id/matchmaking/queue`
+- [x] `DELETE /api/v1/games/:game_id/matchmaking/queue`
+- [x] `GET /api/v1/games/:game_id/matchmaking/status`
+- [x] `POST /api/v1/games/:game_id/matchmaking/match`
 
-### Favorites
-- [ ] GET `/api/v1/favorites` (user's favorites)
-- [ ] POST `/api/v1/favorites` (add)
-- [ ] DELETE `/api/v1/favorites/:gameId` (remove)
-- [ ] GET `/api/v1/favorites/check/:gameId` (check if favorited)
+### Catalog Metadata
 
-### History
-- [ ] GET `/api/v1/history` (user's play history)
-- [ ] POST `/api/v1/history` (record play)
+- [x] `GET /api/v1/categories`
+- [x] `GET /api/v1/categories/with-count`
+- [x] `GET /api/v1/categories/slug/:slug`
+- [x] `GET /api/v1/categories/:id`
+- [x] `POST /api/v1/categories`
+- [x] `PATCH /api/v1/categories/:id`
+- [x] `DELETE /api/v1/categories/:id`
+- [x] `GET /api/v1/tags`
+- [x] `GET /api/v1/tags/with-count`
+- [x] `GET /api/v1/tags/slug/:slug`
+- [x] `GET /api/v1/tags/:id`
+- [x] `POST /api/v1/tags`
+- [x] `PATCH /api/v1/tags/:id`
+- [x] `DELETE /api/v1/tags/:id`
 
-### Progress
-- [ ] GET `/api/v1/progress/:gameId` (user's progress for game)
-- [ ] PUT `/api/v1/progress/:gameId` (save progress)
+### User Game Data
 
-### Reviews
-- [ ] GET `/api/v1/games/:gameId/reviews` (list)
-- [ ] POST `/api/v1/games/:gameId/reviews` (create)
-- [ ] PATCH `/api/v1/reviews/:id` (update own)
-- [ ] DELETE `/api/v1/reviews/:id` (delete own)
+- [x] `GET /api/v1/favorites`
+- [x] `POST /api/v1/favorites`
+- [x] `DELETE /api/v1/favorites/id/:id`
+- [x] `GET /api/v1/favorites/check/:gameId`
+- [x] `GET /api/v1/favorites/count`
+- [x] `DELETE /api/v1/favorites/:gameId`
+- [x] `GET /api/v1/history`
+- [x] `POST /api/v1/history`
+- [x] `GET /api/v1/history/stats`
+- [x] `DELETE /api/v1/history/:id`
+- [x] `GET /api/v1/progress`
+- [x] `POST /api/v1/progress`
+- [x] `GET /api/v1/progress/:gameId`
+- [x] `PUT /api/v1/progress/:gameId`
+- [x] `DELETE /api/v1/progress/:gameId`
 
-### Leaderboards
-- [ ] GET `/api/v1/games/:gameId/leaderboard` (with season filter)
-- [ ] POST `/api/v1/games/:gameId/leaderboard` (submit score)
+### Sessions, Recommendations, Analytics, Ads
 
-### Analytics
-- [ ] POST `/api/v1/analytics/events` (track event)
-- [ ] GET `/api/v1/analytics/events` (admin - list)
-- [ ] GET `/api/v1/analytics/games/:gameId/views` (game views)
+- [x] `GET /api/v1/sessions`
+- [x] `POST /api/v1/sessions`
+- [x] `GET /api/v1/sessions/room/:code`
+- [x] `GET /api/v1/sessions/:id/participants`
+- [x] `POST /api/v1/sessions/:id/join`
+- [x] `POST /api/v1/sessions/:id/leave`
+- [x] `POST /api/v1/sessions/:id/start`
+- [x] `POST /api/v1/sessions/:id/end`
+- [x] `GET /api/v1/sessions/:id`
+- [x] `GET /api/v1/recommendations/personalized`
+- [x] `GET /api/v1/recommendations/trending`
+- [x] `GET /api/v1/recommendations/new-releases`
+- [x] `GET /api/v1/games/:game_id/recommendations/similar`
+- [x] `GET /api/v1/analytics/me`
+- [x] `GET /api/v1/admin/analytics/platform`
+- [x] `GET /api/v1/admin/analytics/games/:game_id`
+- [x] `GET /api/v1/admin/analytics/top-games`
+- [x] `GET /api/v1/ads/active`
+- [x] `POST /api/v1/ads/:id/impression`
+- [x] `POST /api/v1/ads/:id/click`
+- [x] `GET /api/v1/admin/ads`
+- [x] `POST /api/v1/admin/ads`
+- [x] `GET /api/v1/admin/ads/:id/stats`
+- [x] `GET /api/v1/admin/ads/:id`
+- [x] `PATCH /api/v1/admin/ads/:id`
+- [x] `DELETE /api/v1/admin/ads/:id`
 
-### Matchmaking
-- [ ] POST `/api/v1/matchmaking/queue` (join queue)
-- [ ] DELETE `/api/v1/matchmaking/queue` (leave queue)
-- [ ] GET `/api/v1/matchmaking/status` (check status)
+## Verification
 
-### Sessions
-- [ ] POST `/api/v1/sessions` (create session)
-- [ ] GET `/api/v1/sessions/:id` (get session)
-- [ ] POST `/api/v1/sessions/:id/join` (join)
-- [ ] POST `/api/v1/sessions/:id/leave` (leave)
-- [ ] POST `/api/v1/sessions/:id/start` (host starts)
-- [ ] POST `/api/v1/sessions/:id/end` (host ends)
+- [x] `GOCACHE=/tmp/go-build-cache go test ./...`
 
-### Recommendations
-- [ ] GET `/api/v1/recommendations` (personalized)
-- [ ] GET `/api/v1/recommendations/similar/:gameId`
+## Backlog
 
-### Ads
-- [ ] GET `/api/v1/ads/placements` (active placements)
-- [ ] GET `/api/v1/ads/placements/:code` (by code)
-- [ ] POST `/api/v1/ads/impressions` (track impression)
-- [ ] POST `/api/v1/ads/clicks` (track click)
-
-### Home (Aggregated)
-- [ ] GET `/api/v1/home` (featured + new + popular + categories)
-
----
-
-## 📝 Notes for Tomorrow
-
-1. **Priority**: Complete remaining modules (Categories, Tags, Favorites, History, Progress) - these are core user-facing features
-2. **Then**: Reviews, Leaderboards, Analytics (content features)
-3. **Then**: Matchmaking, Sessions, Recommendations, Ads (advanced features)
-4. **Finally**: Main wiring, Docker, tests, docs
-
-The modular structure is solid - each module follows handler → service → repository pattern with interfaces.
-All database schemas and migrations are ready.
-Auth system is production-ready with JWT rotation, Redis storage, and role-based access.
+- [ ] Add real integration tests that run against disposable PostgreSQL and Redis services.
+- [ ] Add generated Swagger/OpenAPI documentation, preferably from route annotations or a maintained OpenAPI spec.
+- [ ] Add a `/api/v1/home` aggregation endpoint if the frontend still needs a single home payload.

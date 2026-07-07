@@ -19,18 +19,16 @@ var (
 	ErrInvalidCredentials   = errors.New("invalid credentials")
 	ErrAccountInactive      = errors.New("account is inactive")
 	ErrRateLimited          = errors.New("rate limit exceeded")
-	ErrConflict             = errors.New("conflict")
+	ErrConflict             = errors.New("resource conflict")
 	ErrBadRequest           = errors.New("bad request")
 	ErrUnprocessable        = errors.New("unprocessable entity")
 	ErrTooManyRequests      = errors.New("too many requests")
 	ErrServiceUnavailable   = errors.New("service unavailable")
 	ErrTimeout              = errors.New("request timeout")
-	ErrConflict             = errors.New("resource conflict")
 	ErrNotImplemented       = errors.New("not implemented")
 	ErrUnsupportedMedia     = errors.New("unsupported media type")
 	ErrForbiddenResource    = errors.New("access to resource forbidden")
 	ErrInvalidToken         = errors.New("invalid token")
-	ErrTokenExpired         = errors.New("token expired")
 	ErrRefreshRequired      = errors.New("refresh token required")
 	ErrInvalidRefreshToken  = errors.New("invalid refresh token")
 	ErrRefreshTokenRevoked  = errors.New("refresh token revoked")
@@ -49,14 +47,13 @@ var (
 	ErrNotInSession         = errors.New("user not in session")
 	ErrAlreadyFavorite      = errors.New("game already in favorites")
 	ErrNotFavorite          = errors.New("game not in favorites")
+	ErrAlreadyReviewed      = errors.New("user already reviewed this game")
 	ErrReviewExists         = errors.New("review already exists")
 	ErrReviewNotFound       = errors.New("review not found")
 	ErrInvalidRating        = errors.New("invalid rating value")
 	ErrLeaderboardNotFound  = errors.New("leaderboard not found")
-	ErrSessionNotFound      = errors.New("session not found")
 	ErrInvalidProgress      = errors.New("invalid progress data")
 	ErrProgressNotFound     = errors.New("progress not found")
-	ErrSessionFull          = errors.New("session is full")
 	ErrMatchmakingTimeout   = errors.New("matchmaking timeout")
 	ErrAlreadyInQueue       = errors.New("already in matchmaking queue")
 	ErrNotInQueue           = errors.New("not in matchmaking queue")
@@ -100,38 +97,6 @@ func Wrap(err error, code, message string) *AppError {
 }
 
 func IsNotFound(err error) bool {
-	return errors.Is(err, ErrNotFound)
-}
-
-func IsAlreadyExists(err error) bool {
-	return errors.Is(err, ErrAlreadyExists)
-}
-
-func IsUnauthorized(err error) bool {
-	return errors.Is(err, ErrUnauthorized)
-}
-
-func IsForbidden(err error) bool {
-	return errors.Is(err, ErrForbidden)
-}
-
-func IsValidationError(err error) bool {
-	return errors.Is(err, ErrValidationFailed)
-}
-
-func IsUnauthorized(err error) bool {
-	return errors.Is(err, ErrUnauthorized) || errors.Is(err, ErrTokenExpired) || errors.Is(err, ErrTokenInvalid) || errors.Is(err, ErrTokenRevoked)
-}
-
-func IsForbidden(err error) bool {
-	return errors.Is(err, ErrForbidden) || errors.Is(err, ErrForbiddenResource)
-}
-
-func IsConflict(err error) bool {
-	return errors.Is(err, ErrConflict) || errors.Is(err, ErrAlreadyExists)
-}
-
-func IsNotFound(err error) bool {
 	return errors.Is(err, ErrNotFound) ||
 		errors.Is(err, ErrUserNotFound) ||
 		errors.Is(err, ErrGameNotFound) ||
@@ -141,8 +106,27 @@ func IsNotFound(err error) bool {
 		errors.Is(err, ErrReviewNotFound) ||
 		errors.Is(err, ErrLeaderboardNotFound) ||
 		errors.Is(err, ErrProgressNotFound) ||
-		errors.Is(err, ErrAdPlacementNotFound) ||
-		errors.Is(err, ErrSessionNotFound)
+		errors.Is(err, ErrAdPlacementNotFound)
+}
+
+func IsAlreadyExists(err error) bool {
+	return errors.Is(err, ErrAlreadyExists) || errors.Is(err, ErrEmailExists) || errors.Is(err, ErrUsernameExists) || errors.Is(err, ErrReviewExists) || errors.Is(err, ErrAlreadyFavorite)
+}
+
+func IsValidationError(err error) bool {
+	return errors.Is(err, ErrValidationFailed) || errors.Is(err, ErrInvalidInput)
+}
+
+func IsUnauthorized(err error) bool {
+	return errors.Is(err, ErrUnauthorized) || errors.Is(err, ErrTokenExpired) || errors.Is(err, ErrTokenInvalid) || errors.Is(err, ErrTokenRevoked) || errors.Is(err, ErrInvalidToken) || errors.Is(err, ErrRefreshRequired) || errors.Is(err, ErrInvalidRefreshToken) || errors.Is(err, ErrRefreshTokenRevoked) || errors.Is(err, ErrRefreshTokenExpired)
+}
+
+func IsForbidden(err error) bool {
+	return errors.Is(err, ErrForbidden) || errors.Is(err, ErrForbiddenResource)
+}
+
+func IsConflict(err error) bool {
+	return errors.Is(err, ErrConflict) || errors.Is(err, ErrAlreadyExists) || errors.Is(err, ErrAlreadyInSession) || errors.Is(err, ErrAlreadyInQueue)
 }
 
 func ToHTTPStatus(err error) int {

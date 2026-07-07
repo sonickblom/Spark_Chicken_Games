@@ -1,9 +1,11 @@
 package auth
 
 import (
+	"context"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/kronos/spark-chicken-games/backend/internal/auth"
 	"github.com/kronos/spark-chicken-games/backend/internal/shared/errors"
 	"github.com/kronos/spark-chicken-games/backend/internal/shared/response"
@@ -16,7 +18,14 @@ const (
 	ContextRole     = "role"
 )
 
-func AuthMiddleware(jwtService *auth.JWTService) gin.HandlerFunc {
+// RoleChecker is an interface for looking up a user's role name from the database.
+// This allows the middleware to freshen the role claim from the DB on every request,
+// ensuring admin permissions are always up-to-date.
+type RoleChecker interface {
+	GetUserRoleName(ctx context.Context, userID uuid.UUID) (string, error)
+}
+
+func AuthMiddleware(jwtService *auth.JWTService, roleChecker ...RoleChecker) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -50,6 +59,15 @@ func AuthMiddleware(jwtService *auth.JWTService) gin.HandlerFunc {
 		c.Set(ContextUsername, claims.Username)
 		c.Set(ContextEmail, claims.Email)
 		c.Set(ContextRole, claims.Role)
+
+		// If a RoleChecker was provided, freshen the role from the database.
+		// This ensures admin endpoints always see the latest role assignment,
+		// even if the JWT was issued before a role change.
+		if len(roleChecker) > 0 && roleChecker[0] != nil {
+			if roleName, err := roleChecker[0].GetUserRoleName(c.Request.Context(), claims.UserID); err == nil && roleName != "" {
+				c.Set(ContextRole, roleName)
+			}
+		}
 
 		c.Next()
 	}

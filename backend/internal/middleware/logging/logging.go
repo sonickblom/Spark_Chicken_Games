@@ -1,11 +1,13 @@
 package logging
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
+
+// ─── Request logger middleware ──────────────────────────────────────────────
 
 func RequestLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -17,29 +19,32 @@ func RequestLogger() gin.HandlerFunc {
 
 		latency := time.Since(start)
 		status := c.Writer.Status()
-		clientIP := c.ClientIP()
 		method := c.Request.Method
-		userAgent := c.Request.UserAgent()
+		clientIP := c.ClientIP()
 
 		if raw != "" {
 			path = path + "?" + raw
 		}
 
-		logger := log.Info()
-		if status >= 400 {
-			logger = log.Warn()
-		}
-		if status >= 500 {
-			logger = log.Error()
+		ms := latency.Milliseconds()
+		timeStr := fmt.Sprintf("%dms", ms)
+		if ms >= 1000 {
+			timeStr = fmt.Sprintf("%.1fs", float64(ms)/1000)
 		}
 
-		logger.
-			Str("method", method).
-			Str("path", path).
-			Int("status", status).
-			Str("client_ip", clientIP).
-			Str("user_agent", userAgent).
-			Dur("latency", latency).
-			Msg("HTTP Request")
+		emoji := StatusIndicator(status)
+
+		fmt.Printf("  %s %3d %-6s %s %7s\n",
+			emoji,
+			status,
+			method,
+			path,
+			timeStr,
+		)
+
+		// Slow request warning (>500ms)
+		if latency > 500*time.Millisecond && clientIP != "" {
+			fmt.Printf("           ⚠ SLOW from %s\n", clientIP)
+		}
 	}
 }

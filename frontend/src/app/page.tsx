@@ -1,332 +1,68 @@
+"use client";
+
 import React from "react";
-import { Metadata } from "next";
 import Link from "next/link";
 import GameGrid from "@/components/game/GameGrid";
-
-export const metadata: Metadata = {
-  title: "Latency Zero - Jogos Instantâneos",
-  description:
-    "Plataforma de jogos web de alta performance com acesso instantâneo e suporte offline.",
-  openGraph: {
-    title: "Latency Zero - Jogos Instantâneos",
-    description:
-      "Plataforma de jogos web de alta performance com acesso instantâneo e suporte offline.",
-    type: "website",
-    locale: "pt_BR",
-  },
-};
-
-const featuredGames = [
-  {
-    id: "1",
-    slug: "cyber-runner",
-    title: "Cyber Runner",
-    description: "Corra pelas ruas neon de uma metrópole futurista.",
-    shortDescription: "Runner cyberpunk de alta velocidade",
-    thumbnail: "https://picsum.photos/seed/cyber-runner/400/225",
-    coverImage: "https://picsum.photos/seed/cyber-runner/800/450",
-    category: {
-      id: "1",
-      slug: "action",
-      name: "Ação",
-      description: "",
-      icon: "⚡",
-      gameCount: 50,
-      color: "red",
-    },
-    tags: ["Cyberpunk", "Runner", "Single Player"],
-    rating: 4.8,
-    playCount: 125000,
-    releaseDate: "2024-01-15",
-    developer: "Neon Studios",
-    publisher: "Latency Zero",
-    iframeUrl: "https://example.com/cyber-runner",
-    width: 800,
-    height: 600,
-    isFeatured: true,
-    isNew: false,
-    isPopular: true,
-    createdAt: "2024-01-15T00:00:00Z",
-    updatedAt: "2024-01-15T00:00:00Z",
-  },
-  {
-    id: "2",
-    slug: "neon-puzzle",
-    title: "Neon Puzzle",
-    description: "Resolva puzzles brilhantes em um mundo de luz.",
-    shortDescription: "Puzzle relaxante com estética neon",
-    thumbnail: "https://picsum.photos/seed/neon-puzzle/400/225",
-    coverImage: "https://picsum.photos/seed/neon-puzzle/800/450",
-    category: {
-      id: "2",
-      slug: "puzzle",
-      name: "Puzzle",
-      description: "",
-      icon: "🧩",
-      gameCount: 30,
-      color: "blue",
-    },
-    tags: ["Puzzle", "Relaxante", "Cores"],
-    rating: 4.6,
-    playCount: 89000,
-    releaseDate: "2024-02-20",
-    developer: "Pixel Labs",
-    publisher: "Latency Zero",
-    iframeUrl: "https://example.com/neon-puzzle",
-    width: 800,
-    height: 600,
-    isFeatured: true,
-    isNew: true,
-    isPopular: false,
-    createdAt: "2024-02-20T00:00:00Z",
-    updatedAt: "2024-02-20T00:00:00Z",
-  },
-  {
-    id: "3",
-    slug: "arcade-classics",
-    title: "Arcade Classics",
-    description: "Reviva os clássicos dos fliperamas.",
-    shortDescription: "Coleção de jogos arcade retrô",
-    thumbnail: "https://picsum.photos/seed/arcade-classics/400/225",
-    coverImage: "https://picsum.photos/seed/arcade-classics/800/450",
-    category: {
-      id: "3",
-      slug: "arcade",
-      name: "Arcade",
-      description: "",
-      icon: "🎮",
-      gameCount: 40,
-      color: "yellow",
-    },
-    tags: ["Retrô", "Arcade", "Multiplayer"],
-    rating: 4.9,
-    playCount: 210000,
-    releaseDate: "2023-12-10",
-    developer: "Retro Games Inc",
-    publisher: "Latency Zero",
-    iframeUrl: "https://example.com/arcade-classics",
-    width: 800,
-    height: 600,
-    isFeatured: true,
-    isNew: false,
-    isPopular: true,
-    createdAt: "2023-12-10T00:00:00Z",
-    updatedAt: "2023-12-10T00:00:00Z",
-  },
-];
-
-const newGames = [
-  {
-    id: "4",
-    slug: "space-shooter",
-    title: "Space Shooter X",
-    description: "Batalha espacial intensa com gráficos modernos.",
-    shortDescription: "Shoot'em up espacial",
-    thumbnail: "https://picsum.photos/seed/space-shooter/400/225",
-    coverImage: "https://picsum.photos/seed/space-shooter/800/450",
-    category: {
-      id: "1",
-      slug: "action",
-      name: "Ação",
-      description: "",
-      icon: "⚡",
-      gameCount: 50,
-      color: "red",
-    },
-    tags: ["Espaço", "Shooter", "Arcade"],
-    rating: 4.5,
-    playCount: 45000,
-    releaseDate: "2024-03-01",
-    developer: "Star Games",
-    publisher: "Latency Zero",
-    iframeUrl: "https://example.com/space-shooter",
-    width: 800,
-    height: 600,
-    isFeatured: false,
-    isNew: true,
-    isPopular: false,
-    createdAt: "2024-03-01T00:00:00Z",
-    updatedAt: "2024-03-01T00:00:00Z",
-  },
-  {
-    id: "5",
-    slug: "platform-hero",
-    title: "Platform Hero",
-    description: "Aventura de plataforma desafiadora.",
-    shortDescription: "Platformer precision",
-    thumbnail: "https://picsum.photos/seed/platform-hero/400/225",
-    coverImage: "https://picsum.photos/seed/platform-hero/800/450",
-    category: {
-      id: "4",
-      slug: "platformer",
-      name: "Plataforma",
-      description: "",
-      icon: "🏃",
-      gameCount: 25,
-      color: "green",
-    },
-    tags: ["Plataforma", "Precision", "Desafio"],
-    rating: 4.7,
-    playCount: 32000,
-    releaseDate: "2024-03-10",
-    developer: "Jump Studios",
-    publisher: "Latency Zero",
-    iframeUrl: "https://example.com/platform-hero",
-    width: 800,
-    height: 600,
-    isFeatured: false,
-    isNew: true,
-    isPopular: false,
-    createdAt: "2024-03-10T00:00:00Z",
-    updatedAt: "2024-03-10T00:00:00Z",
-  },
-];
-
-const popularGames = [
-  {
-    id: "6",
-    slug: "battle-arena",
-    title: "Battle Arena",
-    description: "Combate multiplayer intenso em arenas.",
-    shortDescription: "Multiplayer battle arena",
-    thumbnail: "https://picsum.photos/seed/battle-arena/400/225",
-    coverImage: "https://picsum.photos/seed/battle-arena/800/450",
-    category: {
-      id: "1",
-      slug: "action",
-      name: "Ação",
-      description: "",
-      icon: "⚡",
-      gameCount: 50,
-      color: "red",
-    },
-    tags: ["Multiplayer", "Battle", "Competitivo"],
-    rating: 4.8,
-    playCount: 500000,
-    releaseDate: "2023-11-01",
-    developer: "Arena Games",
-    publisher: "Latency Zero",
-    iframeUrl: "https://example.com/battle-arena",
-    width: 800,
-    height: 600,
-    isFeatured: false,
-    isNew: false,
-    isPopular: true,
-    createdAt: "2023-11-01T00:00:00Z",
-    updatedAt: "2023-11-01T00:00:00Z",
-  },
-  {
-    id: "7",
-    slug: "racing-fever",
-    title: "Racing Fever",
-    description: "Corridas de alta velocidade em pistas neon.",
-    shortDescription: "Racing futurista",
-    thumbnail: "https://picsum.photos/seed/racing-fever/400/225",
-    coverImage: "https://picsum.photos/seed/racing-fever/800/450",
-    category: {
-      id: "5",
-      slug: "racing",
-      name: "Corrida",
-      description: "",
-      icon: "🏎️",
-      gameCount: 15,
-      color: "orange",
-    },
-    tags: ["Corrida", "Velocidade", "Neon"],
-    rating: 4.6,
-    playCount: 380000,
-    releaseDate: "2023-10-15",
-    developer: "Speed Studios",
-    publisher: "Latency Zero",
-    iframeUrl: "https://example.com/racing-fever",
-    width: 800,
-    height: 600,
-    isFeatured: false,
-    isNew: false,
-    isPopular: true,
-    createdAt: "2023-10-15T00:00:00Z",
-    updatedAt: "2023-10-15T00:00:00Z",
-  },
-];
-
-const categories = [
-  {
-    id: "1",
-    slug: "action",
-    name: "Ação",
-    description: "",
-    icon: "⚡",
-    gameCount: 50,
-    color: "red",
-  },
-  {
-    id: "2",
-    slug: "puzzle",
-    name: "Puzzle",
-    description: "",
-    icon: "🧩",
-    gameCount: 30,
-    color: "blue",
-  },
-  {
-    id: "3",
-    slug: "arcade",
-    name: "Arcade",
-    description: "",
-    icon: "🎮",
-    gameCount: 40,
-    color: "yellow",
-  },
-  {
-    id: "4",
-    slug: "platformer",
-    name: "Plataforma",
-    description: "",
-    icon: "🏃",
-    gameCount: 25,
-    color: "green",
-  },
-  {
-    id: "5",
-    slug: "racing",
-    name: "Corrida",
-    description: "",
-    icon: "🏎️",
-    gameCount: 15,
-    color: "orange",
-  },
-  {
-    id: "6",
-    slug: "strategy",
-    name: "Estratégia",
-    description: "",
-    icon: "♟️",
-    gameCount: 20,
-    color: "purple",
-  },
-  {
-    id: "7",
-    slug: "rpg",
-    name: "RPG",
-    description: "",
-    icon: "⚔️",
-    gameCount: 35,
-    color: "pink",
-  },
-  {
-    id: "8",
-    slug: "sports",
-    name: "Esportes",
-    description: "",
-    icon: "⚽",
-    gameCount: 18,
-    color: "teal",
-  },
-];
+import { useUploadedGames } from "@/hooks/use-uploaded-games";
 
 export default function HomePage() {
+  const { games, loading } = useUploadedGames();
+
+  const sortedByDate = [...games].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
+  const sortedByPlays = [...games].sort((a, b) => b.playCount - a.playCount);
+
+  const mapGame = (game: (typeof games)[0]) => ({
+    id: game.id,
+    slug: game.slug,
+    title: game.title,
+    description: game.description,
+    shortDescription: game.description,
+    thumbnail: "",
+    coverImage: "",
+    category: {
+      id: "upload",
+      slug: "upload",
+      name: "Upload",
+      description: "",
+      icon: "🎮",
+      gameCount: games.length,
+    },
+    tags: ["HTML", "Web"],
+    rating: 0,
+    playCount: game.playCount,
+    releaseDate: game.createdAt,
+    developer: "Spark Chicken Games",
+    publisher: "Spark Chicken Games",
+    iframeUrl: game.embedUrl || game.url,
+    width: 800,
+    height: 600,
+    isFeatured: true,
+    isNew: false,
+    isPopular: game.playCount > 0,
+    createdAt: game.createdAt,
+    updatedAt: game.updatedAt,
+  });
+
+  const featuredGames = games.map(mapGame);
+  const newGamesList = sortedByDate.slice(0, 6).map(mapGame);
+  const popularGamesList = sortedByPlays.slice(0, 6).map(mapGame);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-neon-green border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-500">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black">
+      {/* Hero Section - KEEP AS IS */}
       <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black" />
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5" />
@@ -431,100 +167,106 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Featured Games Section */}
       <section className="py-20 bg-gray-950 border-y border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-10">
             <div>
-              <h2 className="text-3xl font-bold text-white">Em Destaque</h2>
+              <h2 className="text-3xl font-bold text-white">
+                {games.length > 0 ? "Jogos Disponíveis" : "Em Destaque"}
+              </h2>
               <p className="text-gray-400 mt-1">
-                Nossos jogos mais recomendados
+                {games.length > 0
+                  ? `${games.length} jogo(s) publicado(s) na plataforma`
+                  : "Nossos jogos mais recomendados"}
               </p>
             </div>
-            <a
-              href="/games?sort=featured"
-              className="text-neon-green hover:text-neon-green/80 font-medium transition-colors"
-            >
-              Ver todos →
-            </a>
-          </div>
-          <GameGrid games={featuredGames} />
-        </div>
-      </section>
-
-      <section className="py-20 bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <h2 className="text-3xl font-bold text-white">Novos Jogos</h2>
-              <p className="text-gray-400 mt-1">
-                Lançamentos recentes na plataforma
-              </p>
-            </div>
-            <a
-              href="/games?sort=newest"
-              className="text-neon-green hover:text-neon-green/80 font-medium transition-colors"
-            >
-              Ver todos →
-            </a>
-          </div>
-          <GameGrid games={newGames} />
-        </div>
-      </section>
-
-      <section className="py-20 bg-gray-950 border-y border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <h2 className="text-3xl font-bold text-white">Mais Populares</h2>
-              <p className="text-gray-400 mt-1">
-                Jogos mais jogados pela comunidade
-              </p>
-            </div>
-            <a
-              href="/games?sort=popular"
-              className="text-neon-green hover:text-neon-green/80 font-medium transition-colors"
-            >
-              Ver todos →
-            </a>
-          </div>
-          <GameGrid games={popularGames} />
-        </div>
-      </section>
-
-      <section className="py-20 bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <h2 className="text-3xl font-bold text-white">Categorias</h2>
-              <p className="text-gray-400 mt-1">Explore por gênero</p>
-            </div>
-            <Link
-              href="/categories"
-              className="text-neon-green hover:text-neon-green/80 font-medium transition-colors"
-            >
-              Ver todas →
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
-            {categories.map((category) => (
+            {games.length > 0 && (
               <Link
-                key={category.id}
-                href={`/categories/${category.slug}`}
-                className="group p-6 bg-gray-800 rounded-xl border border-gray-700 hover:border-neon-green/50 hover:shadow-[0_0_20px_rgba(0,255,65,0.1)] transition-all duration-300 text-center"
+                href="/games"
+                className="text-neon-green hover:text-neon-green/80 font-medium transition-colors"
               >
-                <span className="text-4xl mb-3 block">{category.icon}</span>
-                <h3 className="font-bold text-white group-hover:text-neon-green transition-colors">
-                  {category.name}
-                </h3>
-                <p className="text-sm text-gray-400 mt-1">
-                  {category.gameCount} jogos
-                </p>
+                Ver todos →
               </Link>
-            ))}
+            )}
           </div>
+          {featuredGames.length > 0 ? (
+            <GameGrid games={featuredGames} />
+          ) : (
+            <div className="text-center py-16 bg-gray-900/30 rounded-xl border border-gray-800">
+              <svg
+                className="w-16 h-16 mx-auto text-gray-700 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                />
+              </svg>
+              <p className="text-gray-400 text-lg mb-2">
+                Nenhum jogo publicado ainda
+              </p>
+              <p className="text-gray-600 text-sm">
+                Faça upload do primeiro jogo na página de admin
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
+      {/* New Games Section */}
+      {newGamesList.length > 0 && (
+        <section className="py-20 bg-black">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-10">
+              <div>
+                <h2 className="text-3xl font-bold text-white">
+                  Recém Adicionados
+                </h2>
+                <p className="text-gray-400 mt-1">
+                  Lançamentos recentes na plataforma
+                </p>
+              </div>
+              <Link
+                href="/games?sort=newest"
+                className="text-neon-green hover:text-neon-green/80 font-medium transition-colors"
+              >
+                Ver todos →
+              </Link>
+            </div>
+            <GameGrid games={newGamesList} />
+          </div>
+        </section>
+      )}
+
+      {/* Popular Games Section */}
+      {popularGamesList.length > 0 && (
+        <section className="py-20 bg-gray-950 border-y border-gray-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-10">
+              <div>
+                <h2 className="text-3xl font-bold text-white">Mais Jogados</h2>
+                <p className="text-gray-400 mt-1">
+                  Jogos mais jogados pela comunidade
+                </p>
+              </div>
+              <Link
+                href="/games?sort=popular"
+                className="text-neon-green hover:text-neon-green/80 font-medium transition-colors"
+              >
+                Ver todos →
+              </Link>
+            </div>
+            <GameGrid games={popularGamesList} />
+          </div>
+        </section>
+      )}
+
+      {/* CTA Section - KEEP AS IS */}
       <section className="py-20 bg-gray-950 border-y border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">

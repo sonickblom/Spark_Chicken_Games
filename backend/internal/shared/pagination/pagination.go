@@ -76,11 +76,8 @@ func (p *Params) OrderBy() string {
 		"play_count":    true,
 		"score":         true,
 		"rating_avg":    true,
-		"play_count":    true,
 		"published_at":  true,
 		"last_login_at": true,
-		"created_at":    true,
-		"updated_at":    true,
 	}
 	col := strings.ToLower(p.SortBy)
 	if !allowedColumns[col] {

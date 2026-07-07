@@ -34,14 +34,20 @@ export function GameCard({
         href={`/game/${game.slug}`}
         className="group flex gap-4 p-2 bg-cyber-dark-card/50 rounded-lg hover:bg-cyber-dark-card transition-all duration-300"
       >
-        <div className="relative w-24 h-32 flex-shrink-0 rounded-lg overflow-hidden">
-          <Image
-            src={game.coverImage}
-            alt={game.title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-            sizes="96px"
-          />
+        <div className="relative w-24 h-32 flex-shrink-0 rounded-lg overflow-hidden bg-cyber-dark-surface">
+          {game.coverImage ? (
+            <Image
+              src={game.coverImage}
+              alt={game.title}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              sizes="96px"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-cyber-text-muted text-xs">
+              Sem imagem
+            </div>
+          )}
           {hasDiscount && (
             <span className="absolute top-2 left-2 bg-red-500 text-cyber-dark text-xs font-bold px-1.5 py-0.5 rounded">
               -{game.discount}%
@@ -62,7 +68,7 @@ export function GameCard({
                 {game.rating.toFixed(1)}
               </span>
               <span className="text-xs text-cyber-text-muted">
-                ({formatNumber(game.reviewCount)})
+                ({formatNumber(game.reviewCount ?? 0)})
               </span>
             </div>
           </div>
@@ -95,14 +101,20 @@ export function GameCard({
           href={`/game/${game.slug}`}
           className="block relative rounded-2xl overflow-hidden aspect-[16/9]"
         >
-          <Image
-            src={game.bannerImage || game.coverImage}
-            alt={game.title}
-            fill
-            priority={priority}
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
+          {game.bannerImage || game.coverImage ? (
+            <Image
+              src={game.bannerImage || game.coverImage}
+              alt={game.title}
+              fill
+              priority={priority}
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-cyber-text-muted bg-cyber-dark-surface">
+              Sem imagem
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-cyber-dark/90 via-cyber-dark/30 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6">
             <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -132,7 +144,8 @@ export function GameCard({
                 </span>
               </div>
               <div className="flex items-center gap-1 ml-auto">
-                {game.originalPrice && game.originalPrice > (game.price ?? 0) ? (
+                {game.originalPrice &&
+                game.originalPrice > (game.price ?? 0) ? (
                   <span className="text-sm text-cyber-text-muted line-through">
                     {formatPrice(game.originalPrice)}
                   </span>
@@ -195,13 +208,19 @@ export function GameCard({
         href={`/game/${game.slug}`}
         className="block relative aspect-[3/4] overflow-hidden"
       >
-        <Image
-          src={game.coverImage}
-          alt={game.title}
-          fill
-          className="object-cover hover:scale-105 transition-transform duration-300"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-        />
+        {game.coverImage ? (
+          <Image
+            src={game.coverImage}
+            alt={game.title}
+            fill
+            className="object-cover hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-cyber-text-muted bg-cyber-dark-surface">
+            Sem imagem
+          </div>
+        )}
         <AnimatePresence mode="popLayout">
           {hasDiscount && (
             <motion.div
@@ -299,7 +318,11 @@ export function GameCard({
           </div>
           <div className="flex items-center gap-1 ml-auto text-cyber-text-muted text-xs">
             <Calendar className="w-3 h-3" aria-hidden="true" />
-            <span>{game.releaseDate ? new Date(game.releaseDate).getFullYear() : '—'}</span>
+            <span>
+              {game.releaseDate
+                ? new Date(game.releaseDate).getFullYear()
+                : "—"}
+            </span>
           </div>
         </div>
 
@@ -333,4 +356,3 @@ export function GameCard({
     </Card>
   );
 }
-

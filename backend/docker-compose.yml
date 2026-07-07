@@ -1,0 +1,49 @@
+services:
+  api:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SCG_DATABASE_HOST: postgres
+      SCG_DATABASE_PORT: 5432
+      SCG_DATABASE_USER: postgres
+      SCG_DATABASE_PASSWORD: postgres
+      SCG_DATABASE_NAME: spark_chicken_games
+      SCG_REDIS_HOST: redis
+      SCG_REDIS_PORT: 6379
+      SCG_SERVER_HOST: 0.0.0.0
+      SCG_SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: spark_chicken_games
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d spark_chicken_games"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

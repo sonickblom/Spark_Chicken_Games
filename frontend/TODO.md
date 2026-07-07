@@ -13,38 +13,46 @@
 - ✅ Header & Footer responsivos
 - ✅ Tailwind Config com tema Cyber-Performance
 - ✅ Global CSS com utilitários
+- ✅ **Build passando sem erros de tipo ou lint**
+- ✅ **Script `pnpm typecheck` para verificar erros de TypeScript rapidamente**
+- ✅ **Script `pnpm check` para rodar typecheck + lint de uma vez**
 
 ---
 
-## ❌ Páginas Faltando
+## ✅ Páginas Implementadas
 
-### 1. Página do Jogo (`/game/[slug]`)
+### 1. Página do Jogo (`/game/[slug]`) ✅
 - [x] Corrigir imports faltando (Card, CardHeader, CardTitle, CardDescription, CardContent, Download)
 - [x] Remover uso de `Game` type não utilizado
 - [x] Corrigir async client component warning
-- [ ] Implementar GameEmbed (iframe/canvas player)
-- [ ] Adicionar RelatedGames section
+- [x] Implementar GameEmbed (iframe/canvas player)
 - [x] Implementar botões de ação (Jogar, Favoritar, Compartilhar)
-- [ ] Adicionar metadados SEO dinâmicos
+- [x] Adicionar metadados SEO dinâmicos
+- [x] Corrigir `game.price`, `game.reviewCount`, `game.releaseDate` undefined checks
+- [ ] Adicionar RelatedGames section
 
-### 2. Página de Categorias (`/categories/[slug]`)
+### 2. Página de Categorias (`/categories/[slug]`) ✅
 - [x] Remover variável `categoriesLoading` não usada
 - [x] Simplificar componente (versão client complexa desnecessária)
 - [x] Usar Server Components onde possível (metadata.ts separado)
+- [x] Corrigir `meta.limit` → `meta.pageSize`
+- [x] Corrigir `variant="primary"` → `variant="default"`
 
-### 3. Página de Busca (`/search`)
-- [ ] Criar página completa com resultados
+### 3. Página de Busca (`/search`) ✅
+- [x] Criar página completa com resultados
+- [x] Implementar busca (via `useSearchGames` hook)
+- [x] Adicionar `Suspense` boundary para `useSearchParams()`
 - [ ] Implementar busca instantânea (debounce)
 - [ ] Adicionar filtros laterais
 - [ ] Paginação ou infinite scroll
 
-### 4. Autenticação
-- [ ] `/login` - Formulário de login visual
-- [ ] `/register` - Formulário de registro visual
-- [ ] Integração com `useAuth` hook
+### 4. Autenticação ✅
+- [x] `/login` - Formulário de login visual
+- [x] `/register` - Formulário de registro visual
+- [x] Integração com `useAuth` hook
 - [ ] Protected routes para `/profile`
 
-### 5. Perfil do Usuário (`/profile`)
+### 5. Perfil do Usuário (`/profile`) ❌
 - [ ] Dashboard com abas: Favoritos, Histórico, Progresso
 - [ ] Integração com `useFavorites`, `useRecentlyPlayed`
 - [ ] Configurações de conta
@@ -54,15 +62,13 @@
 ## ❌ Componentes Faltando
 
 ### Core Components
-- [ ] **GameEmbed** - Player de jogo (iframe/canvas WebGL)
 - [ ] **RelatedGames** - Carrossel de jogos relacionados
 - [ ] **FeaturedCarousel** - Carrossel hero na home
 - [ ] **SidebarFilters** - Filtros colapsáveis para `/games` e `/categories`
-- [ ] **GameEmbed** - Wrapper para iframe com fullscreen, loading
 
 ### UI Components
 - [x] **Input** - Corrigir `className` não usado
-- [ ] **Card** - Criar componente Card reutilizável
+- [x] **Card** - Criado e funcional
 - [ ] **Modal** - Para login/register, compartilhar, etc.
 - [ ] **Dropdown** - Para ordenação, filtros
 - [ ] **Tabs** - Para perfil do usuário
@@ -73,39 +79,18 @@
 
 ---
 
-## ❌ Correções de Lint (Prioridade Alta)
+## ✅ Correções de Lint e Build (Concluídas)
 
-### src/app/page.tsx
-- [x] Corrigir parsing error: JSX closing tag para Link
-
-### src/components/game/GameCard.tsx
-- [x] Corrigir parsing error: JSX closing tag para Link
-
-### src/components/SearchBar.tsx
-- [x] Adicionar `aria-selected` aos botões com role="option"
-- [x] Escapar aspas nas strings JSX
-- [x] Remover import `Image` não usado
-
-### src/components/GameCard.tsx
-- [x] Remover imports não usados: Tag, Monitor, Gamepad2, Zap
-- [x] Substituir `<img>` por `<Image>` do Next.js
-
-### src/components/ui/Input.tsx
-- [x] Remover `className` não usado da destructuring
-
-### src/app/categories/[slug]/page.tsx
-- [x] Remover `categoriesLoading` não usada
-- [x] Corrigir warning de missing dependency `resolvedSlug`
-- [x] Corrigir type error `priceRange` as `[number, number]`
-- [x] Corrigir erro `mockCategories.then` - `mockCategories` não é Promise
-
-### src/app/game/[slug]/page.tsx
-- [x] Remover import `Game` não usado
-- [x] Adicionar imports faltando: Card, CardHeader, CardTitle, CardDescription, CardContent, Download
-- [x] Corrigir async client component warning (removido "use client")
-
-### src/hooks/use-data.ts
-- [x] Remover `USE_MOCK` das dependency arrays dos useCallback (warnings corrigidos)
+- [x] Todos os erros de lint resolvidos
+- [x] `Error: Event handlers cannot be passed to Client Component props` — Adicionado `"use client"` ao `Button.tsx` e `game/GameCard.tsx`
+- [x] `useSearchParams() should be wrapped in a suspense boundary` — Adicionado `Suspense` no search page
+- [x] `'game.price' is possibly 'undefined'` — Adicionado `?? 0` e checks opcionais
+- [x] `'game.reviewCount' is possibly 'undefined'` — Adicionado `?? 0`
+- [x] `'game.releaseDate' is possibly 'undefined'` — Adicionado fallback condicional
+- [x] `Property 'limit' does not exist on type` — Corrigido para `pageSize`
+- [x] `Type '"primary"' is not assignable` — Corrigido para `"default"`
+- [x] `Expected 1 arguments, but got 2` em `formatDate` — Adicionado parâmetro `options` opcional
+- [x] `createReview` type mismatch — Adicionado type assertion
 
 ---
 
@@ -139,15 +124,12 @@
 
 ---
 
-## ❌ Mock Data & Services
+## ✅ Mock Data & Services
 
-### lib/mock-data.ts
-- [ ] Verificar se dados mockados estão completos e funcionando
-- [ ] Funções assíncronas simulando API
-- [ ] Categorias, jogos, usuários, reviews, news
-
-### Services
-- [ ] `api.ts` - Verificar se todos endpoints necessários existem
+- [x] Dados mockados completos e funcionando
+- [x] Funções assíncronas simulando API
+- [x] Categorias, jogos, usuários, reviews, news
+- [x] `api.ts` com todos endpoints necessários
 - [ ] Adicionar interceptors para refresh token
 - [ ] Error handling padronizado
 
@@ -191,11 +173,11 @@
 
 ## 📋 Priorização Sugerida
 
-### Sprint 1 (Core Pages)
+### Sprint 1 (Core Pages) ✅
 1. ✅ Corrigir todos os erros de lint (bloqueiam build)
-2. Completar `/game/[slug]` com GameEmbed
-3. Criar `/search` page
-4. Criar `/login` e `/register`
+2. ✅ Completar `/game/[slug]` com GameEmbed
+3. ✅ Criar `/search` page
+4. ✅ Criar `/login` e `/register`
 
 ### Sprint 2 (User Features)
 5. Completar `/profile` com favoritos/histórico
@@ -216,73 +198,64 @@
 
 ---
 
-## 📁 Estrutura de Arquivos Esperada (Final)
+## 📁 Estrutura de Arquivos (Atual)
 
 ```
 src/
 ├── app/
 │   ├── layout.tsx ✅
 │   ├── page.tsx ✅
-│   ├── globals.css ✅ globals.css ✅
+│   ├── globals.css ✅
 │   ├── games/
 │   │   └── page.tsx ✅
 │   ├── game/
 │   │   └── [slug]/
-│   │       └── page.tsx ❌ (lint errors - em progresso)
+│   │       └── page.tsx ✅ (build ok)
 │   ├── categories/
 │   │   └── [slug]/
-│   │       ├── page.tsx ❌ (lint errors - em progresso)
+│   │       ├── page.tsx ✅ (build ok)
 │   │       └── metadata.ts ✅
 │   ├── search/
-│   │   └── page.tsx ❌ (missing)
+│   │   └── page.tsx ✅ (build ok)
 │   ├── login/
-│   │   └── page.tsx ❌ (missing)
+│   │   └── page.tsx ✅
 │   ├── register/
-│   │   └── page.tsx ❌ (missing)
-│   ├── profile/
-│   │   ├── page.tsx ❌ (missing)
-│   │   ├── favorites/
-│   │   ├── history/
-│   │   └── settings/
-│   └── api/ (se necessário)
+│   │   └── page.tsx ✅
+│   └── profile/
+│       └── (vazio) ❌
 ├── components/
 │   ├── ui/
-│   │   ├── Button.tsx ✅
+│   │   ├── Button.tsx ✅ (+ "use client")
 │   │   ├── Skeleton.tsx ✅
 │   │   ├── CategoryPill.tsx ✅
-│   │   ├── SearchBar.tsx ✅ (lint warnings - corrigidos)
-│   │   ├── Input.tsx ✅ (lint error - corrigido)
-│   │   ├── Card.tsx ❌ (missing)
-│   │   ├── Modal.tsx ❌ (missing)
-│   │   ├── Dropdown.tsx ❌ (missing)
-│   │   ├── Tabs.tsx ❌ (missing)
-│   │   ├── Avatar.tsx ❌ (missing)
-│   │   ├── Badge.tsx ❌ (missing)
-│   │   ├── Pagination.tsx ❌ (missing)
-│   │   └── index.ts (barrel exports)
+│   │   ├── SearchBar.tsx ✅
+│   │   ├── Input.tsx ✅
+│   │   ├── Card.tsx ✅
+│   │   └── Motion.tsx ✅
 │   ├── game/
-│   │   ├── GameCard.tsx ✅
+│   │   ├── GameCard.tsx ✅ (+ "use client")
 │   │   ├── GameGrid.tsx ✅
-│   │   ├── GameEmbed.tsx ❌ (missing)
+│   │   ├── GameEmbed.tsx ✅
 │   │   ├── RelatedGames.tsx ❌ (missing)
 │   │   └── FeaturedCarousel.tsx ❌ (missing)
 │   ├── layout/
 │   │   ├── Header.tsx ✅
 │   │   ├── Footer.tsx ✅
 │   │   └── SidebarFilters.tsx ❌ (missing)
-│   └── SearchBar.tsx ✅ (lint warnings - corrigidos)
+│   ├── GameGrid.tsx ✅
+│   ├── GameCard.tsx ✅
+│   └── SearchBar.tsx ✅
 ├── hooks/
-│   ├── use-data.ts ✅ (warnings - corrigidos)
-│   ├── use-debounce.ts ❌ (missing)
-│   ├── use-infinite-scroll.ts ❌ (missing)
-│   └── index.ts
+│   ├── use-data.ts ✅
+│   ├── use-debounce.ts ❌
+│   └── use-infinite-scroll.ts ❌
 ├── lib/
-│   ├── utils.ts ✅
-│   ├── mock-data.ts ❌ (missing - verificar se existe)
-│   └── constants.ts ❌ (missing)
+│   ├── utils.ts ✅ (formatDate aceita options)
+│   ├── mock-data.ts ✅
+│   └── constants.ts ❌
 ├── services/
 │   ├── api.ts ✅
-│   └── analytics.ts ❌ (missing)
+│   └── analytics.ts ❌
 ├── types/
 │   └── index.ts ✅
 └── styles/
@@ -294,14 +267,17 @@ src/
 ## 🔧 Comandos Úteis
 
 ```bash
+# Verificar type errors (rápido, sem build)
+pnpm typecheck
+
 # Verificar lint
 pnpm lint
 
 # Corrigir auto-fixable
 pnpm lint:fix
 
-# Type check
-pnpm tsc --noEmit
+# Type check + lint (tudo)
+pnpm check
 
 # Build production
 pnpm build
@@ -316,5 +292,5 @@ pnpm test:watch
 
 ---
 
-*Última atualização: 2026-07-3*
-*Total de tarefas: ~80+*
+*Última atualização: 2026-07-05*
+*Build: ✅ Passando sem erros*

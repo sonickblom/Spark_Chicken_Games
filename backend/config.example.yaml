@@ -1,0 +1,66 @@
+app:
+  name: "spark-chicken-games"
+  environment: "development"
+  debug: true
+  version: "1.0.0"
+
+database:
+  host: "localhost"
+  port: 5432
+  user: "postgres"
+  password: "postgres"
+  name: "spark_chicken_games"
+  sslmode: "disable"
+  max_open_conns: 25
+  max_idle_conns: 5
+  conn_max_lifetime: "5m"
+  conn_max_idle_time: "2m"
+
+redis:
+  host: "localhost"
+  port: 6379
+  password: ""
+  db: 0
+  pool_size: 10
+  min_idle_conns: 2
+
+jwt:
+  access_secret: "change-me-in-production-access-secret"
+  refresh_secret: "change-me-in-production-refresh-secret"
+  access_token_expiry: "15m"
+  refresh_token_expiry: "168h"
+  issuer: "spark-chicken-games"
+
+server:
+  host: "0.0.0.0"
+  port: 8080
+  read_timeout: "10s"
+  write_timeout: "10s"
+  idle_timeout: "60s"
+
+cors:
+  allowed_origins:
+    - "http://localhost:3000"
+    - "http://localhost:3001"
+  allowed_methods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "PATCH"
+    - "DELETE"
+    - "OPTIONS"
+  allowed_headers:
+    - "Origin"
+    - "Content-Type"
+    - "Accept"
+    - "Authorization"
+    - "X-Requested-With"
+  exposed_headers:
+    - "Content-Length"
+  allow_credentials: true
+  max_age: 86400
+
+ratelimit:
+  enabled: true
+  requests_per_minute: 60
+  burst: 10

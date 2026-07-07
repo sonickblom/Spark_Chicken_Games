@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mail, Lock, LogIn, ArrowRight } from "lucide-react";
-import { useAuth } from "@/hooks/use-data";
+import { useAuthContext } from "@/lib/auth-context";
 import { Button } from "@/components/ui/Button";
 
 export default function LoginPage() {
@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { login } = useAuth();
+  const { login } = useAuthContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,9 +23,16 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      router.push("/");
+      // Redirect to admin if that's where they were going
+      const redirect =
+        new URL(window.location.href).searchParams.get("redirect") || "/";
+      router.push(redirect);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Erro ao fazer login. Tente novamente.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Erro ao fazer login. Tente novamente.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -35,8 +42,8 @@ export default function LoginPage() {
     <div className="min-h-screen bg-cyber-dark flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-grid-pattern opacity-10" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyber-neon/10 rounded-full blur-[120px] pointer-events-none" />
-      
-      <motion.div 
+
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md relative z-10"
@@ -52,8 +59,12 @@ export default function LoginPage() {
 
         <div className="bg-cyber-dark-card border border-cyber-dark-border rounded-2xl p-8 backdrop-blur-xl">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-cyber-text mb-2">Bem-vindo de volta</h1>
-            <p className="text-cyber-text-muted">Acesse sua conta para continuar jogando</p>
+            <h1 className="text-2xl font-bold text-cyber-text mb-2">
+              Bem-vindo de volta
+            </h1>
+            <p className="text-cyber-text-muted">
+              Acesse sua conta para continuar jogando
+            </p>
           </div>
 
           {error && (
@@ -64,7 +75,9 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm text-cyber-text-muted font-medium">E-mail</label>
+              <label className="text-sm text-cyber-text-muted font-medium">
+                E-mail
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-cyber-text-muted">
                   <Mail className="h-5 w-5" />
@@ -82,8 +95,13 @@ export default function LoginPage() {
 
             <div className="space-y-2">
               <div className="flex justify-between">
-                <label className="text-sm text-cyber-text-muted font-medium">Senha</label>
-                <Link href="#" className="text-sm text-cyber-neon hover:underline">
+                <label className="text-sm text-cyber-text-muted font-medium">
+                  Senha
+                </label>
+                <Link
+                  href="#"
+                  className="text-sm text-cyber-neon hover:underline"
+                >
                   Esqueceu a senha?
                 </Link>
               </div>
@@ -102,10 +120,10 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Button 
-              type="submit" 
-              fullWidth 
-              size="lg" 
+            <Button
+              type="submit"
+              fullWidth
+              size="lg"
               leftIcon={<LogIn className="w-5 h-5" />}
               disabled={isLoading}
             >
@@ -115,7 +133,10 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center text-cyber-text-muted text-sm">
             Não tem uma conta?{" "}
-            <Link href="/register" className="text-cyber-neon hover:underline font-medium inline-flex items-center gap-1">
+            <Link
+              href="/register"
+              className="text-cyber-neon hover:underline font-medium inline-flex items-center gap-1"
+            >
               Criar conta <ArrowRight className="w-3 h-3" />
             </Link>
           </div>

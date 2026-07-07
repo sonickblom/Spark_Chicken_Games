@@ -18,8 +18,8 @@ CREATE TRIGGER update_roles_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- Seed default roles
-INSERT INTO roles (name, description) VALUES
-    ('admin', 'Administrator with full access'),
-    ('moderator', 'Moderator with limited admin access'),
-    ('user', 'Regular user')
+INSERT INTO roles (id, name, description) VALUES
+    ('00000000-0000-0000-0000-000000000001', 'admin', 'Administrator with full access'),
+    ('00000000-0000-0000-0000-000000000002', 'moderator', 'Moderator with limited admin access'),
+    ('00000000-0000-0000-0000-000000000003', 'user', 'Regular user')
 ON CONFLICT (name) DO NOTHING;
