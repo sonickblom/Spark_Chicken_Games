@@ -39,6 +39,10 @@ func New(cfg *config.Config, database *db.DB, redisClient *db.Redis) *Server {
 	return s
 }
 
+func (s *Server) Handler() http.Handler {
+	return s.http.Handler
+}
+
 func (s *Server) Start() error {
 	if err := s.http.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		return err
