@@ -1,12 +1,5 @@
 {
   "framework": "nextjs",
   "installCommand": "npm install",
-  "buildCommand": "npm run build",
-  "functions": {
-    "api/index.go": {
-      "runtime": "@vercel/go@3.0.0",
-      "maxDuration": 30
-    }
-  },
-  "rewrites": [{ "source": "/api/(.*)", "destination": "/api/index.go" }]
+  "buildCommand": "npm run build"
 }
