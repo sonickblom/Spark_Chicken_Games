@@ -176,7 +176,7 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("server.idle_timeout", "60s")
 
 	// CORS
-	v.SetDefault("cors.allowed_origins", []string{"http://localhost:3000"})
+	v.SetDefault("cors.allowed_origins", []string{"http://localhost:3000", "https://spark-chicken-games-jg8o.vercel.app"})
 	v.SetDefault("cors.allowed_methods", []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"})
 	v.SetDefault("cors.allowed_headers", []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"})
 	v.SetDefault("cors.exposed_headers", []string{"Content-Length"})

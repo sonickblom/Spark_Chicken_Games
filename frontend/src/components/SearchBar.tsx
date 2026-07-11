@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, ChevronDown, Filter } from "lucide-react";
@@ -86,77 +88,89 @@ export function SearchBar({
   return (
     <div ref={wrapperRef} className={cn("relative w-full max-w-xl", className)}>
       <form onSubmit={handleSubmit} className="relative">
-        <div className="relative">
-          <label htmlFor="search" className="sr-only">
-            Buscar jogos
-          </label>
-          <Input
-            ref={inputRef}
-            id="search"
-            type="search"
-            value={value}
-            onChange={(e) => {
-              onChange(e.target.value);
-              if (e.target.value.trim() && suggestions.length > 0) {
-                setShowSuggestions(true);
-              } else {
-                setShowSuggestions(false);
-              }
-            }}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onKeyDown={handleKeyDown}
-            placeholder={placeholder}
-            leftIcon={
-              <Search
-                className={cn(
-                  "w-5 h-5 transition-colors",
-                  isFocused || value
-                    ? "text-cyber-neon"
-                    : "text-cyber-text-muted",
-                )}
-                aria-hidden="true"
-              />
-            }
-            rightIcon={
-              value ? (
-                <button
-                  type="button"
-                  onClick={clearSearch}
-                  className="p-1 text-cyber-text-muted hover:text-cyber-neon transition-colors"
-                  aria-label="Limpar busca"
-                >
-                  <X className="w-5 h-5" aria-hidden="true" />
-                </button>
-              ) : (
-                <Filter
-                  className="w-5 h-5 text-cyber-text-muted"
+        {/* Double-bezel input wrapper */}
+        <div
+          className={cn(
+            "bg-white/[0.02] ring-1 p-[1px] rounded-xl transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+            isFocused
+              ? "ring-neon-green/40 shadow-[0_0_24px_rgba(0,255,65,0.1)]"
+              : "ring-white/[0.06]",
+          )}
+        >
+          <div className="relative bg-[#0a0a12] rounded-[calc(0.75rem-1px)]">
+            <label htmlFor="search" className="sr-only">
+              Buscar jogos
+            </label>
+            <Input
+              ref={inputRef}
+              id="search"
+              type="search"
+              value={value}
+              onChange={(e) => {
+                onChange(e.target.value);
+                if (e.target.value.trim() && suggestions.length > 0) {
+                  setShowSuggestions(true);
+                } else {
+                  setShowSuggestions(false);
+                }
+              }}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder}
+              leftIcon={
+                <Search
+                  className={cn(
+                    "w-5 h-5 transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                    isFocused || value
+                      ? "text-neon-green"
+                      : "text-cyber-text-muted",
+                  )}
                   aria-hidden="true"
                 />
-              )
-            }
-            className={cn(
-              "input-cyber",
-              isFocused && "border-cyber-neon shadow-neon-sm",
-            )}
-          />
+              }
+              rightIcon={
+                value ? (
+                  <button
+                    type="button"
+                    onClick={clearSearch}
+                    className="p-1 text-cyber-text-muted hover:text-neon-green transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] pointer-events-auto"
+                    aria-label="Limpar busca"
+                  >
+                    <X className="w-5 h-5" aria-hidden="true" />
+                  </button>
+                ) : (
+                  <Filter
+                    className="w-5 h-5 text-cyber-text-muted"
+                    aria-hidden="true"
+                  />
+                )
+              }
+              className={cn(
+                "bg-transparent border-0 focus:ring-0 focus:outline-none focus-visible:ring-0",
+                isFocused && "shadow-none",
+              )}
+            />
+          </div>
         </div>
 
+        {/* Suggestions dropdown */}
         <AnimatePresence>
           {showSuggestions && suggestions.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.98 }}
+              initial={{ opacity: 0, y: -8, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-              className="absolute top-full left-0 right-0 mt-2 bg-cyber-dark-card border border-cyber-dark-border rounded-xl shadow-lg overflow-hidden z-50"
+              exit={{ opacity: 0, y: -8, scale: 0.98 }}
+              transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
+              className="absolute top-full left-0 right-0 mt-2 backdrop-blur-xl bg-[#0a0a12]/80 border border-neon-green/10 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(0,255,65,0.05)] overflow-hidden z-50"
               role="listbox"
             >
-              <div className="p-2 border-b border-cyber-dark-border">
-                <p className="text-xs font-semibold text-cyber-neon uppercase tracking-wider">
+              <div className="px-4 py-2.5 border-b border-white/[0.05]">
+                <p className="text-[10px] font-mono font-semibold text-neon-green uppercase tracking-widest">
                   Sugestões
                 </p>
               </div>
+
               <div className="max-h-96 overflow-y-auto">
                 {suggestions.slice(0, 5).map((game) => (
                   <button
@@ -168,11 +182,11 @@ export function SearchBar({
                       onSearch(game.title);
                       setShowSuggestions(false);
                     }}
-                    className="w-full px-4 py-3 text-left hover:bg-cyber-dark-surface transition-colors flex items-center gap-3 group"
+                    className="w-full px-4 py-3 text-left hover:bg-neon-green/[0.04] transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] flex items-center gap-3 group/item border-b border-white/[0.03] last:border-b-0"
                     role="option"
                     aria-selected={false}
                   >
-                    <div className="relative w-12 h-16 flex-shrink-0 rounded overflow-hidden bg-cyber-dark-surface">
+                    <div className="relative w-12 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-[#12121e] ring-1 ring-white/[0.06]">
                       {game.thumbnail ? (
                         <Image
                           src={game.thumbnail}
@@ -182,33 +196,37 @@ export function SearchBar({
                           loading="lazy"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-cyber-text-muted text-xs">
+                        <div className="w-full h-full flex items-center justify-center text-cyber-text-muted font-mono text-[8px]">
                           Sem imagem
                         </div>
                       )}
                     </div>
+
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-cyber-text truncate group-hover:text-cyber-neon transition-colors">
+                      <p className="font-sans font-bold text-sm text-white truncate group-hover/item:text-neon-green transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]">
                         {game.title}
                       </p>
-                      <p className="text-xs text-cyber-text-muted truncate">
+                      <p className="font-mono text-[11px] text-cyber-text-muted truncate">
                         {game.category?.name || "Sem Categoria"}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1 text-cyber-neon font-semibold">
+
+                    <div className="flex items-center gap-1 font-sans font-bold text-xs text-neon-green">
                       {game.isFree ? "Gratuito" : "Jogar"}
                     </div>
                   </button>
                 ))}
+
                 {suggestions.length > 5 && (
                   <button
                     type="button"
                     onClick={() => onSearch(value)}
-                    className="w-full px-4 py-3 text-center text-cyber-neon hover:bg-cyber-dark-surface transition-colors border-t border-cyber-dark-border"
+                    className="w-full px-4 py-3 text-center font-mono text-xs text-neon-green hover:bg-neon-green/[0.04] transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] border-t border-white/[0.05]"
                   >
-                    Ver todos os {suggestions.length} resultados para {value}
+                    Ver todos os {suggestions.length} resultados para{" "}
+                    <span className="font-bold">{value}</span>
                     <ChevronDown
-                      className="w-4 h-4 ml-2 inline"
+                      className="w-4 h-4 ml-1.5 inline"
                       aria-hidden="true"
                     />
                   </button>

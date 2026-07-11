@@ -2,14 +2,124 @@
 
 import React from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  ChevronRight,
+  Zap,
+  Monitor,
+  Wifi,
+  Trophy,
+  Gamepad2,
+  Upload,
+} from "lucide-react";
 import GameGrid from "@/components/game/GameGrid";
 import { useUploadedGames } from "@/hooks/use-uploaded-games";
+
+/* ------------------------------------------------------------------ */
+/*  Animation helpers                                                  */
+/* ------------------------------------------------------------------ */
+
+const ease = [0.32, 0.72, 0, 1] as const;
+
+function fadeUp(
+  delay: number,
+): {
+  initial: { opacity: number; y: number; filter: string };
+  animate: { opacity: number; y: number; filter: string };
+  transition: { duration: number; delay: number; ease: number[] };
+} {
+  return {
+    initial: { opacity: 0, y: 28, filter: "blur(8px)" },
+    animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+    transition: { duration: 0.7, delay, ease },
+  };
+}
+
+function revealOnScroll(delay = 0) {
+  return {
+    initial: { opacity: 0, y: 40, filter: "blur(6px)" },
+    whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
+    viewport: { once: true, amount: 0.25 },
+    transition: { duration: 0.7, delay, ease },
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Reusable section header                                             */
+/* ------------------------------------------------------------------ */
+
+function SectionHeader({
+  eyebrow,
+  title,
+  subtitle,
+  linkHref,
+  linkLabel,
+}: {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  linkHref?: string;
+  linkLabel?: string;
+}) {
+  return (
+    <div className="flex items-end justify-between gap-6">
+      <motion.div {...revealOnScroll()}>
+          <span className="inline-block rounded-full border border-neon-green/30 bg-neon-green/5 px-3 py-1 text-[10px] font-mono uppercase tracking-[0.2em] text-neon-green">
+            {eyebrow}
+          </span>
+          <h2 className="mt-4 font-sans text-3xl font-bold text-white sm:text-4xl">
+            {title}
+          </h2>
+          <p className="mt-2 max-w-lg font-mono text-sm text-cyber-text-muted">
+            {subtitle}
+          </p>
+        </motion.div>
+
+      {linkHref && linkLabel && (
+        <Link
+          href={linkHref}
+          className="group hidden shrink-0 items-center gap-1.5 text-sm font-medium text-neon-green transition-all duration-500 hover:gap-2.5 hover:text-[#33ff66] sm:inline-flex"
+          style={{ transitionTimingFunction: "cubic-bezier(0.32,0.72,0,1)" }}
+        >
+          {linkLabel}
+          <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+        </Link>
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Empty state                                                        */
+/* ------------------------------------------------------------------ */
+
+function EmptyState() {
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 rounded-[1.25rem] border border-white/5 bg-[#0a0a12] py-20 text-center">
+      <div className="animate-glitch">
+        <Upload className="h-14 w-14 text-neon-green/30" />
+      </div>
+      <p className="font-sans text-lg font-bold text-white">
+        Nenhum jogo publicado
+      </p>
+      <p className="max-w-xs font-mono text-xs text-cyber-text-muted">
+        Faça upload do primeiro jogo na página de administração para começar.
+      </p>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Page                                                               */
+/* ------------------------------------------------------------------ */
 
 export default function HomePage() {
   const { games, loading } = useUploadedGames();
 
   const sortedByDate = [...games].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    (a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
   const sortedByPlays = [...games].sort((a, b) => b.playCount - a.playCount);
 
@@ -49,253 +159,307 @@ export default function HomePage() {
   const newGamesList = sortedByDate.slice(0, 6).map(mapGame);
   const popularGamesList = sortedByPlays.slice(0, 6).map(mapGame);
 
+  /* ── Loading ────────────────────────────────────────── */
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-2 border-neon-green border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500">Carregando...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#030305]">
+        <div className="flex flex-col items-center gap-5">
+          <div className="relative h-14 w-14">
+            <div className="absolute inset-0 rounded-full border-2 border-neon-green/20" />
+            <div className="absolute inset-0 animate-spin rounded-full border-2 border-transparent border-t-neon-green" />
+            <div className="absolute inset-2 animate-spin rounded-full border-2 border-transparent border-b-neon-green/40 [animation-direction:reverse] [animation-duration:1.5s]" />
+            <div className="absolute inset-0 rounded-full shadow-[0_0_30px_rgba(0,255,65,0.25)]" />
+          </div>
+          <span className="font-mono text-xs uppercase tracking-[0.25em] text-neon-green/60">
+            Inicializando sistema...
+          </span>
         </div>
       </div>
     );
   }
 
+  /* ── Render ─────────────────────────────────────────── */
+
   return (
-    <div className="min-h-screen bg-black">
-      {/* Hero Section - KEEP AS IS */}
-      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black" />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neon-green/10 rounded-full blur-3xl" />
+    <div className="relative min-h-screen bg-[#030305]">
+      {/* ================================================================ */}
+      {/*  HERO                                                           */}
+      {/* ================================================================ */}
+      <section className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden">
+        {/* Animated grid background */}
+        <div className="absolute inset-0 animate-grid-move bg-grid-pattern opacity-[0.07]" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neon-green/10 border border-neon-green/30 text-neon-green text-sm font-medium mb-8">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-green opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-neon-green"></span>
-            </span>
-            Acesso Instantâneo • Sem Downloads • Offline Ready
-          </div>
+        {/* Radial green glow orb */}
+        <div className="absolute left-1/2 top-1/2 h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-neon-green/[0.06] blur-3xl" />
 
-          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-bold text-white mb-6 leading-tight">
-            Latency<span className="text-neon-green"> Zero</span>
-          </h1>
+        {/* Scanline overlay */}
+        <div
+          className="pointer-events-none absolute inset-0 z-10"
+          style={{
+            background:
+              "repeating-linear-gradient(0deg, rgba(0,255,65,0.015) 0px, rgba(0,255,65,0.015) 1px, transparent 1px, transparent 3px)",
+          }}
+        />
 
-          <p className="text-xl sm:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto">
-            A plataforma de jogos web de alta performance. Jogue
-            instantaneamente no navegador, com suporte robusto para execução
-            offline e sincronização de progresso.
-          </p>
+        {/* Content */}
+        <div className="relative z-20 max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center text-center">
+            {/* Eyebrow badge */}
+            <motion.div {...fadeUp(0.1)}>
+              <span className="inline-flex items-center gap-2 rounded-full border border-neon-green/30 bg-neon-green/[0.06] px-4 py-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-neon-green shadow-[0_0_20px_rgba(0,255,65,0.1)]">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-neon-green opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-neon-green" />
+                </span>
+                Acesso Instantâneo · Offline Ready
+              </span>
+            </motion.div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/games"
-              className="px-8 py-4 text-lg font-bold bg-neon-green text-black rounded-lg hover:bg-neon-green/80 transition-colors w-full sm:w-auto"
+            {/* Title */}
+            <motion.h1
+              {...fadeUp(0.25)}
+              className="mt-10 font-sans text-6xl font-black leading-[0.9] tracking-tight text-white sm:text-8xl lg:text-[10rem]"
             >
-              Explorar Jogos
-            </Link>
-            <Link
-              href="/categories"
-              className="px-8 py-4 text-lg font-medium bg-gray-800 text-white border border-gray-700 rounded-lg hover:border-neon-green/50 hover:bg-gray-700 transition-colors w-full sm:w-auto"
-            >
-              Ver Categorias
-            </Link>
-          </div>
+              Latency
+              <br />
+              <span
+                className="glow-neon text-neon-green"
+                style={{
+                  textShadow:
+                    "0 0 20px rgba(0,255,65,0.6), 0 0 60px rgba(0,255,65,0.25), 0 0 100px rgba(0,255,65,0.1)",
+                }}
+              >
+                Zero
+              </span>
+            </motion.h1>
 
-          <div className="mt-16 flex flex-wrap items-center justify-center gap-8 text-gray-400 text-sm">
-            <div className="flex items-center gap-2">
-              <svg
-                className="h-5 w-5 text-neon-green"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                aria-hidden="true"
+            {/* Subtitle */}
+            <motion.p
+              {...fadeUp(0.4)}
+              className="mt-8 max-w-2xl font-mono text-sm leading-relaxed text-cyber-text-muted sm:text-base"
+              style={{ letterSpacing: "0.04em" }}
+            >
+              Plataforma de jogos web de alta performance. Jogue
+              instantaneamente no navegador com suporte offline e
+              sincronização de progresso.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div
+              {...fadeUp(0.55)}
+              className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
+            >
+              <Link
+                href="/games"
+                className="btn-cyber flex items-center gap-2 px-8 py-3.5 text-sm font-bold"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>Zero Instalação</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg
-                className="h-5 w-5 text-neon-green"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                aria-hidden="true"
+                <Zap className="h-4 w-4" />
+                Explorar Jogos
+              </Link>
+              <Link
+                href="/categories"
+                className="btn-cyber-outline flex items-center gap-2 px-8 py-3.5 text-sm font-bold"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>Offline First</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg
-                className="h-5 w-5 text-neon-green"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>Cross-Platform</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg
-                className="h-5 w-5 text-neon-green"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>Gratuito</span>
-            </div>
+                Ver Categorias
+              </Link>
+            </motion.div>
+
+            {/* Stats row */}
+            <motion.div
+              {...fadeUp(0.7)}
+              className="mt-16 flex flex-wrap items-center justify-center gap-0"
+            >
+              {[
+                { label: "Zero Instalação", icon: Monitor },
+                { label: "Offline First", icon: Wifi },
+                { label: "Cross-Platform", icon: Gamepad2 },
+                { label: "Gratuito", icon: Trophy },
+              ].map((stat, i) => (
+                <React.Fragment key={stat.label}>
+                  {i > 0 && (
+                    <div className="hidden h-8 w-px bg-white/10 sm:block" />
+                  )}
+                  <div className="flex items-center gap-2.5 px-5 py-2">
+                    <stat.icon className="h-4 w-4 text-neon-green/70" />
+                    <span className="font-mono text-xs text-cyber-text-muted">
+                      {stat.label}
+                    </span>
+                  </div>
+                </React.Fragment>
+              ))}
+            </motion.div>
           </div>
         </div>
+
+        {/* Bottom gradient fade */}
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#030305] to-transparent" />
       </section>
 
-      {/* Featured Games Section */}
-      <section className="py-20 bg-gray-950 border-y border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <h2 className="text-3xl font-bold text-white">
-                {games.length > 0 ? "Jogos Disponíveis" : "Em Destaque"}
+      {/* ================================================================ */}
+      {/*  FEATURED / ALL GAMES                                           */}
+      {/* ================================================================ */}
+      <section className="relative border-t border-white/[0.04] bg-[#030305] py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between gap-6">
+            <motion.div {...revealOnScroll()}>
+              <span className="inline-block rounded-full border border-neon-green/30 bg-neon-green/5 px-3 py-1 text-[10px] font-mono uppercase tracking-[0.2em] text-neon-green">
+                System
+              </span>
+              <h2 className="mt-4 font-sans text-3xl font-bold text-white sm:text-4xl">
+                {games.length > 0 ? "Jogos Disponíveis" : "Catálogo"}
               </h2>
-              <p className="text-gray-400 mt-1">
+              <p className="mt-2 max-w-lg font-mono text-sm text-cyber-text-muted">
                 {games.length > 0
                   ? `${games.length} jogo(s) publicado(s) na plataforma`
                   : "Nossos jogos mais recomendados"}
               </p>
-            </div>
+            </motion.div>
+
             {games.length > 0 && (
               <Link
                 href="/games"
-                className="text-neon-green hover:text-neon-green/80 font-medium transition-colors"
+                className="group hidden shrink-0 items-center gap-1.5 text-sm font-medium text-neon-green transition-all duration-500 hover:gap-2.5 hover:text-[#33ff66] sm:inline-flex"
+                style={{
+                  transitionTimingFunction: "cubic-bezier(0.32,0.72,0,1)",
+                }}
               >
-                Ver todos →
+                Ver todos
+                <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
               </Link>
             )}
           </div>
-          {featuredGames.length > 0 ? (
-            <GameGrid games={featuredGames} />
-          ) : (
-            <div className="text-center py-16 bg-gray-900/30 rounded-xl border border-gray-800">
-              <svg
-                className="w-16 h-16 mx-auto text-gray-700 mb-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                />
-              </svg>
-              <p className="text-gray-400 text-lg mb-2">
-                Nenhum jogo publicado ainda
-              </p>
-              <p className="text-gray-600 text-sm">
-                Faça upload do primeiro jogo na página de admin
-              </p>
-            </div>
-          )}
+
+          <div className="mt-10">
+            {featuredGames.length > 0 ? (
+              <motion.div {...revealOnScroll(0.1)}>
+                <GameGrid games={featuredGames} />
+              </motion.div>
+            ) : (
+              <motion.div {...revealOnScroll(0.1)}>
+                <EmptyState />
+              </motion.div>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* New Games Section */}
+      {/* ================================================================ */}
+      {/*  NEW GAMES                                                      */}
+      {/* ================================================================ */}
       {newGamesList.length > 0 && (
-        <section className="py-20 bg-black">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-10">
-              <div>
-                <h2 className="text-3xl font-bold text-white">
-                  Recém Adicionados
-                </h2>
-                <p className="text-gray-400 mt-1">
-                  Lançamentos recentes na plataforma
-                </p>
-              </div>
-              <Link
-                href="/games?sort=newest"
-                className="text-neon-green hover:text-neon-green/80 font-medium transition-colors"
-              >
-                Ver todos →
-              </Link>
+        <section className="relative border-t border-white/[0.04] bg-[#020204] py-24">
+          {/* Subtle gradient divider */}
+          <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neon-green/20 to-transparent" />
+
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <SectionHeader
+              eyebrow="Launches"
+              title="Recém Adicionados"
+              subtitle="Lançamentos recentes na plataforma"
+              linkHref="/games?sort=newest"
+              linkLabel="Ver todos"
+            />
+            <div className="mt-10">
+              <motion.div {...revealOnScroll(0.1)}>
+                <GameGrid games={newGamesList} />
+              </motion.div>
             </div>
-            <GameGrid games={newGamesList} />
           </div>
         </section>
       )}
 
-      {/* Popular Games Section */}
+      {/* ================================================================ */}
+      {/*  POPULAR GAMES                                                  */}
+      {/* ================================================================ */}
       {popularGamesList.length > 0 && (
-        <section className="py-20 bg-gray-950 border-y border-gray-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-10">
-              <div>
-                <h2 className="text-3xl font-bold text-white">Mais Jogados</h2>
-                <p className="text-gray-400 mt-1">
-                  Jogos mais jogados pela comunidade
-                </p>
-              </div>
-              <Link
-                href="/games?sort=popular"
-                className="text-neon-green hover:text-neon-green/80 font-medium transition-colors"
-              >
-                Ver todos →
-              </Link>
+        <section className="relative border-t border-white/[0.04] bg-[#030305] py-24">
+          <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neon-green/20 to-transparent" />
+
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <SectionHeader
+              eyebrow="Trending"
+              title="Mais Jogados"
+              subtitle="Jogos mais jogados pela comunidade"
+              linkHref="/games?sort=popular"
+              linkLabel="Ver todos"
+            />
+            <div className="mt-10">
+              <motion.div {...revealOnScroll(0.1)}>
+                <GameGrid games={popularGamesList} />
+              </motion.div>
             </div>
-            <GameGrid games={popularGamesList} />
           </div>
         </section>
       )}
 
-      {/* CTA Section - KEEP AS IS */}
-      <section className="py-20 bg-gray-950 border-y border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Pronto para Jogar?
-          </h2>
-          <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
+      {/* ================================================================ */}
+      {/*  CTA                                                            */}
+      {/* ================================================================ */}
+      <section className="relative border-t border-white/[0.04] bg-[#020204] py-32 overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute left-1/2 top-1/2 h-[500px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-neon-green/[0.05] blur-[120px]" />
+        <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neon-green/20 to-transparent" />
+
+        <div className="relative mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+          <motion.div {...revealOnScroll()}>
+            <h2 className="font-sans text-4xl font-black text-white sm:text-5xl lg:text-6xl">
+              Pronto para{" "}
+              <span className="glow-neon text-neon-green">Jogar</span>?
+            </h2>
+          </motion.div>
+
+          <motion.p
+            {...revealOnScroll(0.1)}
+            className="mx-auto mt-6 max-w-xl font-mono text-sm leading-relaxed text-cyber-text-muted"
+          >
             Junte-se a milhões de jogadores e descubra sua próxima aventura
             favorita. Sem downloads, sem espera, apenas diversão instantânea.
-          </p>
-          <Link
-            href="/games"
-            className="inline-flex items-center gap-2 px-8 py-4 text-lg font-bold bg-neon-green text-black rounded-lg hover:bg-neon-green/80 transition-colors"
+          </motion.p>
+
+          <motion.div
+            {...revealOnScroll(0.2)}
+            className="mt-10 flex justify-center"
           >
-            Começar Agora
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
+            <Link
+              href="/games"
+              className="group inline-flex items-center gap-0 rounded-full bg-neon-green pl-8 pr-2 py-2 font-bold text-black shadow-[0_0_30px_rgba(0,255,65,0.3)] transition-all duration-500 hover:shadow-[0_0_50px_rgba(0,255,65,0.5)] active:scale-95"
+              style={{
+                transitionTimingFunction: "cubic-bezier(0.32,0.72,0,1)",
+              }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
-              />
-            </svg>
-          </Link>
+              Começar Agora
+              <span className="ml-4 flex h-10 w-10 items-center justify-center rounded-full bg-black/15 transition-colors duration-300 group-hover:bg-black/25">
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+              </span>
+            </Link>
+          </motion.div>
+
+          {/* Trust indicators */}
+          <motion.div
+            {...revealOnScroll(0.3)}
+            className="mt-14 flex flex-wrap items-center justify-center gap-8"
+          >
+            {[
+              { value: "0ms", label: "Setup" },
+              { value: "100%", label: "Free" },
+              { value: "24/7", label: "Online" },
+            ].map((stat, i) => (
+              <React.Fragment key={stat.label}>
+                {i > 0 && (
+                  <div className="hidden h-8 w-px bg-white/10 sm:block" />
+                )}
+                <div className="flex flex-col items-center gap-1 px-4">
+                  <span className="font-sans text-xl font-bold text-white">
+                    {stat.value}
+                  </span>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-cyber-text-muted">
+                    {stat.label}
+                  </span>
+                </div>
+              </React.Fragment>
+            ))}
+          </motion.div>
         </div>
       </section>
     </div>

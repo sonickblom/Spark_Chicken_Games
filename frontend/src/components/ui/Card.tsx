@@ -1,9 +1,9 @@
 "use client";
 
-import { forwardRef, type HTMLAttributes } from "react";
+import React, { forwardRef, type HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
-export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+export interface CardProps extends React.PropsWithChildren<HTMLAttributes<HTMLDivElement>> {
   variant?: "default" | "glass" | "elevated";
   hover?: boolean;
   padding?: "none" | "sm" | "md" | "lg";
@@ -22,10 +22,18 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     ref,
   ) => {
     const variants = {
-      default: "bg-cyber-dark-card border border-cyber-dark-border",
-      glass: "glass-card",
-      elevated:
-        "bg-cyber-dark-card border border-cyber-dark-border shadow-card",
+      default: cn(
+        // Outer shell
+        "bg-white/[0.02] ring-1 ring-white/[0.06] p-[1px] rounded-[1.25rem]",
+      ),
+      glass: cn(
+        "rounded-[1.25rem] backdrop-blur-xl bg-white/[0.03] border border-white/[0.08]",
+      ),
+      elevated: cn(
+        // Outer shell with green glow
+        "bg-white/[0.02] ring-1 ring-white/[0.06] p-[1px] rounded-[1.25rem]",
+        "shadow-[0_0_40px_rgba(0,255,65,0.06),0_4px_24px_rgba(0,0,0,0.4)]",
+      ),
     };
 
     const paddings = {
@@ -36,19 +44,38 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     };
 
     const hoverStyles = hover
-      ? "hover:border-cyber-neon-dim hover:shadow-card hover:shadow-neon-sm transition-all duration-300"
+      ? cn(
+          "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+          "hover:ring-neon-green/30 hover:shadow-[0_0_30px_rgba(0,255,65,0.1)]",
+        )
       : "";
 
+    // Double-bezel: outer shell wraps inner core
+    if (variant === "default" || variant === "elevated") {
+      return (
+        <div
+          ref={ref}
+          className={cn(variants[variant], hoverStyles)}
+          {...props}
+        >
+          <div
+            className={cn(
+              "bg-[#0a0a12] rounded-[calc(1.25rem-1px)]",
+              "shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]",
+              paddings[padding],
+            )}
+          >
+            {children}
+          </div>
+        </div>
+      );
+    }
+
+    // Glass variant is a single layer
     return (
       <div
         ref={ref}
-        className={cn(
-          "rounded-xl",
-          variants[variant],
-          paddings[padding],
-          hoverStyles,
-          className,
-        )}
+        className={cn(variants[variant], paddings[padding], hoverStyles)}
         {...props}
       >
         {children}
@@ -59,11 +86,13 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
 
 Card.displayName = "Card";
 
-export type CardHeaderProps = HTMLAttributes<HTMLDivElement>;
+// ── Card sub-components ──
+
+export type CardHeaderProps = React.PropsWithChildren<HTMLAttributes<HTMLDivElement>>;
 
 export const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
   ({ className, children, ...props }, ref) => (
-    <div ref={ref} className={cn("mb-4", className)} {...props}>
+    <div ref={ref} className={cn("mb-5", className)} {...props}>
       {children}
     </div>
   ),
@@ -71,7 +100,7 @@ export const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
 
 CardHeader.displayName = "CardHeader";
 
-export interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {
+export interface CardTitleProps extends React.PropsWithChildren<HTMLAttributes<HTMLHeadingElement>> {
   as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 }
 
@@ -79,7 +108,10 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
   ({ className, as: Component = "h3", children, ...props }, ref) => (
     <Component
       ref={ref}
-      className={cn("text-xl font-bold text-cyber-text", className)}
+      className={cn(
+        "font-sans text-xl font-bold tracking-wide text-cyber-text",
+        className,
+      )}
       {...props}
     >
       {children}
@@ -89,7 +121,7 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
 
 CardTitle.displayName = "CardTitle";
 
-export type CardDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
+export type CardDescriptionProps = React.PropsWithChildren<HTMLAttributes<HTMLParagraphElement>>;
 
 export const CardDescription = forwardRef<
   HTMLParagraphElement,
@@ -97,7 +129,10 @@ export const CardDescription = forwardRef<
 >(({ className, children, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-cyber-text-muted text-sm mt-1", className)}
+    className={cn(
+      "mt-1.5 font-mono text-sm text-cyber-text-muted",
+      className,
+    )}
     {...props}
   >
     {children}
@@ -106,7 +141,7 @@ export const CardDescription = forwardRef<
 
 CardDescription.displayName = "CardDescription";
 
-export type CardContentProps = HTMLAttributes<HTMLDivElement>;
+export type CardContentProps = React.PropsWithChildren<HTMLAttributes<HTMLDivElement>>;
 
 export const CardContent = forwardRef<HTMLDivElement, CardContentProps>(
   ({ className, children, ...props }, ref) => (
@@ -118,14 +153,14 @@ export const CardContent = forwardRef<HTMLDivElement, CardContentProps>(
 
 CardContent.displayName = "CardContent";
 
-export type CardFooterProps = HTMLAttributes<HTMLDivElement>;
+export type CardFooterProps = React.PropsWithChildren<HTMLAttributes<HTMLDivElement>>;
 
 export const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(
   ({ className, children, ...props }, ref) => (
     <div
       ref={ref}
       className={cn(
-        "mt-4 pt-4 border-t border-cyber-dark-border flex items-center gap-2",
+        "mt-5 flex items-center gap-2 border-t border-white/[0.05] pt-5",
         className,
       )}
       {...props}

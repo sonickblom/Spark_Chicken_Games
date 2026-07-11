@@ -1,11 +1,21 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Orbitron, JetBrains_Mono } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/lib/auth-context";
 
-const inter = Inter({ subsets: ["latin"] });
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  variable: "--font-orbitron",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Latency Zero - Jogos Instantâneos",
@@ -23,10 +33,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className="scroll-smooth">
-      <body className={inter.className}>
+      <body
+        className={`${orbitron.variable} ${jetbrainsMono.variable} font-mono antialiased`}
+      >
         <AuthProvider>
           <Header />
-          <main className="min-h-screen bg-gray-900 text-gray-100">
+          <main className="min-h-screen bg-[#030305] text-gray-100">
             {children}
           </main>
           <Footer />
