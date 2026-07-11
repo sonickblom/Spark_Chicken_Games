@@ -9,7 +9,7 @@ import type {
   Review,
 } from "@/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://spark-chicken-gamesbackend-production.up.railway.app/api/v1";
 
 /**
  * Backend response wrapper shape:
