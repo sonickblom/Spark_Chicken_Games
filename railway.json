@@ -5,8 +5,6 @@
     "dockerfilePath": "Dockerfile"
   },
   "deploy": {
-    "startCommand": "spark-chicken-api",
-    "healthcheckPath": "/health",
-    "healthcheckTimeout": 30
+    "startCommand": "spark-chicken-api"
   }
 }
