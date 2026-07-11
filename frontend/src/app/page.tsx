@@ -27,7 +27,7 @@ function fadeUp(
 ): {
   initial: { opacity: number; y: number; filter: string };
   animate: { opacity: number; y: number; filter: string };
-  transition: { duration: number; delay: number; ease: number[] };
+  transition: { duration: number; delay: number; ease: readonly number[] };
 } {
   return {
     initial: { opacity: 0, y: 28, filter: "blur(8px)" },
