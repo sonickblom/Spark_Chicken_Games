@@ -11,10 +11,10 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/gin-gonic/gin"
-	"github.com/kronos/spark-chicken-games/backend/internal/config"
-	"github.com/kronos/spark-chicken-games/backend/internal/db"
-	"github.com/kronos/spark-chicken-games/backend/internal/middleware/logging"
-	"github.com/kronos/spark-chicken-games/backend/internal/server"
+	"github.com/kronos/spark-chicken-games/backend/pkg/config"
+	"github.com/kronos/spark-chicken-games/backend/pkg/db"
+	"github.com/kronos/spark-chicken-games/backend/pkg/middleware/logging"
+	"github.com/kronos/spark-chicken-games/backend/pkg/server"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )

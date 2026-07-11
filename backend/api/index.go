@@ -3,9 +3,9 @@ package handler
 import (
 	"net/http"
 
-	"github.com/kronos/spark-chicken-games/backend/internal/config"
-	"github.com/kronos/spark-chicken-games/backend/internal/db"
-	"github.com/kronos/spark-chicken-games/backend/internal/server"
+	"github.com/kronos/spark-chicken-games/backend/pkg/config"
+	"github.com/kronos/spark-chicken-games/backend/pkg/db"
+	"github.com/kronos/spark-chicken-games/backend/pkg/server"
 )
 
 var handler http.Handler

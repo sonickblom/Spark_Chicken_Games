@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/kronos/spark-chicken-games/backend/internal/config"
-	"github.com/kronos/spark-chicken-games/backend/internal/db"
+	"github.com/kronos/spark-chicken-games/backend/pkg/config"
+	"github.com/kronos/spark-chicken-games/backend/pkg/db"
 )
 
 func main() {
