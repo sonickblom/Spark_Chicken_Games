@@ -15,6 +15,7 @@ export interface UploadedGameData {
   size: number;
   url: string;
   embedUrl: string;
+  category?: string;
 }
 
 export function useUploadedGames() {
@@ -44,11 +45,13 @@ export function useUploadedGames() {
   const uploadGame = async (
     title: string,
     description: string,
-    files: FileList | File[]
+    files: FileList | File[],
+    category?: string
   ): Promise<UploadedGameData> => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
+    if (category) formData.append("category", category);
 
     for (let i = 0; i < files.length; i++) {
       formData.append("files", files[i]);

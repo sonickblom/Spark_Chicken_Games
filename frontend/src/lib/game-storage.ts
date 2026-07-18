@@ -13,6 +13,7 @@ export interface UploadedGame {
   updatedAt: string;
   playCount: number;
   size: number;
+  category?: string;
 }
 
 const GAMES_DIR = path.join(process.cwd(), "public", "games");
@@ -50,7 +51,8 @@ export function getUploadedGame(slug: string): UploadedGame | undefined {
 export function createGameFromFiles(
   title: string,
   description: string,
-  files: { name: string; buffer: Buffer }[]
+  files: { name: string; buffer: Buffer }[],
+  category?: string,
 ): UploadedGame {
   ensureGamesDir();
 
@@ -107,6 +109,7 @@ export function createGameFromFiles(
     updatedAt: new Date().toISOString(),
     playCount: 0,
     size: totalSize,
+    category: category || undefined,
   };
 
   // Remove old entry with same slug

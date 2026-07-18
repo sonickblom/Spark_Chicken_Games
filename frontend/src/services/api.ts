@@ -308,6 +308,11 @@ class ApiService {
     return extractEntity<User>(res, "user");
   }
 
+  async updateProfile(data: { username?: string; bio?: string; avatar?: string }): Promise<User> {
+    const res = await this.client.patch("/auth/me", data);
+    return extractEntity<User>(res, "user");
+  }
+
   // ── Favorites ─────────────────────────────────────────────────────────
 
   async getFavorites(): Promise<Game[]> {

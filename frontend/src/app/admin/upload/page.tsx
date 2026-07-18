@@ -8,6 +8,7 @@ export default function AdminUploadPage() {
   const { uploadGame, games } = useUploadedGames();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -70,10 +71,11 @@ export default function AdminUploadPage() {
 
     setUploading(true);
     try {
-      const game = await uploadGame(title, description, files);
+      const game = await uploadGame(title, description, files, category || undefined);
       setSuccess(`Jogo "${game.title}" publicado!`);
       setTitle("");
       setDescription("");
+      setCategory("");
       setFiles([]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao publicar");
@@ -168,6 +170,31 @@ export default function AdminUploadPage() {
                        placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green
                        focus:border-transparent transition-all duration-200 resize-none"
           />
+        </div>
+
+        {/* Category */}
+        <div>
+          <label className="block text-sm font-medium text-cyber-text mb-2">
+            Categoria
+          </label>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full px-4 py-3 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white
+                       focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent transition-all duration-200"
+          >
+            <option value="">Sem categoria</option>
+            <option value="Ação">Ação</option>
+            <option value="Aventura">Aventura</option>
+            <option value="Arcade">Arcade</option>
+            <option value="Corrida">Corrida</option>
+            <option value="Estratégia">Estratégia</option>
+            <option value="Esporte">Esporte</option>
+            <option value="Plataforma">Plataforma</option>
+            <option value="Puzzle">Puzzle</option>
+            <option value="RPG">RPG</option>
+            <option value="Simulação">Simulação</option>
+          </select>
         </div>
 
         {/* File drop zone */}

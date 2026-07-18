@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { GamesClient } from "./GamesClient";
 
@@ -14,5 +15,9 @@ export const metadata: Metadata = {
 };
 
 export default function GamesPage() {
-  return <GamesClient />;
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-cyber-darker" />}>
+      <GamesClient />
+    </Suspense>
+  );
 }
