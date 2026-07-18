@@ -19,7 +19,7 @@ const CategoryPill = ({
         "focus:outline-none focus:ring-2 focus:ring-neon-green focus:ring-offset-2 focus:ring-offset-black",
         isActive
           ? "bg-neon-green text-black shadow-[0_0_10px_rgb(0,255,65)]"
-          : "bg-gray-800 border border-gray-700 text-neon-green hover:bg-neon-green/10",
+          : "bg-cyber-dark-surface border border-cyber-dark-border text-neon-green hover:bg-neon-green/10",
       )}
       aria-pressed={isActive}
     >

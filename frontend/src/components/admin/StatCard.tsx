@@ -26,18 +26,18 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-xl bg-gray-900/50 border border-gray-800 p-6 hover:border-neon-green/30 transition-all duration-300 group",
+        "relative overflow-hidden rounded-xl bg-cyber-dark-surface/50 border border-cyber-dark-border p-6 hover:border-neon-green/30 transition-all duration-300 group",
         className,
       )}
     >
       <div className="flex items-start justify-between">
         <div className="space-y-2">
-          <p className="text-sm font-medium text-gray-400">{title}</p>
+          <p className="text-sm font-medium text-cyber-text-muted">{title}</p>
           <p className="text-3xl font-bold text-white tracking-tight">
             {value}
           </p>
           {description && (
-            <p className="text-xs text-gray-500">{description}</p>
+            <p className="text-xs text-cyber-text-muted">{description}</p>
           )}
           {trend && (
             <div className="flex items-center gap-1.5 mt-2">
@@ -67,7 +67,7 @@ export function StatCard({
                 </svg>
                 {Math.abs(trend.value)}%
               </span>
-              <span className="text-xs text-gray-500">vs mês anterior</span>
+              <span className="text-xs text-cyber-text-muted">vs mês anterior</span>
             </div>
           )}
         </div>

@@ -33,8 +33,8 @@ export function GameCard({
         href={`/game/${game.slug}`}
         className="group flex gap-4 p-[1px] bg-white/[0.02] ring-1 ring-white/[0.06] rounded-xl transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:ring-neon-green/30 hover:shadow-[0_0_24px_rgba(0,255,65,0.08)]"
       >
-        <div className="flex-1 min-w-0 flex gap-4 bg-[#0a0a12] rounded-[calc(1rem-1px)] p-3">
-          <div className="relative w-20 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-[#12121e]">
+        <div className="flex-1 min-w-0 flex gap-4 bg-cyber-dark-surface rounded-[calc(1rem-1px)] p-3">
+          <div className="relative w-20 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-cyber-dark-surface">
             {game.coverImage ? (
               <Image
                 src={game.coverImage}
@@ -49,7 +49,7 @@ export function GameCard({
               </div>
             )}
             {hasDiscount && (
-              <span className="absolute top-1.5 left-1.5 bg-[#00FF41] text-black text-[10px] font-bold font-sans px-1.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(0,255,65,0.4)]">
+              <span className="absolute top-1.5 left-1.5 bg-neon-green text-black text-[10px] font-bold font-sans px-1.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(0,255,65,0.4)]">
                 -{game.discount}%
               </span>
             )}
@@ -115,7 +115,7 @@ export function GameCard({
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-cyber-text-muted font-mono text-sm bg-[#0a0a12]">
+            <div className="w-full h-full flex items-center justify-center text-cyber-text-muted font-mono text-sm bg-cyber-dark-surface">
               Sem imagem
             </div>
           )}
@@ -180,7 +180,7 @@ export function GameCard({
         {/* New release badge */}
         {game.isNewRelease && (
           <div className="absolute top-4 left-4 z-10">
-            <span className="bg-[#00FF41] text-black text-xs font-bold font-sans px-2.5 py-1 rounded-full shadow-[0_0_12px_rgba(0,255,65,0.4)]">
+            <span className="bg-neon-green text-black text-xs font-bold font-sans px-2.5 py-1 rounded-full shadow-[0_0_12px_rgba(0,255,65,0.4)]">
               Novo
             </span>
           </div>
@@ -228,7 +228,7 @@ export function GameCard({
       transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
       className="bg-white/[0.02] ring-1 ring-white/[0.06] p-[1px] rounded-[1.25rem] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:ring-neon-green/25 hover:shadow-[0_0_30px_rgba(0,255,65,0.08)] flex flex-col h-full"
     >
-      <div className="bg-[#0a0a12] rounded-[calc(1.25rem-1px)] overflow-hidden flex flex-col h-full">
+      <div className="bg-cyber-dark-surface rounded-[calc(1.25rem-1px)] overflow-hidden flex flex-col h-full">
         {/* Cover image */}
         <Link
           href={`/game/${game.slug}`}
@@ -243,7 +243,7 @@ export function GameCard({
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-cyber-text-muted font-mono text-xs bg-[#12121e]">
+            <div className="w-full h-full flex items-center justify-center text-cyber-text-muted font-mono text-xs bg-cyber-dark-surface">
               Sem imagem
             </div>
           )}
@@ -275,7 +275,7 @@ export function GameCard({
                 transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
                 className="absolute top-3 right-12 z-10"
               >
-                <span className="bg-[#00FF41] text-black text-[10px] font-bold font-sans px-2 py-1 rounded-full shadow-[0_0_10px_rgba(0,255,65,0.4)]">
+                <span className="bg-neon-green text-black text-[10px] font-bold font-sans px-2 py-1 rounded-full shadow-[0_0_10px_rgba(0,255,65,0.4)]">
                   Novo
                 </span>
               </motion.div>

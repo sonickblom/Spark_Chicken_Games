@@ -167,7 +167,7 @@ class ApiService {
       if (filters.pageSize)
         params.append("page_size", String(filters.pageSize));
       if (filters.sortBy) params.append("sort_by", filters.sortBy);
-      if (filters.category) params.append("search", filters.category);
+      if (filters.category) params.append("category_id", filters.category);
     }
     const res = await this.client.get(`/games?${params.toString()}`);
     return toPaginated<Game>(res);
@@ -402,16 +402,12 @@ class ApiService {
       )
       .filter(Boolean);
 
-    const games: Game[] = [];
-    for (const id of gameIds.slice(0, 5)) {
-      try {
-        const game = await this.getGame(id);
-        games.push(game);
-      } catch {
-        // skip failed
-      }
-    }
-    return games;
+    const results = await Promise.allSettled(
+      gameIds.slice(0, 5).map((id) => this.getGame(id)),
+    );
+    return results
+      .filter((r) => r.status === "fulfilled")
+      .map((r) => (r as PromiseFulfilledResult<Game>).value);
   }
 
   // ── Reviews ───────────────────────────────────────────────────────────

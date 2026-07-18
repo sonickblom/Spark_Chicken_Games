@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import GameGrid from "@/components/game/GameGrid";
+import { GameGrid } from "@/components/GameGrid";
 import SearchBar from "@/components/ui/SearchBar";
 import { useUploadedGames } from "@/hooks/use-uploaded-games";
 import type { Game } from "@/types";
@@ -158,7 +158,7 @@ export default function CategoryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+      <div className="min-h-screen bg-cyber-dark flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-2 border-neon-green border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-500">Carregando...</p>
@@ -168,14 +168,14 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
-      <section className="py-16 bg-gray-950 border-b border-gray-800">
+    <div className="min-h-screen bg-cyber-dark">
+      <section className="py-16 bg-cyber-dark border-b border-cyber-dark-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header with back button */}
           <div className="mb-8">
             <Link
               href="/categories"
-              className="inline-flex items-center gap-2 text-gray-400 hover:text-neon-green transition-colors text-sm mb-4"
+              className="inline-flex items-center gap-2 text-cyber-text-muted hover:text-neon-green transition-colors text-sm mb-4"
             >
               ← Voltar para Categorias
             </Link>
@@ -184,7 +184,7 @@ export default function CategoryPage() {
                 <h1 className="text-4xl font-bold text-white">
                   {currentCategory.name}
                 </h1>
-                <p className="text-gray-400 mt-2">
+                <p className="text-cyber-text-muted mt-2">
                   {currentCategory.description}
                 </p>
               </>
@@ -193,7 +193,7 @@ export default function CategoryPage() {
                 <h1 className="text-4xl font-bold text-white capitalize">
                   {resolvedSlug}
                 </h1>
-                <p className="text-gray-400 mt-2">
+                <p className="text-cyber-text-muted mt-2">
                   Jogos na categoria {resolvedSlug}
                 </p>
               </>
@@ -214,7 +214,7 @@ export default function CategoryPage() {
               onChange={(event) =>
                 setSortBy(event.target.value as typeof sortBy)
               }
-              className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-green"
+              className="px-4 py-2.5 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-green"
               aria-label="Ordenar por"
             >
               {sortOptions.map((option) => (
@@ -225,7 +225,7 @@ export default function CategoryPage() {
             </select>
           </div>
 
-          <div className="flex items-center gap-3 text-sm text-gray-500 mt-6">
+          <div className="flex items-center gap-3 text-sm text-cyber-text-muted mt-6">
             <span>{filteredGames.length} resultado(s)</span>
           </div>
         </div>
@@ -244,7 +244,7 @@ export default function CategoryPage() {
           ) : (
             <div className="text-center py-20">
               <svg
-                className="w-16 h-16 mx-auto text-gray-700 mb-4"
+                className="w-16 h-16 mx-auto text-cyber-text-muted/40 mb-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -258,21 +258,21 @@ export default function CategoryPage() {
               </svg>
               {games.length === 0 ? (
                 <>
-                  <p className="text-gray-400 text-lg font-medium mb-2">
+                  <p className="text-cyber-text-muted text-lg font-medium mb-2">
                     Nenhum jogo disponível
                   </p>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-cyber-text-muted/70 text-sm">
                     Faça upload de jogos na página de admin
                   </p>
                 </>
               ) : (
                 <>
-                  <p className="text-gray-400 text-lg font-medium mb-2">
+                  <p className="text-cyber-text-muted text-lg font-medium mb-2">
                     {searchQuery
                       ? `Nenhum resultado para "${searchQuery}"`
                       : "Nenhum jogo nesta categoria"}
                   </p>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-cyber-text-muted/70 text-sm">
                     {searchQuery
                       ? "Tente outros termos de busca"
                       : "Tente ver outras categorias"}

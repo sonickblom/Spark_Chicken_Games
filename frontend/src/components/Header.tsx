@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useAuthContext } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
 import { ChevronDown, LogOut, User, Shield } from "lucide-react";
@@ -18,6 +19,7 @@ const navLinks = [
 
 const Header = ({ className = "" }: HeaderProps) => {
   const { user, isAuthenticated, logout } = useAuthContext();
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -57,7 +59,7 @@ const Header = ({ className = "" }: HeaderProps) => {
           aria-label="Navegação principal"
           className={cn(
             "relative mx-auto w-full rounded-full",
-            "bg-[#0a0a12]/80 backdrop-blur-xl",
+            "bg-cyber-dark-surface/80 backdrop-blur-xl",
             "border border-white/[0.06]",
             "shadow-[0_0_40px_rgba(0,0,0,0.6),0_0_1px_rgba(0,255,65,0.08)]",
           )}
@@ -94,36 +96,44 @@ const Header = ({ className = "" }: HeaderProps) => {
 
             {/* ── Desktop nav links ── */}
             <div className="hidden items-center gap-1 md:flex">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "relative px-3.5 py-1.5 font-mono text-xs font-medium tracking-widest uppercase",
-                    "text-cyber-text-muted transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
-                    "hover:text-neon-green",
-                  )}
-                >
-                  <span className="relative z-10">{link.label}</span>
-                  <span className="absolute inset-x-3.5 -bottom-0.5 h-px scale-x-0 bg-neon-green shadow-[0_0_8px_rgba(0,255,65,0.6)] transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-x-100 hover:scale-x-100" />
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={cn(
+                      "relative px-3.5 py-1.5 font-mono text-xs font-medium tracking-widest uppercase",
+                      "text-cyber-text-muted transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                      "hover:text-neon-green",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-green focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-darker rounded",
+                    )}
+                  >
+                    <span className="relative z-10">{link.label}</span>
+                    <span className="absolute inset-x-3.5 -bottom-0.5 h-px scale-x-0 bg-neon-green shadow-[0_0_8px_rgba(0,255,65,0.6)] transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-x-100 hover:scale-x-100" />
+                  </Link>
+                );
+              })}
             </div>
 
             {/* ── Desktop auth section ── */}
             <div className="hidden items-center gap-3 md:flex">
               {isAuthenticated && user ? (
                 <div className="relative" ref={dropdownRef}>
-                  <button
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className={cn(
-                      "flex items-center gap-2 rounded-full pl-1.5 pr-3 py-1.5",
-                      "font-mono text-xs tracking-wide text-cyber-text",
-                      "border border-white/[0.06] bg-white/[0.03]",
-                      "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
-                      "hover:border-neon-green/30 hover:text-neon-green",
-                    )}
-                  >
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                aria-expanded={dropdownOpen}
+                aria-haspopup="true"
+                className={cn(
+                  "flex items-center gap-2 rounded-full pl-1.5 pr-3 py-1.5",
+                  "font-mono text-xs tracking-wide text-cyber-text",
+                  "border border-white/[0.06] bg-white/[0.03]",
+                  "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                  "hover:border-neon-green/30 hover:text-neon-green",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-green focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-darker",
+                )}
+              >
                     <div className="flex size-6 items-center justify-center rounded-full bg-neon-green/15">
                       <span className="text-[10px] font-bold text-neon-green">
                         {user.username?.charAt(0).toUpperCase() || "U"}
@@ -144,7 +154,7 @@ const Header = ({ className = "" }: HeaderProps) => {
                     <div
                       className={cn(
                         "absolute right-0 mt-3 w-52 origin-top-right",
-                        "rounded-2xl border border-white/[0.08] bg-[#0a0a12]/95 backdrop-blur-xl",
+                        "rounded-2xl border border-white/[0.08] bg-cyber-dark-surface/95 backdrop-blur-xl",
                         "shadow-[0_20px_60px_rgba(0,0,0,0.6),0_0_1px_rgba(0,255,65,0.1)]",
                         "py-2",
                       )}
@@ -213,8 +223,10 @@ const Header = ({ className = "" }: HeaderProps) => {
             {/* ── Mobile hamburger ── */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="relative z-50 flex size-9 items-center justify-center rounded-full md:hidden"
               aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-menu"
+              className="relative z-50 flex size-9 items-center justify-center rounded-full md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-green focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-darker"
             >
               <div className="flex flex-col gap-1.5">
                 <span
@@ -243,9 +255,13 @@ const Header = ({ className = "" }: HeaderProps) => {
 
       {/* ── Mobile full-screen overlay ── */}
       <div
+        id="mobile-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu de navegação"
         className={cn(
           "fixed inset-0 z-40 md:hidden",
-          "bg-[#06060c]/95 backdrop-blur-2xl",
+          "bg-cyber-dark/95 backdrop-blur-2xl",
           "transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]",
           mobileOpen
             ? "pointer-events-auto opacity-100"
@@ -255,24 +271,29 @@ const Header = ({ className = "" }: HeaderProps) => {
       >
         <div className="flex h-full flex-col items-center justify-center gap-2">
           {/* Mobile nav links with staggered reveal */}
-          {navLinks.map((link, i) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className={cn(
-                "font-mono text-2xl font-bold tracking-[0.2em] uppercase text-cyber-text-muted",
-                "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
-                "hover:text-neon-green",
-                mobileOpen
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-6 opacity-0",
-              )}
-              style={{ transitionDelay: mobileOpen ? `${150 + i * 80}ms` : "0ms" }}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link, i) => {
+            const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                aria-current={isActive ? "page" : undefined}
+                className={cn(
+                  "font-mono text-2xl font-bold tracking-[0.2em] uppercase text-cyber-text-muted",
+                  "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                  "hover:text-neon-green",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-green rounded",
+                  mobileOpen
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-6 opacity-0",
+                )}
+                style={{ transitionDelay: mobileOpen ? `${150 + i * 80}ms` : "0ms" }}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
 
           {/* Divider */}
           <div

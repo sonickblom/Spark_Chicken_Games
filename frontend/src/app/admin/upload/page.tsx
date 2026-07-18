@@ -98,26 +98,26 @@ export default function AdminUploadPage() {
         <h1 className="text-2xl sm:text-3xl font-bold text-white">
           Upload de Jogo
         </h1>
-        <p className="text-gray-400 mt-1">
+        <p className="text-cyber-text-muted mt-1">
           Publique seu jogo HTML arrastando os arquivos ou colando o código
         </p>
       </div>
 
       {/* Quick stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+        <div className="bg-cyber-dark-surface border border-cyber-dark-border rounded-xl p-4">
           <div className="text-2xl font-bold text-neon-green">
             {uploadedCount}
           </div>
-          <div className="text-sm text-gray-400">Jogos Publicados</div>
+          <div className="text-sm text-cyber-text-muted">Jogos Publicados</div>
         </div>
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+        <div className="bg-cyber-dark-surface border border-cyber-dark-border rounded-xl p-4">
           <div className="text-2xl font-bold text-neon-green">
             {games.reduce((sum, g) => sum + g.playCount, 0)}
           </div>
-          <div className="text-sm text-gray-400">Total de Jogadas</div>
+          <div className="text-sm text-cyber-text-muted">Total de Jogadas</div>
         </div>
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+        <div className="bg-cyber-dark-surface border border-cyber-dark-border rounded-xl p-4">
           <div className="text-2xl font-bold text-neon-green">
             {games.length > 0
               ? games.reduce((sum, g) => sum + g.size, 0) > 1024 * 1024
@@ -125,14 +125,14 @@ export default function AdminUploadPage() {
                 : `${(games.reduce((sum, g) => sum + g.size, 0) / 1024).toFixed(0)} KB`
               : "0 B"}
           </div>
-          <div className="text-sm text-gray-400">Armazenamento</div>
+          <div className="text-sm text-cyber-text-muted">Armazenamento</div>
         </div>
         <Link
           href="/admin/games"
-          className="bg-gray-900 border border-gray-800 rounded-xl p-4 hover:border-neon-green/50 transition-colors"
+          className="bg-cyber-dark-surface border border-cyber-dark-border rounded-xl p-4 hover:border-neon-green/50 transition-colors"
         >
           <div className="text-lg font-bold text-neon-green">Gerenciar →</div>
-          <div className="text-sm text-gray-400">Ver todos os jogos</div>
+          <div className="text-sm text-cyber-text-muted">Ver todos os jogos</div>
         </Link>
       </div>
 
@@ -140,7 +140,7 @@ export default function AdminUploadPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-cyber-text mb-2">
             Título do Jogo <span className="text-red-400">*</span>
           </label>
           <input
@@ -148,15 +148,15 @@ export default function AdminUploadPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Ex: Meu Incrível Jogo"
-            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white
-                       placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-neon-green
+            className="w-full px-4 py-3 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white
+                       placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green
                        focus:border-transparent transition-all duration-200"
           />
         </div>
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-cyber-text mb-2">
             Descrição
           </label>
           <textarea
@@ -164,15 +164,15 @@ export default function AdminUploadPage() {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Descreva seu jogo..."
             rows={3}
-            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white
-                       placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-neon-green
+            className="w-full px-4 py-3 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white
+                       placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green
                        focus:border-transparent transition-all duration-200 resize-none"
           />
         </div>
 
         {/* File drop zone */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-cyber-text mb-2">
             Arquivos do Jogo <span className="text-red-400">*</span>
           </label>
           <div
@@ -186,7 +186,7 @@ export default function AdminUploadPage() {
               ${
                 dragOver
                   ? "border-neon-green bg-neon-green/5 shadow-[0_0_30px_rgba(0,255,65,0.1)]"
-                  : "border-gray-700 hover:border-gray-600 bg-gray-900/50"
+                  : "border-cyber-dark-border hover:border-gray-600 bg-cyber-dark-surface/50"
               }
             `}
           >
@@ -201,7 +201,7 @@ export default function AdminUploadPage() {
             <div className="space-y-3">
               <div className="flex justify-center">
                 <svg
-                  className={`w-12 h-12 ${dragOver ? "text-neon-green" : "text-gray-600"}`}
+                  className={`w-12 h-12 ${dragOver ? "text-neon-green" : "text-cyber-text-muted/70"}`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -215,14 +215,14 @@ export default function AdminUploadPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-gray-300 font-medium">
+                <p className="text-cyber-text font-medium">
                   Arraste seus arquivos aqui
                 </p>
-                <p className="text-gray-500 text-sm mt-1">
+                <p className="text-cyber-text-muted text-sm mt-1">
                   ou clique para selecionar (HTML, JS, CSS, imagens, sons...)
                 </p>
               </div>
-              <p className="text-gray-600 text-xs">
+              <p className="text-cyber-text-muted/70 text-xs">
                 O arquivo <strong>index.html</strong> será usado como ponto de
                 entrada
               </p>
@@ -232,20 +232,20 @@ export default function AdminUploadPage() {
 
         {/* File list */}
         {files.length > 0 && (
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-            <h3 className="text-sm font-medium text-gray-400 mb-3">
+          <div className="bg-cyber-dark-surface border border-cyber-dark-border rounded-xl p-4">
+            <h3 className="text-sm font-medium text-cyber-text-muted mb-3">
               Arquivos selecionados ({files.length})
             </h3>
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {files.map((file, index) => (
                 <div
                   key={`${file.name}-${index}`}
-                  className="flex items-center justify-between bg-gray-800/50 rounded-lg px-3 py-2"
+                  className="flex items-center justify-between bg-cyber-dark-surface/50 rounded-lg px-3 py-2"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     {/* File icon */}
                     <svg
-                      className="w-5 h-5 text-gray-500 shrink-0"
+                      className="w-5 h-5 text-cyber-text-muted shrink-0"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -257,12 +257,12 @@ export default function AdminUploadPage() {
                         d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
                       />
                     </svg>
-                    <span className="text-sm text-gray-300 truncate">
+                    <span className="text-sm text-cyber-text truncate">
                       {file.name}
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-cyber-text-muted">
                       {formatSize(file.size)}
                     </span>
                     {file.name.endsWith(".html") && (
@@ -276,7 +276,7 @@ export default function AdminUploadPage() {
                         e.stopPropagation();
                         removeFile(index);
                       }}
-                      className="text-gray-500 hover:text-red-400 transition-colors"
+                      className="text-cyber-text-muted hover:text-red-400 transition-colors"
                     >
                       <svg
                         className="w-4 h-4"
@@ -364,7 +364,7 @@ export default function AdminUploadPage() {
               </>
             )}
           </button>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-cyber-text-muted">
             {files.length} arquivo(s) —{" "}
             {formatSize(files.reduce((sum, f) => sum + f.size, 0))}
           </span>
@@ -373,7 +373,7 @@ export default function AdminUploadPage() {
 
       {/* Latest uploaded games preview */}
       {games.length > 0 && (
-        <div className="border-t border-gray-800 pt-8">
+        <div className="border-t border-cyber-dark-border pt-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-white">
               Jogos Publicados Recentemente
@@ -390,13 +390,13 @@ export default function AdminUploadPage() {
             {games.slice(0, 5).map((game) => (
               <div
                 key={game.id}
-                className="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-xl px-5 py-3 hover:border-gray-700 transition-colors"
+                className="flex items-center justify-between bg-cyber-dark-surface border border-cyber-dark-border rounded-xl px-5 py-3 hover:border-cyber-dark-border transition-colors"
               >
                 <div className="min-w-0">
                   <h3 className="text-white font-medium truncate">
                     {game.title}
                   </h3>
-                  <p className="text-sm text-gray-500 truncate">
+                  <p className="text-sm text-cyber-text-muted truncate">
                     /play/{game.slug} · {game.files.length} arquivo(s) ·{" "}
                     {game.playCount} jogada(s)
                   </p>
@@ -411,7 +411,7 @@ export default function AdminUploadPage() {
                   >
                     Jogar
                   </a>
-                  <span className="text-xs text-gray-600">
+                  <span className="text-xs text-cyber-text-muted/70">
                     {new Date(game.createdAt).toLocaleDateString("pt-BR")}
                   </span>
                 </div>
@@ -422,13 +422,13 @@ export default function AdminUploadPage() {
       )}
 
       {/* HTML paste alternative */}
-      <div className="border-t border-gray-800 pt-8">
+      <div className="border-t border-cyber-dark-border pt-8">
         <details className="group">
-          <summary className="text-sm text-gray-500 cursor-pointer hover:text-gray-300 transition-colors">
+          <summary className="text-sm text-cyber-text-muted cursor-pointer hover:text-cyber-text transition-colors">
             Ou cole o código HTML diretamente
           </summary>
           <div className="mt-4">
-            <p className="text-sm text-gray-500 mb-3">
+            <p className="text-sm text-cyber-text-muted mb-3">
               Cole o HTML completo do seu jogo abaixo. Use &lt;style&gt; para
               CSS e &lt;script&gt; para JS.
             </p>
@@ -490,8 +490,8 @@ function HtmlPasteForm() {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Título do jogo"
-        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white
-                   placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-neon-green
+        className="w-full px-4 py-3 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white
+                   placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green
                    focus:border-transparent transition-all duration-200"
       />
       <textarea
@@ -499,8 +499,8 @@ function HtmlPasteForm() {
         onChange={(e) => setHtmlCode(e.target.value)}
         placeholder="Cole o HTML completo do seu jogo aqui..."
         rows={12}
-        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white font-mono text-sm
-                   placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-neon-green
+        className="w-full px-4 py-3 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white font-mono text-sm
+                   placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green
                    focus:border-transparent transition-all duration-200 resize-none"
       />
       {error && (

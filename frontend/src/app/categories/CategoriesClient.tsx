@@ -67,17 +67,17 @@ export function CategoriesClient() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-cyber-darker flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-2 border-neon-green border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500">Carregando...</p>
+          <p className="text-cyber-text-muted">Carregando...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-cyber-darker">
       <section className="relative py-16 lg:py-24">
         <div
           className="absolute inset-0 bg-grid-pattern opacity-20"
@@ -93,7 +93,7 @@ export function CategoriesClient() {
             <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
               Categorias
             </h1>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg text-cyber-text-muted max-w-2xl mx-auto">
               {games.length > 0
                 ? `Explore nossos ${games.length} jogos disponíveis na plataforma`
                 : "Explore nossa biblioteca de jogos organizada por categorias"}
@@ -115,7 +115,7 @@ export function CategoriesClient() {
                         ? "/games"
                         : `/games?sort=${category.slug}`
                     }
-                    className="group block p-6 bg-gray-900 border border-gray-800 rounded-xl hover:border-neon-green/50 hover:shadow-[0_0_30px_rgba(0,255,65,0.1)] transition-all duration-500"
+                    className="group block p-6 bg-cyber-dark-surface border border-cyber-dark-border rounded-xl hover:border-neon-green/50 hover:shadow-[0_0_30px_rgba(0,255,65,0.1)] transition-all duration-500"
                   >
                     <div className="flex items-start gap-4">
                       <span className="text-4xl" aria-hidden="true">
@@ -125,7 +125,7 @@ export function CategoriesClient() {
                         <h2 className="text-xl font-bold text-white group-hover:text-neon-green transition-colors mb-1">
                           {category.name}
                         </h2>
-                        <p className="text-sm text-gray-400 line-clamp-2 mb-3">
+                        <p className="text-sm text-cyber-text-muted line-clamp-2 mb-3">
                           {category.description}
                         </p>
                         <div className="flex items-center gap-3 text-sm">
@@ -140,7 +140,7 @@ export function CategoriesClient() {
                         </div>
                       </div>
                       <svg
-                        className="w-5 h-5 text-gray-600 group-hover:text-neon-green transition-colors flex-shrink-0 mt-1"
+                        className="w-5 h-5 text-cyber-text-muted/50 group-hover:text-neon-green transition-colors flex-shrink-0 mt-1"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -160,7 +160,7 @@ export function CategoriesClient() {
           ) : (
             <div className="text-center py-20">
               <svg
-                className="w-16 h-16 mx-auto text-gray-700 mb-4"
+                className="w-16 h-16 mx-auto text-cyber-text-muted/40 mb-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -172,10 +172,10 @@ export function CategoriesClient() {
                   d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                 />
               </svg>
-              <p className="text-gray-400 text-lg mb-2">
+              <p className="text-cyber-text-muted text-lg mb-2">
                 Nenhum jogo disponível
               </p>
-              <p className="text-gray-600 text-sm">
+              <p className="text-cyber-text-muted/70 text-sm">
                 Faça upload de jogos na página de admin para vê-los aqui
               </p>
             </div>

@@ -15,6 +15,7 @@ module.exports = {
         },
         cyber: {
           dark: "#0A0A0F",
+          darker: "#030305",
           "dark-surface": "#11111A",
           "dark-border": "#1E1E2E",
           text: "#E0E0E0",

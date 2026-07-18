@@ -13,7 +13,7 @@ export default function NewGamePage() {
         <h1 className="text-2xl sm:text-3xl font-bold text-white">
           Publicar Novo Jogo
         </h1>
-        <p className="text-gray-400 mt-1">
+        <p className="text-cyber-text-muted mt-1">
           Preencha os dados abaixo para publicar um novo jogo na plataforma
         </p>
       </div>

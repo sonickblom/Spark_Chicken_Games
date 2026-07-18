@@ -54,7 +54,7 @@ export default function GamePlayer({ gameUrl, title, slug }: GamePlayerProps) {
       style={{ aspectRatio: "16/9" }}
     >
       {!isPlaying ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-[#0a0a0f]">
+        <div className="absolute inset-0 flex items-center justify-center bg-cyber-dark">
           <div className="text-center space-y-6">
             <div className="w-20 h-20 mx-auto rounded-full border-2 border-neon-green/30 flex items-center justify-center">
               <svg
@@ -84,7 +84,7 @@ export default function GamePlayer({ gameUrl, title, slug }: GamePlayerProps) {
       ) : (
         <>
           {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#0a0a0f] z-10">
+            <div className="absolute inset-0 flex items-center justify-center bg-cyber-dark z-10">
               <div className="text-center">
                 <svg
                   className="animate-spin w-10 h-10 text-neon-green mx-auto mb-3"
@@ -110,7 +110,7 @@ export default function GamePlayer({ gameUrl, title, slug }: GamePlayerProps) {
             </div>
           )}
           {hasError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#0a0a0f] z-10">
+            <div className="absolute inset-0 flex items-center justify-center bg-cyber-dark z-10">
               <div className="text-center max-w-md px-6">
                 <div className="text-4xl mb-4">⚠️</div>
                 <h3 className="text-lg font-bold text-white mb-2">
@@ -126,7 +126,7 @@ export default function GamePlayer({ gameUrl, title, slug }: GamePlayerProps) {
                     setIsPlaying(false);
                     setTimeout(() => setIsPlaying(true), 100);
                   }}
-                  className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                  className="px-6 py-2 bg-cyber-dark-surface text-white rounded-lg hover:bg-cyber-dark-surface/70 transition-colors"
                 >
                   Tentar novamente
                 </button>

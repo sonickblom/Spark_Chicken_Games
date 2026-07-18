@@ -162,15 +162,15 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
   };
 
   const inputClass =
-    "w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent transition-all duration-200 text-sm";
+    "w-full px-4 py-2.5 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white placeholder:text-cyber-text-muted/70 focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent transition-all duration-200 text-sm";
 
-  const labelClass = "block text-sm font-medium text-gray-300 mb-1.5";
+  const labelClass = "block text-sm font-medium text-cyber-text mb-1.5";
   const errorClass = "text-red-400 text-xs mt-1";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Basic Information */}
-      <section className="rounded-xl bg-gray-900/30 border border-gray-800 p-6">
+      <section className="rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border p-6">
         <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
           <svg
             className="w-5 h-5 text-neon-green"
@@ -360,7 +360,7 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
       </section>
 
       {/* Media */}
-      <section className="rounded-xl bg-gray-900/30 border border-gray-800 p-6">
+      <section className="rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border p-6">
         <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
           <svg
             className="w-5 h-5 text-neon-green"
@@ -395,7 +395,7 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
               <p className={errorClass}>{errors.coverImage}</p>
             )}
             {form.coverImage && (
-              <div className="mt-2 rounded-lg overflow-hidden border border-gray-700 max-w-sm">
+              <div className="mt-2 rounded-lg overflow-hidden border border-cyber-dark-border max-w-sm">
                 <img
                   src={form.coverImage}
                   alt="Preview da capa"
@@ -458,7 +458,7 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
       </section>
 
       {/* Pricing & Status */}
-      <section className="rounded-xl bg-gray-900/30 border border-gray-800 p-6">
+      <section className="rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border p-6">
         <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
           <svg
             className="w-5 h-5 text-neon-green"
@@ -478,7 +478,7 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label className="flex items-center gap-3 p-4 rounded-lg bg-gray-900/50 border border-gray-700 cursor-pointer hover:border-neon-green/30 transition-colors">
+            <label className="flex items-center gap-3 p-4 rounded-lg bg-cyber-dark-surface/50 border border-cyber-dark-border cursor-pointer hover:border-neon-green/30 transition-colors">
               <input
                 type="checkbox"
                 name="isFree"
@@ -490,13 +490,13 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
                     ...(e.target.checked ? { price: 0 } : {}),
                   }));
                 }}
-                className="w-4 h-4 rounded border-gray-600 bg-gray-800 text-neon-green focus:ring-neon-green"
+                className="w-4 h-4 rounded border-gray-600 bg-cyber-dark-surface text-neon-green focus:ring-neon-green"
               />
               <div>
                 <span className="text-sm font-medium text-white">
                   Jogo Gratuito
                 </span>
-                <p className="text-xs text-gray-500">Disponível sem custo</p>
+                <p className="text-xs text-cyber-text-muted">Disponível sem custo</p>
               </div>
             </label>
           </div>
@@ -557,7 +557,7 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
           ].map((field) => (
             <label
               key={field.name}
-              className="flex items-start gap-3 p-3 rounded-lg bg-gray-900/50 border border-gray-700 cursor-pointer hover:border-neon-green/30 transition-colors"
+              className="flex items-start gap-3 p-3 rounded-lg bg-cyber-dark-surface/50 border border-cyber-dark-border cursor-pointer hover:border-neon-green/30 transition-colors"
             >
               <input
                 type="checkbox"
@@ -566,13 +566,13 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
                   (form as Record<string, unknown>)[field.name] as boolean
                 }
                 onChange={handleChange}
-                className="mt-0.5 w-4 h-4 rounded border-gray-600 bg-gray-800 text-neon-green focus:ring-neon-green"
+                className="mt-0.5 w-4 h-4 rounded border-gray-600 bg-cyber-dark-surface text-neon-green focus:ring-neon-green"
               />
               <div>
                 <span className="text-sm font-medium text-white">
                   {field.label}
                 </span>
-                <p className="text-xs text-gray-500">{field.desc}</p>
+                <p className="text-xs text-cyber-text-muted">{field.desc}</p>
               </div>
             </label>
           ))}
@@ -580,7 +580,7 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
       </section>
 
       {/* Links */}
-      <section className="rounded-xl bg-gray-900/30 border border-gray-800 p-6">
+      <section className="rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border p-6">
         <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
           <svg
             className="w-5 h-5 text-neon-green"
@@ -649,7 +649,7 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
         </div>
       )}
 
-      <div className="flex items-center gap-4 pt-4 border-t border-gray-800">
+      <div className="flex items-center gap-4 pt-4 border-t border-cyber-dark-border">
         <Button type="submit" disabled={isSubmitting} className="min-w-[180px]">
           {isSubmitting ? (
             <span className="flex items-center gap-2">
@@ -684,7 +684,7 @@ export function GameForm({ initialData, isEditing }: GameFormProps) {
         <button
           type="button"
           onClick={() => router.push("/admin/games")}
-          className="px-6 py-2.5 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-800/50"
+          className="px-6 py-2.5 text-sm font-medium text-cyber-text-muted hover:text-white transition-colors rounded-lg hover:bg-cyber-dark-surface/50"
         >
           Cancelar
         </button>

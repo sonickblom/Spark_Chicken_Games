@@ -35,15 +35,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       "rounded-full font-medium tracking-wide",
       "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
       "active:scale-[0.98]",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-green/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f]",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-green/50 focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-darker",
       "disabled:pointer-events-none disabled:opacity-40",
     );
 
     const variants = {
       default: cn(
-        "bg-[#00FF41] text-black font-bold",
+        "bg-neon-green text-black font-bold",
         "shadow-[0_0_20px_rgba(0,255,65,0.25)]",
-        "hover:bg-[#00e63b] hover:shadow-[0_0_30px_rgba(0,255,65,0.45)]",
+        "hover:bg-neon-green/90 hover:shadow-[0_0_30px_rgba(0,255,65,0.45)]",
       ),
       destructive: cn(
         "bg-red-500 text-white",

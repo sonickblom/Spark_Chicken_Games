@@ -6,7 +6,6 @@ import type {
   Category,
   PaginatedResponse,
   GameFilters,
-  User,
   Review,
   NewsItem,
 } from "@/types";
@@ -294,60 +293,6 @@ export function useSearchGames(query: string, limit = 10) {
   return { data, loading, error, search };
 }
 
-export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const login = useCallback(async (email: string, password: string) => {
-    const result = await api.login(email, password);
-    localStorage.setItem("auth_token", result.token);
-    localStorage.setItem("user", JSON.stringify(result.user));
-    setUser(result.user);
-    return result;
-  }, []);
-
-  const register = useCallback(
-    async (username: string, email: string, password: string) => {
-      const result = await api.register({ username, email, password });
-      localStorage.setItem("auth_token", result.token);
-      localStorage.setItem("user", JSON.stringify(result.user));
-      setUser(result.user);
-      return result;
-    },
-    [],
-  );
-
-  const logout = useCallback(() => {
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("user");
-    setUser(null);
-  }, []);
-
-  const checkAuth = useCallback(async () => {
-    if (typeof window === "undefined") {
-      setLoading(false);
-      return;
-    }
-    const token = localStorage.getItem("auth_token");
-    const storedUser = localStorage.getItem("user");
-    if (token && storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch {
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("user");
-      }
-    }
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
-  return { user, loading, login, register, logout, isAuthenticated: !!user };
-}
-
 export function useFavorites() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -367,7 +312,7 @@ export function useFavorites() {
         setLoading(false);
       }
     },
-    [favorites],
+    [],
   );
 
   const isFavorite = useCallback(

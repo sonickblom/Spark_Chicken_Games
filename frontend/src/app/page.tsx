@@ -2,10 +2,10 @@
 
 import React from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
-  ChevronRight,
   Zap,
   Monitor,
   Wifi,
@@ -13,8 +13,13 @@ import {
   Gamepad2,
   Upload,
 } from "lucide-react";
-import GameGrid from "@/components/game/GameGrid";
+import { SectionHeader } from "@/components/SectionHeader";
 import { useUploadedGames } from "@/hooks/use-uploaded-games";
+
+const GameGrid = dynamic(
+  () => import("@/components/GameGrid").then((mod) => mod.GameGrid),
+  { ssr: false },
+);
 
 /* ------------------------------------------------------------------ */
 /*  Animation helpers                                                  */
@@ -46,57 +51,12 @@ function revealOnScroll(delay = 0) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Reusable section header                                             */
-/* ------------------------------------------------------------------ */
-
-function SectionHeader({
-  eyebrow,
-  title,
-  subtitle,
-  linkHref,
-  linkLabel,
-}: {
-  eyebrow: string;
-  title: string;
-  subtitle: string;
-  linkHref?: string;
-  linkLabel?: string;
-}) {
-  return (
-    <div className="flex items-end justify-between gap-6">
-      <motion.div {...revealOnScroll()}>
-          <span className="inline-block rounded-full border border-neon-green/30 bg-neon-green/5 px-3 py-1 text-[10px] font-mono uppercase tracking-[0.2em] text-neon-green">
-            {eyebrow}
-          </span>
-          <h2 className="mt-4 font-sans text-3xl font-bold text-white sm:text-4xl">
-            {title}
-          </h2>
-          <p className="mt-2 max-w-lg font-mono text-sm text-cyber-text-muted">
-            {subtitle}
-          </p>
-        </motion.div>
-
-      {linkHref && linkLabel && (
-        <Link
-          href={linkHref}
-          className="group hidden shrink-0 items-center gap-1.5 text-sm font-medium text-neon-green transition-all duration-500 hover:gap-2.5 hover:text-[#33ff66] sm:inline-flex"
-          style={{ transitionTimingFunction: "cubic-bezier(0.32,0.72,0,1)" }}
-        >
-          {linkLabel}
-          <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-        </Link>
-      )}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
 /*  Empty state                                                        */
 /* ------------------------------------------------------------------ */
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center gap-4 rounded-[1.25rem] border border-white/5 bg-[#0a0a12] py-20 text-center">
+    <div className="flex flex-col items-center justify-center gap-4 rounded-[1.25rem] border border-white/5 bg-cyber-dark-surface py-20 text-center">
       <div className="animate-glitch">
         <Upload className="h-14 w-14 text-neon-green/30" />
       </div>
@@ -163,7 +123,7 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#030305]">
+      <div className="flex min-h-screen items-center justify-center bg-cyber-darker">
         <div className="flex flex-col items-center gap-5">
           <div className="relative h-14 w-14">
             <div className="absolute inset-0 rounded-full border-2 border-neon-green/20" />
@@ -182,7 +142,7 @@ export default function HomePage() {
   /* ── Render ─────────────────────────────────────────── */
 
   return (
-    <div className="relative min-h-screen bg-[#030305]">
+    <div className="relative min-h-screen bg-cyber-darker">
       {/* ================================================================ */}
       {/*  HERO                                                           */}
       {/* ================================================================ */}
@@ -252,14 +212,14 @@ export default function HomePage() {
             >
               <Link
                 href="/games"
-                className="btn-cyber flex items-center gap-2 px-8 py-3.5 text-sm font-bold"
+                className="inline-flex items-center gap-2 px-8 py-3.5 text-sm font-bold bg-neon-green text-black rounded-full transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:shadow-[0_0_24px_rgba(0,255,65,0.45),0_0_48px_rgba(0,255,65,0.15)] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-green focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-darker"
               >
                 <Zap className="h-4 w-4" />
                 Explorar Jogos
               </Link>
               <Link
                 href="/categories"
-                className="btn-cyber-outline flex items-center gap-2 px-8 py-3.5 text-sm font-bold"
+                className="inline-flex items-center gap-2 px-8 py-3.5 text-sm font-bold text-neon-green border-2 border-neon-green rounded-full bg-transparent transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-neon-green/10 hover:shadow-[0_0_24px_rgba(0,255,65,0.25),0_0_48px_rgba(0,255,65,0.1)] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-green focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-darker"
               >
                 Ver Categorias
               </Link>
@@ -293,42 +253,23 @@ export default function HomePage() {
         </div>
 
         {/* Bottom gradient fade */}
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#030305] to-transparent" />
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-cyber-darker to-transparent" />
       </section>
 
       {/* ================================================================ */}
       {/*  FEATURED / ALL GAMES                                           */}
       {/* ================================================================ */}
-      <section className="relative border-t border-white/[0.04] bg-[#030305] py-24">
+        <section className="relative border-t border-white/[0.04] bg-cyber-darker py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between gap-6">
-            <motion.div {...revealOnScroll()}>
-              <span className="inline-block rounded-full border border-neon-green/30 bg-neon-green/5 px-3 py-1 text-[10px] font-mono uppercase tracking-[0.2em] text-neon-green">
-                System
-              </span>
-              <h2 className="mt-4 font-sans text-3xl font-bold text-white sm:text-4xl">
-                {games.length > 0 ? "Jogos Disponíveis" : "Catálogo"}
-              </h2>
-              <p className="mt-2 max-w-lg font-mono text-sm text-cyber-text-muted">
-                {games.length > 0
-                  ? `${games.length} jogo(s) publicado(s) na plataforma`
-                  : "Nossos jogos mais recomendados"}
-              </p>
-            </motion.div>
-
-            {games.length > 0 && (
-              <Link
-                href="/games"
-                className="group hidden shrink-0 items-center gap-1.5 text-sm font-medium text-neon-green transition-all duration-500 hover:gap-2.5 hover:text-[#33ff66] sm:inline-flex"
-                style={{
-                  transitionTimingFunction: "cubic-bezier(0.32,0.72,0,1)",
-                }}
-              >
-                Ver todos
-                <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-              </Link>
-            )}
-          </div>
+          <SectionHeader
+            eyebrow="System"
+            title={games.length > 0 ? "Jogos Disponíveis" : "Catálogo"}
+            description={games.length > 0
+              ? `${games.length} jogo(s) publicado(s) na plataforma`
+              : "Nossos jogos mais recomendados"}
+            linkHref={games.length > 0 ? "/games" : undefined}
+            linkLabel={games.length > 0 ? "Ver todos" : undefined}
+          />
 
           <div className="mt-10">
             {featuredGames.length > 0 ? (
@@ -348,7 +289,7 @@ export default function HomePage() {
       {/*  NEW GAMES                                                      */}
       {/* ================================================================ */}
       {newGamesList.length > 0 && (
-        <section className="relative border-t border-white/[0.04] bg-[#020204] py-24">
+        <section className="relative border-t border-white/[0.04] bg-cyber-darker py-24">
           {/* Subtle gradient divider */}
           <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neon-green/20 to-transparent" />
 
@@ -356,7 +297,7 @@ export default function HomePage() {
             <SectionHeader
               eyebrow="Launches"
               title="Recém Adicionados"
-              subtitle="Lançamentos recentes na plataforma"
+              description="Lançamentos recentes na plataforma"
               linkHref="/games?sort=newest"
               linkLabel="Ver todos"
             />
@@ -373,14 +314,14 @@ export default function HomePage() {
       {/*  POPULAR GAMES                                                  */}
       {/* ================================================================ */}
       {popularGamesList.length > 0 && (
-        <section className="relative border-t border-white/[0.04] bg-[#030305] py-24">
+      <section className="relative border-t border-white/[0.04] bg-cyber-darker py-24">
           <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neon-green/20 to-transparent" />
 
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SectionHeader
               eyebrow="Trending"
               title="Mais Jogados"
-              subtitle="Jogos mais jogados pela comunidade"
+              description="Jogos mais jogados pela comunidade"
               linkHref="/games?sort=popular"
               linkLabel="Ver todos"
             />
@@ -396,7 +337,7 @@ export default function HomePage() {
       {/* ================================================================ */}
       {/*  CTA                                                            */}
       {/* ================================================================ */}
-      <section className="relative border-t border-white/[0.04] bg-[#020204] py-32 overflow-hidden">
+      <section className="relative border-t border-white/[0.04] bg-cyber-darker py-32 overflow-hidden">
         {/* Background glow */}
         <div className="absolute left-1/2 top-1/2 h-[500px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-neon-green/[0.05] blur-[120px]" />
         <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neon-green/20 to-transparent" />

@@ -73,14 +73,14 @@ export default function RegisterPage() {
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-lg mb-6 text-sm">
+            <div id="register-error" className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-lg mb-6 text-sm">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} noValidate className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm text-cyber-text-muted font-medium">
+              <label htmlFor="register-username" className="text-sm text-cyber-text-muted font-medium">
                 Nome de Usuário
               </label>
               <div className="relative">
@@ -88,10 +88,12 @@ export default function RegisterPage() {
                   <User className="h-5 w-5" />
                 </div>
                 <input
+                  id="register-username"
                   type="text"
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  aria-describedby={error ? "register-error" : undefined}
                   className="w-full bg-cyber-dark-surface border border-cyber-dark-border text-cyber-text rounded-lg pl-10 px-4 py-2.5 focus:border-cyber-neon focus:ring-1 focus:ring-cyber-neon transition-colors"
                   placeholder="Seu nick gamer"
                 />
@@ -99,7 +101,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm text-cyber-text-muted font-medium">
+              <label htmlFor="register-email" className="text-sm text-cyber-text-muted font-medium">
                 E-mail
               </label>
               <div className="relative">
@@ -107,10 +109,12 @@ export default function RegisterPage() {
                   <Mail className="h-5 w-5" />
                 </div>
                 <input
+                  id="register-email"
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  aria-describedby={error ? "register-error" : undefined}
                   className="w-full bg-cyber-dark-surface border border-cyber-dark-border text-cyber-text rounded-lg pl-10 px-4 py-2.5 focus:border-cyber-neon focus:ring-1 focus:ring-cyber-neon transition-colors"
                   placeholder="seu@email.com"
                 />
@@ -118,7 +122,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm text-cyber-text-muted font-medium">
+              <label htmlFor="register-password" className="text-sm text-cyber-text-muted font-medium">
                 Senha
               </label>
               <div className="relative">
@@ -126,10 +130,12 @@ export default function RegisterPage() {
                   <Lock className="h-5 w-5" />
                 </div>
                 <input
+                  id="register-password"
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  aria-describedby={error ? "register-error" : undefined}
                   className="w-full bg-cyber-dark-surface border border-cyber-dark-border text-cyber-text rounded-lg pl-10 px-4 py-2.5 focus:border-cyber-neon focus:ring-1 focus:ring-cyber-neon transition-colors"
                   placeholder="••••••••"
                 />
@@ -137,7 +143,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm text-cyber-text-muted font-medium">
+              <label htmlFor="register-confirm-password" className="text-sm text-cyber-text-muted font-medium">
                 Confirmar Senha
               </label>
               <div className="relative">
@@ -145,10 +151,12 @@ export default function RegisterPage() {
                   <Lock className="h-5 w-5" />
                 </div>
                 <input
+                  id="register-confirm-password"
                   type="password"
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  aria-describedby={error ? "register-error" : undefined}
                   className="w-full bg-cyber-dark-surface border border-cyber-dark-border text-cyber-text rounded-lg pl-10 px-4 py-2.5 focus:border-cyber-neon focus:ring-1 focus:ring-cyber-neon transition-colors"
                   placeholder="••••••••"
                 />

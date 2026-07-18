@@ -68,14 +68,14 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-lg mb-6 text-sm">
+            <div id="login-error" className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-lg mb-6 text-sm">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} noValidate className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm text-cyber-text-muted font-medium">
+              <label htmlFor="login-email" className="text-sm text-cyber-text-muted font-medium">
                 E-mail
               </label>
               <div className="relative">
@@ -83,10 +83,12 @@ export default function LoginPage() {
                   <Mail className="h-5 w-5" />
                 </div>
                 <input
+                  id="login-email"
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  aria-describedby={error ? "login-error" : undefined}
                   className="w-full bg-cyber-dark-surface border border-cyber-dark-border text-cyber-text rounded-lg pl-10 px-4 py-2.5 focus:border-cyber-neon focus:ring-1 focus:ring-cyber-neon transition-colors"
                   placeholder="seu@email.com"
                 />
@@ -95,7 +97,7 @@ export default function LoginPage() {
 
             <div className="space-y-2">
               <div className="flex justify-between">
-                <label className="text-sm text-cyber-text-muted font-medium">
+                <label htmlFor="login-password" className="text-sm text-cyber-text-muted font-medium">
                   Senha
                 </label>
                 <Link
@@ -110,10 +112,12 @@ export default function LoginPage() {
                   <Lock className="h-5 w-5" />
                 </div>
                 <input
+                  id="login-password"
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  aria-describedby={error ? "login-error" : undefined}
                   className="w-full bg-cyber-dark-surface border border-cyber-dark-border text-cyber-text rounded-lg pl-10 px-4 py-2.5 focus:border-cyber-neon focus:ring-1 focus:ring-cyber-neon transition-colors"
                   placeholder="••••••••"
                 />

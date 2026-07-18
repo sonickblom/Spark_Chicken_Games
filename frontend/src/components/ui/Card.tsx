@@ -55,12 +55,12 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       return (
         <div
           ref={ref}
-          className={cn(variants[variant], hoverStyles)}
+          className={cn(variants[variant], hoverStyles, className)}
           {...props}
         >
           <div
             className={cn(
-              "bg-[#0a0a12] rounded-[calc(1.25rem-1px)]",
+              "bg-cyber-dark-surface rounded-[calc(1.25rem-1px)]",
               "shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]",
               paddings[padding],
             )}
@@ -75,7 +75,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     return (
       <div
         ref={ref}
-        className={cn(variants[variant], paddings[padding], hoverStyles)}
+        className={cn(variants[variant], paddings[padding], hoverStyles, className)}
         {...props}
       >
         {children}

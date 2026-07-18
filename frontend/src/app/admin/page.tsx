@@ -131,7 +131,7 @@ export default function AdminDashboard() {
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
             {greeting}, Admin 👋
           </h1>
-          <p className="text-gray-400 mt-1">
+          <p className="text-cyber-text-muted mt-1">
             Aqui está o resumo da sua plataforma
           </p>
         </div>
@@ -172,7 +172,7 @@ export default function AdminDashboard() {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Jogos Mais Populares */}
-        <div className="lg:col-span-2 rounded-xl bg-gray-900/30 border border-gray-800 p-6">
+        <div className="lg:col-span-2 rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border p-6">
           <h2 className="text-lg font-semibold text-white mb-6">
             Jogos Mais Populares
           </h2>
@@ -180,7 +180,7 @@ export default function AdminDashboard() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="text-xs text-gray-500 uppercase tracking-wider">
+                  <tr className="text-xs text-cyber-text-muted uppercase tracking-wider">
                     <th className="text-left pb-3 font-medium">#</th>
                     <th className="text-left pb-3 font-medium">Jogo</th>
                     <th className="text-right pb-3 font-medium">Jogadas</th>
@@ -191,9 +191,9 @@ export default function AdminDashboard() {
                   {sortedByPlays.slice(0, 10).map((game, index) => (
                     <tr
                       key={game.id}
-                      className="text-sm hover:bg-gray-800/30 transition-colors"
+                      className="text-sm hover:bg-cyber-dark-surface/30 transition-colors"
                     >
-                      <td className="py-3 text-gray-400">{index + 1}</td>
+                      <td className="py-3 text-cyber-text-muted">{index + 1}</td>
                       <td className="py-3 font-medium text-white">
                         <Link
                           href={`/play/${game.slug}`}
@@ -202,10 +202,10 @@ export default function AdminDashboard() {
                           {game.title}
                         </Link>
                       </td>
-                      <td className="py-3 text-right text-gray-300">
+                      <td className="py-3 text-right text-cyber-text">
                         {formatNumber(game.playCount)}
                       </td>
-                      <td className="py-3 text-right text-gray-400">
+                      <td className="py-3 text-right text-cyber-text-muted">
                         {game.size < 1024
                           ? `${game.size} B`
                           : game.size < 1024 * 1024
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
               </table>
             </div>
           ) : (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-cyber-text-muted">
               <svg
                 className="w-12 h-12 mx-auto mb-3 opacity-50"
                 fill="none"
@@ -249,7 +249,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Atividade Recente */}
-        <div className="rounded-xl bg-gray-900/30 border border-gray-800 p-6">
+        <div className="rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border p-6">
           <h2 className="text-lg font-semibold text-white mb-6">
             Jogos Recentes
           </h2>
@@ -280,14 +280,14 @@ export default function AdminDashboard() {
                     <p className="text-sm text-gray-200 leading-snug group-hover:text-neon-green transition-colors">
                       {game.title}
                     </p>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs text-cyber-text-muted mt-0.5">
                       {new Date(game.createdAt).toLocaleDateString("pt-BR")}
                     </p>
                   </div>
                 </Link>
               ))
             ) : (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-cyber-text-muted">
                 <p>Nenhuma atividade recente</p>
               </div>
             )}
@@ -306,7 +306,7 @@ function UploadedGamesSection() {
 
   if (loading) {
     return (
-      <div className="rounded-xl bg-gray-900/30 border border-gray-800 p-6 text-center text-gray-500">
+      <div className="rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border p-6 text-center text-cyber-text-muted">
         Carregando...
       </div>
     );
@@ -314,7 +314,7 @@ function UploadedGamesSection() {
 
   if (games.length === 0) {
     return (
-      <div className="rounded-xl bg-gray-900/30 border border-gray-800 p-6">
+      <div className="rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border p-6">
         <div className="text-center py-12">
           <svg
             className="w-16 h-16 mx-auto mb-4 text-gray-700"
@@ -329,10 +329,10 @@ function UploadedGamesSection() {
               d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
             />
           </svg>
-          <h3 className="text-lg font-medium text-gray-400 mb-2">
+          <h3 className="text-lg font-medium text-cyber-text-muted mb-2">
             Nenhum jogo publicado
           </h3>
-          <p className="text-sm text-gray-600 mb-6">
+          <p className="text-sm text-cyber-text-muted/70 mb-6">
             Faça upload do seu primeiro jogo HTML agora mesmo!
           </p>
           <Link
@@ -368,13 +368,13 @@ function UploadedGamesSection() {
   };
 
   return (
-    <div className="rounded-xl bg-gray-900/30 border border-gray-800 p-6">
+    <div className="rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-lg font-semibold text-white">
             📦 Jogos Enviados (Upload)
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-cyber-text-muted mt-1">
             Jogos HTML publicados via upload rápido
           </p>
         </div>
@@ -401,29 +401,29 @@ function UploadedGamesSection() {
 
       {/* Mini stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <div className="bg-gray-800/50 rounded-lg p-3">
+        <div className="bg-cyber-dark-surface/50 rounded-lg p-3">
           <div className="text-xl font-bold text-neon-green">
             {games.length}
           </div>
-          <div className="text-xs text-gray-500">Jogos</div>
+          <div className="text-xs text-cyber-text-muted">Jogos</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-3">
+        <div className="bg-cyber-dark-surface/50 rounded-lg p-3">
           <div className="text-xl font-bold text-neon-green">
             {totalPlayCount}
           </div>
-          <div className="text-xs text-gray-500">Jogadas</div>
+          <div className="text-xs text-cyber-text-muted">Jogadas</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-3">
+        <div className="bg-cyber-dark-surface/50 rounded-lg p-3">
           <div className="text-xl font-bold text-neon-green">
             {formatSize(totalSize)}
           </div>
-          <div className="text-xs text-gray-500">Armazenamento</div>
+          <div className="text-xs text-cyber-text-muted">Armazenamento</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-3">
+        <div className="bg-cyber-dark-surface/50 rounded-lg p-3">
           <div className="text-xl font-bold text-neon-green">
             {games.reduce((sum, g) => sum + g.files.length, 0)}
           </div>
-          <div className="text-xs text-gray-500">Arquivos</div>
+          <div className="text-xs text-cyber-text-muted">Arquivos</div>
         </div>
       </div>
 
@@ -432,13 +432,13 @@ function UploadedGamesSection() {
         {games.slice(0, 5).map((game) => (
           <div
             key={game.id}
-            className="flex items-center justify-between bg-gray-800/30 rounded-lg px-4 py-3 hover:bg-gray-800/50 transition-colors"
+            className="flex items-center justify-between bg-cyber-dark-surface/30 rounded-lg px-4 py-3 hover:bg-cyber-dark-surface/50 transition-colors"
           >
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-white truncate">
                 {game.title}
               </p>
-              <p className="text-xs text-gray-500 truncate">
+              <p className="text-xs text-cyber-text-muted truncate">
                 /play/{game.slug} · {game.playCount} jogada(s) ·{" "}
                 {new Date(game.createdAt).toLocaleDateString("pt-BR")}
               </p>
@@ -452,7 +452,7 @@ function UploadedGamesSection() {
               >
                 Jogar
               </a>
-              <span className="text-xs text-gray-600">
+              <span className="text-xs text-cyber-text-muted/70">
                 {formatSize(game.size)}
               </span>
             </div>
@@ -461,7 +461,7 @@ function UploadedGamesSection() {
       </div>
 
       {games.length > 5 && (
-        <p className="block text-center text-sm text-gray-500 mt-4">
+        <p className="block text-center text-sm text-cyber-text-muted mt-4">
           + {games.length - 5} jogo(s) - todos listados em Jogos Enviados
         </p>
       )}

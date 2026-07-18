@@ -34,7 +34,7 @@ export default function AdminGames() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white">Jogos</h1>
-          <p className="text-gray-400 mt-1">
+          <p className="text-cyber-text-muted mt-1">
             Gerencie todos os jogos da plataforma
           </p>
         </div>
@@ -64,7 +64,7 @@ export default function AdminGames() {
         {/* Search */}
         <div className="relative flex-1">
           <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyber-text-muted"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -81,42 +81,42 @@ export default function AdminGames() {
             placeholder="Buscar jogos..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent text-sm transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent text-sm transition-all"
           />
         </div>
       </div>
 
       {/* Stats summary */}
       <div className="flex flex-wrap gap-4 text-sm">
-        <span className="text-gray-400">
+        <span className="text-cyber-text-muted">
           Total: <strong className="text-white">{games.length}</strong>
         </span>
       </div>
 
       {/* Games table */}
-      <div className="rounded-xl bg-gray-900/30 border border-gray-800 overflow-hidden">
+      <div className="rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border overflow-hidden">
         <div className="overflow-x-auto">
           {loading ? (
             <div className="text-center py-16">
-              <p className="text-gray-500">Carregando jogos...</p>
+              <p className="text-cyber-text-muted">Carregando jogos...</p>
             </div>
           ) : (
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-800 bg-gray-900/50">
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <tr className="border-b border-cyber-dark-border bg-cyber-dark-surface/50">
+                  <th className="text-left px-4 py-3 text-xs font-medium text-cyber-text-muted uppercase tracking-wider">
                     Jogo
                   </th>
-                  <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                  <th className="text-center px-4 py-3 text-xs font-medium text-cyber-text-muted uppercase tracking-wider hidden md:table-cell">
                     Criado em
                   </th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                  <th className="text-right px-4 py-3 text-xs font-medium text-cyber-text-muted uppercase tracking-wider hidden lg:table-cell">
                     Jogadas
                   </th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                  <th className="text-right px-4 py-3 text-xs font-medium text-cyber-text-muted uppercase tracking-wider hidden lg:table-cell">
                     Tamanho
                   </th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="text-right px-4 py-3 text-xs font-medium text-cyber-text-muted uppercase tracking-wider">
                     Ações
                   </th>
                 </tr>
@@ -125,13 +125,13 @@ export default function AdminGames() {
                 {filteredGames.map((game) => (
                   <tr
                     key={game.id}
-                    className="hover:bg-gray-800/20 transition-colors group"
+                    className="hover:bg-cyber-dark-surface/20 transition-colors group"
                   >
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center shrink-0 overflow-hidden">
+                        <div className="w-10 h-10 rounded-lg bg-cyber-dark-surface flex items-center justify-center shrink-0 overflow-hidden">
                           <svg
-                            className="w-5 h-5 text-gray-600"
+                            className="w-5 h-5 text-cyber-text-muted/70"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -151,26 +151,26 @@ export default function AdminGames() {
                           >
                             {game.title}
                           </Link>
-                          <p className="text-xs text-gray-500 truncate max-w-[200px]">
+                          <p className="text-xs text-cyber-text-muted truncate max-w-[200px]">
                             /play/{game.slug}
                           </p>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3.5 hidden md:table-cell text-center">
-                      <span className="text-sm text-gray-400">
+                      <span className="text-sm text-cyber-text-muted">
                         {new Date(game.createdAt).toLocaleDateString("pt-BR")}
                       </span>
                     </td>
                     <td className="px-4 py-3.5 hidden lg:table-cell text-right">
-                      <span className="text-sm text-gray-300">
+                      <span className="text-sm text-cyber-text">
                         {game.playCount > 0
                           ? formatNumber(game.playCount)
                           : "—"}
                       </span>
                     </td>
                     <td className="px-4 py-3.5 hidden lg:table-cell text-right">
-                      <span className="text-sm text-gray-400">
+                      <span className="text-sm text-cyber-text-muted">
                         {game.size < 1024
                           ? `${game.size} B`
                           : game.size < 1024 * 1024
@@ -184,7 +184,7 @@ export default function AdminGames() {
                           href={`/play/${game.slug}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 rounded-lg text-gray-500 hover:text-neon-green hover:bg-gray-800 transition-all"
+                          className="p-2 rounded-lg text-cyber-text-muted hover:text-neon-green hover:bg-cyber-dark-surface transition-all"
                           title="Jogar"
                         >
                           <svg
@@ -205,7 +205,7 @@ export default function AdminGames() {
                           onClick={() =>
                             handleDelete(game.id, game.slug, game.title)
                           }
-                          className="p-2 rounded-lg text-gray-500 hover:text-red-400 hover:bg-gray-800 transition-all"
+                          className="p-2 rounded-lg text-cyber-text-muted hover:text-red-400 hover:bg-cyber-dark-surface transition-all"
                           title="Excluir"
                         >
                           <svg
@@ -247,12 +247,12 @@ export default function AdminGames() {
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
-            <p className="text-gray-400 text-lg font-medium">
+            <p className="text-cyber-text-muted text-lg font-medium">
               {games.length === 0
                 ? "Nenhum jogo publicado ainda"
                 : "Nenhum jogo encontrado"}
             </p>
-            <p className="text-gray-600 text-sm mt-1">
+            <p className="text-cyber-text-muted/70 text-sm mt-1">
               {games.length === 0
                 ? "Faça upload do primeiro jogo HTML agora mesmo!"
                 : "Tente alterar os filtros da busca"}
@@ -285,7 +285,7 @@ export default function AdminGames() {
       {/* Pagination info */}
       {!loading && filteredGames.length > 0 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-cyber-text-muted">
             Mostrando {filteredGames.length} de {games.length} jogos
           </p>
         </div>

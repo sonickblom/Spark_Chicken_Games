@@ -20,7 +20,7 @@
   }
 
   body {
-    @apply bg-[#030305] text-white antialiased font-mono;
+    @apply bg-cyber-darker text-white antialiased font-mono;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
@@ -34,7 +34,7 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-[#0a0a12];
+    @apply bg-cyber-dark-surface;
   }
 
   ::-webkit-scrollbar-thumb {
@@ -47,7 +47,7 @@
   }
 
   ::-webkit-scrollbar-corner {
-    @apply bg-[#0a0a12];
+    @apply bg-cyber-dark-surface;
   }
 
   * {
@@ -56,92 +56,6 @@
 }
 
 @layer components {
-  /* ── Buttons ─────────────────────────────────────────── */
-
-  .btn-cyber {
-    @apply inline-flex items-center justify-center px-6 py-3 font-bold text-black bg-neon-green rounded-full
-           transition-all duration-500
-           focus:outline-none focus:ring-2 focus:ring-neon-green focus:ring-offset-2 focus:ring-offset-[#030305];
-    transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-  }
-
-  .btn-cyber:hover {
-    @apply shadow-[0_0_24px_rgba(0,255,65,0.45),0_0_48px_rgba(0,255,65,0.15)];
-  }
-
-  .btn-cyber:active {
-    @apply scale-95;
-  }
-
-  .btn-cyber-outline {
-    @apply inline-flex items-center justify-center px-6 py-3 font-bold text-neon-green border-2 border-neon-green rounded-full bg-transparent
-           transition-all duration-500
-           focus:outline-none focus:ring-2 focus:ring-neon-green focus:ring-offset-2 focus:ring-offset-[#030305];
-    transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-  }
-
-  .btn-cyber-outline:hover {
-    @apply bg-neon-green/10 shadow-[0_0_24px_rgba(0,255,65,0.25),0_0_48px_rgba(0,255,65,0.1)];
-  }
-
-  .btn-cyber-outline:active {
-    @apply scale-95;
-  }
-
-  .btn-cyber-ghost {
-    @apply inline-flex items-center justify-center px-6 py-3 font-medium text-gray-400 rounded-full bg-transparent
-           transition-all duration-500
-           focus:outline-none focus:ring-2 focus:ring-neon-green focus:ring-offset-2 focus:ring-offset-[#030305];
-    transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-  }
-
-  .btn-cyber-ghost:hover {
-    @apply text-neon-green bg-neon-green/5;
-  }
-
-  .btn-cyber-ghost:active {
-    @apply scale-95;
-  }
-
-  /* ── Inputs ──────────────────────────────────────────── */
-
-  .input-cyber {
-    @apply w-full px-4 py-3 bg-[#0d0d1a] border border-white/10 rounded-lg text-white font-mono text-sm
-           placeholder:text-gray-600
-           focus:outline-none focus:ring-2 focus:ring-neon-green/50 focus:border-neon-green/50
-           transition-all duration-300;
-  }
-
-  .input-cyber:focus {
-    box-shadow: 0 0 16px rgba(0, 255, 65, 0.15), 0 0 4px rgba(0, 255, 65, 0.1);
-  }
-
-  /* ── Card: double-bezel architecture ─────────────────── */
-
-  .card-cyber {
-    @apply relative rounded-2xl overflow-hidden
-           bg-[#0a0a12] ring-1 ring-white/5
-           transition-all duration-500;
-  }
-
-  .card-cyber::before {
-    content: "";
-    @apply absolute inset-0 rounded-2xl pointer-events-none;
-    background:
-      linear-gradient(135deg, rgba(0, 255, 65, 0.04) 0%, transparent 50%),
-      linear-gradient(315deg, rgba(0, 255, 65, 0.02) 0%, transparent 50%);
-  }
-
-  .card-cyber > .card-cyber-inner {
-    @apply relative m-[1px] rounded-[14px] bg-[#11111a] p-6;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 40%);
-  }
-
-  .card-cyber:hover {
-    @apply ring-neon-green/30;
-    box-shadow: 0 0 40px rgba(0, 255, 65, 0.08), 0 0 80px rgba(0, 255, 65, 0.03);
-  }
-
   /* ── Text & Glow Utilities ───────────────────────────── */
 
   .text-gradient-neon {
@@ -240,6 +154,15 @@
   @keyframes shimmer {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

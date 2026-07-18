@@ -48,7 +48,7 @@ export function SkeletonCard({
           className,
         )}
       >
-        <div className="flex-1 min-w-0 flex gap-4 bg-[#0a0a12] rounded-[calc(1rem-1px)] p-3">
+        <div className="flex-1 min-w-0 flex gap-4 bg-cyber-dark-surface rounded-[calc(1rem-1px)] p-3">
           <Shimmer className="w-20 h-28 flex-shrink-0 rounded-lg" />
 
           <div className="flex-1 min-w-0 flex flex-col justify-between gap-3">
@@ -118,7 +118,7 @@ export function SkeletonCard({
         className,
       )}
     >
-      <div className="bg-[#0a0a12] rounded-[calc(1.25rem-1px)] overflow-hidden flex flex-col h-full">
+      <div className="bg-cyber-dark-surface rounded-[calc(1.25rem-1px)] overflow-hidden flex flex-col h-full">
         {/* Cover */}
         <div className="relative aspect-[3/4] overflow-hidden">
           <Shimmer className="absolute inset-0 !rounded-none" rounded="rounded-none" />

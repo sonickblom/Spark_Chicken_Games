@@ -17,7 +17,7 @@ export default function AdminUsersPage() {
   const ROLE_COLORS: Record<string, string> = {
     admin: "bg-purple-500/10 text-purple-400 border-purple-500/30",
     moderator: "bg-blue-500/10 text-blue-400 border-blue-500/30",
-    user: "bg-gray-500/10 text-gray-400 border-gray-500/30",
+    user: "bg-gray-500/10 text-cyber-text-muted border-gray-500/30",
   };
 
   const ROLE_LABELS: Record<string, string> = {
@@ -123,7 +123,7 @@ export default function AdminUsersPage() {
         <h1 className="text-2xl sm:text-3xl font-bold text-white">
           👥 Usuários
         </h1>
-        <p className="text-gray-400 mt-1">
+        <p className="text-cyber-text-muted mt-1">
           Gerencie o acesso de administradores da plataforma
         </p>
       </div>
@@ -149,7 +149,7 @@ export default function AdminUsersPage() {
       )}
 
       {/* Info card */}
-      <div className="rounded-xl bg-gray-900/30 border border-gray-800 p-5">
+      <div className="rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border p-5">
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400 shrink-0">
             <svg
@@ -167,7 +167,7 @@ export default function AdminUsersPage() {
             </svg>
           </div>
           <div>
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-cyber-text">
               <strong className="text-white">Apenas Samuteg</strong> pode
               gerenciar administradores. Clique no botão ao lado do usuário para
               conceder ou remover acesso de admin.
@@ -179,7 +179,7 @@ export default function AdminUsersPage() {
       {/* Search */}
       <div className="relative">
         <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyber-text-muted"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -196,32 +196,32 @@ export default function AdminUsersPage() {
           placeholder="Buscar por nome, email ou usuário..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent text-sm transition-all"
+          className="w-full pl-10 pr-4 py-2.5 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent text-sm transition-all"
         />
       </div>
 
       {/* Users table */}
-      <div className="rounded-xl bg-gray-900/30 border border-gray-800 overflow-hidden">
+      <div className="rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border overflow-hidden">
         <div className="overflow-x-auto">
           {loading ? (
             <div className="text-center py-16">
               <div className="w-8 h-8 border-2 border-neon-green border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-              <p className="text-gray-500 text-sm">Carregando usuários...</p>
+              <p className="text-cyber-text-muted text-sm">Carregando usuários...</p>
             </div>
           ) : (
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-800 bg-gray-900/50">
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <tr className="border-b border-cyber-dark-border bg-cyber-dark-surface/50">
+                  <th className="text-left px-4 py-3 text-xs font-medium text-cyber-text-muted uppercase tracking-wider">
                     Usuário
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                  <th className="text-left px-4 py-3 text-xs font-medium text-cyber-text-muted uppercase tracking-wider hidden sm:table-cell">
                     Email
                   </th>
-                  <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                  <th className="text-center px-4 py-3 text-xs font-medium text-cyber-text-muted uppercase tracking-wider hidden md:table-cell">
                     Papel
                   </th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="text-right px-4 py-3 text-xs font-medium text-cyber-text-muted uppercase tracking-wider">
                     Ações
                   </th>
                 </tr>
@@ -234,17 +234,17 @@ export default function AdminUsersPage() {
                   const roleLabel = ROLE_LABELS[roleName] || roleName;
                   const roleColor =
                     ROLE_COLORS[roleName] ||
-                    "bg-gray-500/10 text-gray-400 border-gray-500/30";
+                    "bg-gray-500/10 text-cyber-text-muted border-gray-500/30";
                   const isUpdating = updatingUserId === user.id;
 
                   return (
                     <tr
                       key={user.id}
-                      className="hover:bg-gray-800/20 transition-colors group"
+                      className="hover:bg-cyber-dark-surface/20 transition-colors group"
                     >
                       <td className="px-4 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center shrink-0 text-sm font-bold text-gray-500">
+                          <div className="w-9 h-9 rounded-full bg-cyber-dark-surface flex items-center justify-center shrink-0 text-sm font-bold text-cyber-text-muted">
                             {user.username?.charAt(0).toUpperCase() || "?"}
                           </div>
                           <div>
@@ -257,7 +257,7 @@ export default function AdminUsersPage() {
                               )}
                             </p>
                             {user.name && (
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-cyber-text-muted">
                                 {user.name}
                               </p>
                             )}
@@ -265,7 +265,7 @@ export default function AdminUsersPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3.5 hidden sm:table-cell">
-                        <span className="text-sm text-gray-400">
+                        <span className="text-sm text-cyber-text-muted">
                           {user.email}
                         </span>
                       </td>
@@ -278,7 +278,7 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="px-4 py-3.5 text-right">
                         {isSamuteg ? (
-                          <span className="text-xs text-gray-600 italic">
+                          <span className="text-xs text-cyber-text-muted/70 italic">
                             —
                           </span>
                         ) : (
@@ -358,7 +358,7 @@ export default function AdminUsersPage() {
                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
               />
             </svg>
-            <p className="text-gray-400 text-lg font-medium">
+            <p className="text-cyber-text-muted text-lg font-medium">
               {users.length === 0
                 ? "Nenhum usuário encontrado"
                 : "Nenhum resultado para sua busca"}
@@ -369,7 +369,7 @@ export default function AdminUsersPage() {
 
       {/* Summary */}
       {!loading && users.length > 0 && (
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-cyber-text-muted">
           Mostrando {filteredUsers.length} de {users.length} usuário(s)
           {" · "}
           <span className="text-purple-400">
@@ -392,7 +392,7 @@ export default function AdminUsersPage() {
             moderador(es)
           </span>
           {" · "}
-          <span className="text-gray-400">
+          <span className="text-cyber-text-muted">
             {
               users.filter((u) => {
                 const roleName = roles[u.roleId || ""] || u.roleName || "user";
@@ -409,7 +409,7 @@ export default function AdminUsersPage() {
         <button
           onClick={fetchUsers}
           disabled={loading}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-700 hover:border-gray-600 rounded-lg transition-all disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm text-cyber-text-muted hover:text-white border border-cyber-dark-border hover:border-gray-600 rounded-lg transition-all disabled:opacity-50"
         >
           <svg
             className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}

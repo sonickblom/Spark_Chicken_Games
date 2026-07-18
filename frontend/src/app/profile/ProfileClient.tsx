@@ -14,7 +14,7 @@ export function ProfileClient() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-cyber-darker flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-neon-green" />
       </div>
     );
@@ -22,9 +22,9 @@ export function ProfileClient() {
 
   if (!isAuthenticated || !user) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-cyber-darker flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gray-800 flex items-center justify-center">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-cyber-dark-surface flex items-center justify-center">
             <svg
               className="w-10 h-10 text-gray-500"
               fill="none"
@@ -42,7 +42,7 @@ export function ProfileClient() {
           <h1 className="text-2xl font-bold text-white mb-2">
             Acesso Restrito
           </h1>
-          <p className="text-gray-400 mb-8">
+          <p className="text-cyber-text-muted mb-8">
             Faça login para acessar seu perfil e gerenciar suas informações.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -54,7 +54,7 @@ export function ProfileClient() {
             </Link>
             <Link
               href="/register"
-              className="px-6 py-3 bg-gray-800 text-white font-medium border border-gray-700 rounded-lg hover:bg-gray-700 transition-colors"
+              className="px-6 py-3 bg-cyber-dark-surface text-white font-medium border border-cyber-dark-border rounded-lg hover:bg-cyber-dark-surface/70 transition-colors"
             >
               Cadastrar
             </Link>
@@ -70,7 +70,7 @@ export function ProfileClient() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-cyber-darker">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Profile Header */}
         <div className="mb-10">
@@ -85,11 +85,11 @@ export function ProfileClient() {
               <h1 className="text-3xl font-bold text-white mb-1">
                 {user.username}
               </h1>
-              <p className="text-gray-400 mb-1">{user.email}</p>
+              <p className="text-cyber-text-muted mb-1">{user.email}</p>
               {user.bio && (
-                <p className="text-gray-500 text-sm max-w-md">{user.bio}</p>
+                <p className="text-cyber-text-muted/80 text-sm max-w-md">{user.bio}</p>
               )}
-              <p className="text-xs text-gray-600 mt-2">
+              <p className="text-xs text-cyber-text-muted/50 mt-2">
                 Membro desde {formatDate(user.createdAt)}
               </p>
             </div>
@@ -98,30 +98,30 @@ export function ProfileClient() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
-          <div className="p-4 bg-gray-900 border border-gray-800 rounded-xl text-center">
-            <p className="text-2xl font-bold text-neon-green">
-              {user.favorites?.length ?? 0}
-            </p>
-            <p className="text-sm text-gray-400">Favoritos</p>
-          </div>
-          <div className="p-4 bg-gray-900 border border-gray-800 rounded-xl text-center">
-            <p className="text-2xl font-bold text-white">
-              {user.recentlyPlayed?.length ?? 0}
-            </p>
-            <p className="text-sm text-gray-400">Jogados</p>
-          </div>
-          <div className="p-4 bg-gray-900 border border-gray-800 rounded-xl text-center">
-            <p className="text-2xl font-bold text-white">
-              {user.achievements?.length ?? 0}
-            </p>
-            <p className="text-sm text-gray-400">Conquistas</p>
-          </div>
-          <div className="p-4 bg-gray-900 border border-gray-800 rounded-xl text-center">
-            <p className="text-2xl font-bold text-white">
-              {formatPlaytime(totalPlaytime)}
-            </p>
-            <p className="text-sm text-gray-400">Total Jogado</p>
-          </div>
+            <div className="p-4 bg-cyber-dark-surface border border-cyber-dark-border rounded-xl text-center">
+              <p className="text-2xl font-bold text-neon-green">
+                {user.favorites?.length ?? 0}
+              </p>
+              <p className="text-sm text-cyber-text-muted">Favoritos</p>
+            </div>
+            <div className="p-4 bg-cyber-dark-surface border border-cyber-dark-border rounded-xl text-center">
+              <p className="text-2xl font-bold text-white">
+                {user.recentlyPlayed?.length ?? 0}
+              </p>
+              <p className="text-sm text-cyber-text-muted">Jogados</p>
+            </div>
+            <div className="p-4 bg-cyber-dark-surface border border-cyber-dark-border rounded-xl text-center">
+              <p className="text-2xl font-bold text-white">
+                {user.achievements?.length ?? 0}
+              </p>
+              <p className="text-sm text-cyber-text-muted">Conquistas</p>
+            </div>
+            <div className="p-4 bg-cyber-dark-surface border border-cyber-dark-border rounded-xl text-center">
+              <p className="text-2xl font-bold text-white">
+                {formatPlaytime(totalPlaytime)}
+              </p>
+              <p className="text-sm text-cyber-text-muted">Total Jogado</p>
+            </div>
         </div>
 
         {/* Recently Played */}
@@ -134,9 +134,9 @@ export function ProfileClient() {
               {user.recentlyPlayed.map((item) => (
                 <div
                   key={item.gameId}
-                  className="flex items-center gap-4 p-4 bg-gray-900 border border-gray-800 rounded-xl"
+                  className="flex items-center gap-4 p-4 bg-cyber-dark-surface border border-cyber-dark-border rounded-xl"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-gray-800 flex items-center justify-center text-2xl flex-shrink-0">
+                  <div className="w-12 h-12 rounded-lg bg-cyber-dark-surface flex items-center justify-center text-2xl flex-shrink-0">
                     🎮
                   </div>
                   <div className="flex-1 min-w-0">
@@ -146,7 +146,7 @@ export function ProfileClient() {
                     >
                       Jogo #{item.gameId}
                     </Link>
-                    <div className="flex items-center gap-3 text-sm text-gray-500">
+                    <div className="flex items-center gap-3 text-sm text-cyber-text-muted">
                       <span>{formatPlaytime(item.duration)}</span>
                       <span>{formatDate(item.lastPlayed)}</span>
                     </div>
@@ -165,7 +165,7 @@ export function ProfileClient() {
               {user.achievements.map((achievement) => (
                 <div
                   key={achievement.id}
-                  className="flex items-center gap-3 p-4 bg-gray-900 border border-gray-800 rounded-xl"
+                  className="flex items-center gap-3 p-4 bg-cyber-dark-surface border border-cyber-dark-border rounded-xl"
                 >
                   <span className="text-2xl" aria-hidden="true">
                     {achievement.icon || "🏆"}
@@ -174,11 +174,11 @@ export function ProfileClient() {
                     <p className="text-white font-medium text-sm">
                       {achievement.name}
                     </p>
-                    <p className="text-gray-500 text-xs">
+                    <p className="text-cyber-text-muted/80 text-xs">
                       {achievement.description}
                     </p>
                     {achievement.unlockedAt && (
-                      <p className="text-gray-600 text-xs mt-1">
+                      <p className="text-cyber-text-muted/50 text-xs mt-1">
                         Desbloqueado em {formatDate(achievement.unlockedAt)}
                       </p>
                     )}

@@ -58,7 +58,7 @@ const Footer = ({ className = "" }: FooterProps) => {
   return (
     <footer
       className={cn(
-        "relative bg-[#020204] text-cyber-text",
+        "relative bg-cyber-darker text-cyber-text",
         className,
       )}
     >
@@ -116,6 +116,7 @@ const Footer = ({ className = "" }: FooterProps) => {
                       "text-cyber-text-muted",
                       "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
                       "hover:border-neon-green/40 hover:text-neon-green hover:shadow-[0_0_16px_rgba(0,255,65,0.25)]",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-green focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-darker",
                     )}
                   >
                     <Icon className="size-4" />
@@ -140,6 +141,7 @@ const Footer = ({ className = "" }: FooterProps) => {
                         "group/link inline-flex items-center gap-1.5 font-mono text-xs text-cyber-text-muted",
                         "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
                         "hover:text-neon-green hover:drop-shadow-[0_0_6px_rgba(0,255,65,0.4)]",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-green focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-darker rounded",
                       )}
                     >
                       <span className="inline-block size-1 rounded-full bg-neon-green/0 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover/link:bg-neon-green group-hover/link:shadow-[0_0_4px_rgba(0,255,65,0.6)]" />

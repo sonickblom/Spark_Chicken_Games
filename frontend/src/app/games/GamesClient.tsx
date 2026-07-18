@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import GameGrid from "@/components/game/GameGrid";
+import { GameGrid } from "@/components/GameGrid";
 import SearchBar from "@/components/ui/SearchBar";
 import { useUploadedGames } from "@/hooks/use-uploaded-games";
 import type { UploadedGameData } from "@/hooks/use-uploaded-games";
@@ -95,25 +95,25 @@ export function GamesClient() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-cyber-darker flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-2 border-neon-green border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500">Carregando jogos...</p>
+          <p className="text-cyber-text-muted">Carregando jogos...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black">
-      <section className="py-16 bg-gray-950 border-b border-gray-800">
+    <div className="min-h-screen bg-cyber-darker">
+      <section className="py-16 bg-cyber-dark border-b border-cyber-dark-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-6 mb-8 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h1 className="text-4xl font-bold text-white">
                 Catálogo de Jogos
               </h1>
-              <p className="text-gray-400 mt-2">
+              <p className="text-cyber-text-muted mt-2">
                 {games.length > 0
                   ? `${games.length} jogo(s) disponíveis`
                   : "Explore nossa biblioteca completa de jogos"}
@@ -132,7 +132,7 @@ export function GamesClient() {
                 onChange={(event) =>
                   setSortBy(event.target.value as typeof sortBy)
                 }
-                className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-green"
+                className="px-4 py-2.5 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-green"
                 aria-label="Ordenar por"
               >
                 {sortOptions.map((option) => (
@@ -144,7 +144,7 @@ export function GamesClient() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 text-sm text-gray-500 mb-6">
+          <div className="flex items-center gap-3 text-sm text-cyber-text-muted mb-6">
             <span>{filteredGames.length} resultado(s)</span>
           </div>
 
@@ -153,7 +153,7 @@ export function GamesClient() {
           ) : (
             <div className="text-center py-20">
               <svg
-                className="w-16 h-16 mx-auto text-gray-700 mb-4"
+                className="w-16 h-16 mx-auto text-cyber-text-muted/40 mb-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -165,12 +165,12 @@ export function GamesClient() {
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-              <p className="text-gray-400 text-lg font-medium mb-2">
+              <p className="text-cyber-text-muted text-lg font-medium mb-2">
                 {searchQuery
                   ? `Nenhum resultado para "${searchQuery}"`
                   : "Nenhum jogo disponível"}
               </p>
-              <p className="text-gray-600 text-sm">
+              <p className="text-cyber-text-muted/70 text-sm">
                 {searchQuery
                   ? "Tente outros termos de busca"
                   : "Faça upload de jogos na página de admin"}

@@ -39,7 +39,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={cn(
-              "input-cyber",
+              "w-full px-4 py-3 bg-cyber-surface border border-white/10 rounded-lg text-white font-mono text-sm placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green/50 focus:border-neon-green/50 transition-all duration-300",
               leftIcon && "pl-10",
               rightIcon && "pr-10",
               error &&
@@ -111,7 +111,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           id={textareaId}
           className={cn(
-            "input-cyber resize-y min-h-[100px]",
+            "w-full px-4 py-3 bg-cyber-surface border border-white/10 rounded-lg text-white font-mono text-sm placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green/50 focus:border-neon-green/50 transition-all duration-300 resize-y min-h-[100px]",
             error &&
               "border-cyber-neon focus:border-cyber-neon focus:shadow-neon-sm",
             className,

@@ -97,7 +97,7 @@ export function SearchBar({
               : "ring-white/[0.06]",
           )}
         >
-          <div className="relative bg-[#0a0a12] rounded-[calc(0.75rem-1px)]">
+          <div className="relative bg-cyber-dark-surface rounded-[calc(0.75rem-1px)]">
             <label htmlFor="search" className="sr-only">
               Buscar jogos
             </label>
@@ -162,7 +162,7 @@ export function SearchBar({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.98 }}
               transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-              className="absolute top-full left-0 right-0 mt-2 backdrop-blur-xl bg-[#0a0a12]/80 border border-neon-green/10 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(0,255,65,0.05)] overflow-hidden z-50"
+              className="absolute top-full left-0 right-0 mt-2 backdrop-blur-xl bg-cyber-dark-surface/80 border border-neon-green/10 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(0,255,65,0.05)] overflow-hidden z-50"
               role="listbox"
             >
               <div className="px-4 py-2.5 border-b border-white/[0.05]">
@@ -186,7 +186,7 @@ export function SearchBar({
                     role="option"
                     aria-selected={false}
                   >
-                    <div className="relative w-12 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-[#12121e] ring-1 ring-white/[0.06]">
+                    <div className="relative w-12 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-cyber-dark-surface ring-1 ring-white/[0.06]">
                       {game.thumbnail ? (
                         <Image
                           src={game.thumbnail}

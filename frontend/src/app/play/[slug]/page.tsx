@@ -30,9 +30,9 @@ export default async function PlayGamePage({ params }: PageProps) {
   const gameUrl = getGameUrl(slug);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div className="min-h-screen bg-cyber-dark">
       {/* Top bar */}
-      <header className="sticky top-0 z-30 bg-[#0a0a0f]/80 backdrop-blur-md border-b border-gray-800">
+      <header className="sticky top-0 z-30 bg-cyber-dark/80 backdrop-blur-md border-b border-cyber-dark-border">
         <div className="flex items-center justify-between px-4 sm:px-6 h-16 max-w-7xl mx-auto">
           <div className="flex items-center gap-4">
             <Link
@@ -41,7 +41,7 @@ export default async function PlayGamePage({ params }: PageProps) {
             >
               ← Latency Zero
             </Link>
-            <span className="text-gray-600 hidden sm:inline">/</span>
+            <span className="text-cyber-text-muted/60 hidden sm:inline">/</span>
             <span className="text-white font-medium truncate hidden sm:block">
               {game.title}
             </span>
@@ -50,7 +50,7 @@ export default async function PlayGamePage({ params }: PageProps) {
             <AdminLink />
             <Link
               href="/games"
-              className="px-3 py-1.5 text-sm border border-gray-700 text-gray-300 rounded-lg hover:border-neon-green/50 transition-colors"
+              className="px-3 py-1.5 text-sm border border-cyber-dark-border text-cyber-text rounded-lg hover:border-neon-green/50 transition-colors"
             >
               Explorar Jogos
             </Link>
@@ -68,7 +68,7 @@ export default async function PlayGamePage({ params }: PageProps) {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Game iframe */}
           <div className="flex-1 min-w-0">
-            <div className="bg-black rounded-xl overflow-hidden border border-gray-800">
+            <div className="bg-cyber-darker rounded-xl overflow-hidden border border-cyber-dark-border">
               <GamePlayer
                 gameUrl={gameUrl}
                 title={game.title}
@@ -77,14 +77,14 @@ export default async function PlayGamePage({ params }: PageProps) {
             </div>
 
             {/* Game info */}
-            <div className="mt-6 bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+            <div className="mt-6 bg-cyber-dark-surface/50 border border-cyber-dark-border rounded-xl p-5">
               <h2 className="text-lg font-bold text-white mb-2">
                 {game.title}
               </h2>
               {game.description && (
-                <p className="text-gray-400 text-sm mb-4">{game.description}</p>
+                <p className="text-cyber-text-muted text-sm mb-4">{game.description}</p>
               )}
-              <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+              <div className="flex flex-wrap gap-4 text-sm text-cyber-text-muted">
                 <span>📁 {game.files.length} arquivo(s)</span>
                 <span>🎮 {game.playCount} jogada(s)</span>
                 <span>
@@ -100,7 +100,7 @@ export default async function PlayGamePage({ params }: PageProps) {
                 {game.files.map((file) => (
                   <span
                     key={file}
-                    className="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded-full"
+                    className="text-xs bg-cyber-dark-surface text-cyber-text-muted px-2 py-1 rounded-full"
                   >
                     {file}
                   </span>
@@ -111,32 +111,32 @@ export default async function PlayGamePage({ params }: PageProps) {
 
           {/* Sidebar */}
           <aside className="lg:w-80 shrink-0">
-            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5 sticky top-24">
-              <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">
+            <div className="bg-cyber-dark-surface/50 border border-cyber-dark-border rounded-xl p-5 sticky top-24">
+              <h3 className="text-sm font-semibold text-cyber-text uppercase tracking-wider mb-4">
                 Informações
               </h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Slug</span>
+                  <span className="text-cyber-text-muted">Slug</span>
                   <code className="text-neon-green">{game.slug}</code>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Tamanho</span>
-                  <span className="text-gray-300">
+                  <span className="text-cyber-text-muted">Tamanho</span>
+                  <span className="text-cyber-text">
                     {game.size > 1024 * 1024
                       ? `${(game.size / (1024 * 1024)).toFixed(1)} MB`
                       : `${(game.size / 1024).toFixed(0)} KB`}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Publicado</span>
-                  <span className="text-gray-300">
+                  <span className="text-cyber-text-muted">Publicado</span>
+                  <span className="text-cyber-text">
                     {new Date(game.createdAt).toLocaleDateString("pt-BR")}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Arquivos</span>
-                  <span className="text-gray-300">{game.files.length}</span>
+                  <span className="text-cyber-text-muted">Arquivos</span>
+                  <span className="text-cyber-text">{game.files.length}</span>
                 </div>
               </div>
 
@@ -145,14 +145,14 @@ export default async function PlayGamePage({ params }: PageProps) {
                   href={gameUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block w-full text-center px-4 py-2.5 bg-gray-800 text-gray-300 rounded-lg
-                             hover:bg-gray-700 transition-colors text-sm"
+                  className="block w-full text-center px-4 py-2.5 bg-cyber-dark-surface text-cyber-text rounded-lg
+                             hover:bg-cyber-dark-surface/70 transition-colors text-sm"
                 >
                   Abrir em nova aba
                 </a>
                 <Link
                   href={`/admin/games`}
-                  className="block w-full text-center px-4 py-2.5 border border-gray-700 text-gray-400 rounded-lg
+                  className="block w-full text-center px-4 py-2.5 border border-cyber-dark-border text-cyber-text-muted rounded-lg
                              hover:border-neon-green/50 transition-colors text-sm"
                 >
                   Voltar ao Admin

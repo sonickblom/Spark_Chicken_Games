@@ -106,7 +106,7 @@ export default function AdminLayout({
 
   return (
     <AdminGuard>
-      <div className="min-h-screen bg-[#0a0a0f]">
+      <div className="min-h-screen bg-cyber-dark">
         {/* Mobile overlay */}
         {sidebarOpen && (
           <div
@@ -118,13 +118,13 @@ export default function AdminLayout({
         {/* Sidebar */}
         <aside
           className={cn(
-            "fixed top-0 left-0 z-50 h-full w-64 bg-gray-950 border-r border-gray-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:z-auto",
+            "fixed top-0 left-0 z-50 h-full w-64 bg-cyber-dark border-r border-cyber-dark-border transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:z-auto",
             sidebarOpen ? "translate-x-0" : "-translate-x-full",
           )}
         >
           <div className="flex flex-col h-full">
             {/* Logo */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-800">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-cyber-dark-border">
               <Link href="/admin" className="flex items-center gap-2">
                 <svg
                   className="h-7 w-7 text-neon-green"
@@ -137,7 +137,7 @@ export default function AdminLayout({
               </Link>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden text-gray-400 hover:text-white transition-colors"
+                className="lg:hidden text-cyber-text-muted hover:text-white transition-colors"
               >
                 <svg
                   className="w-5 h-5"
@@ -170,7 +170,7 @@ export default function AdminLayout({
                       "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                       isActive
                         ? "bg-neon-green/10 text-neon-green border border-neon-green/20"
-                        : "text-gray-400 hover:text-white hover:bg-gray-800/50 border border-transparent",
+                        : "text-cyber-text-muted hover:text-white hover:bg-cyber-dark-surface/50 border border-transparent",
                     )}
                   >
                     {item.icon}
@@ -184,10 +184,10 @@ export default function AdminLayout({
             </nav>
 
             {/* Back to site */}
-            <div className="px-3 py-4 border-t border-gray-800">
+            <div className="px-3 py-4 border-t border-cyber-dark-border">
               <Link
                 href="/"
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all duration-200"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-cyber-text-muted hover:text-white hover:bg-cyber-dark-surface/50 transition-all duration-200"
               >
                 <svg
                   className="w-5 h-5"
@@ -211,11 +211,11 @@ export default function AdminLayout({
         {/* Main content */}
         <div className="lg:pl-64">
           {/* Top bar */}
-          <header className="sticky top-0 z-30 bg-[#0a0a0f]/80 backdrop-blur-md border-b border-gray-800">
+          <header className="sticky top-0 z-30 bg-cyber-dark/80 backdrop-blur-md border-b border-cyber-dark-border">
             <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden text-gray-400 hover:text-white transition-colors"
+                className="lg:hidden text-cyber-text-muted hover:text-white transition-colors"
               >
                 <svg
                   className="w-6 h-6"
@@ -237,7 +237,7 @@ export default function AdminLayout({
               <div className="flex items-center gap-4">
                 <Link
                   href="/"
-                  className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-neon-green transition-colors rounded-lg hover:bg-gray-800/50"
+                  className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm text-cyber-text-muted hover:text-neon-green transition-colors rounded-lg hover:bg-cyber-dark-surface/50"
                 >
                   <svg
                     className="w-4 h-4"
