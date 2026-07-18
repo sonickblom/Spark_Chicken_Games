@@ -1,17 +1,29 @@
 "use client";
 
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useUploadedGames } from "@/hooks/use-uploaded-games";
 import { formatNumber } from "@/lib/utils";
 
+const categoryIcons: Record<string, string> = {
+  "Ação": "🎯",
+  "Aventura": "🗺️",
+  "Arcade": "🕹️",
+  "Corrida": "🏎️",
+  "Estratégia": "🧠",
+  "Esporte": "⚽",
+  "Plataforma": "🏗️",
+  "Puzzle": "🧩",
+  "RPG": "⚔️",
+  "Simulação": "🌍",
+};
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
-    },
+    transition: { staggerChildren: 0.05 },
   },
 };
 
@@ -27,43 +39,24 @@ const itemVariants = {
 export function CategoriesClient() {
   const { games, loading } = useUploadedGames();
 
-  // Derive a single "category" from uploaded games
-  const categories =
-    games.length > 0
-      ? [
-          {
-            id: "all",
-            slug: "all",
-            name: "Todos os Jogos",
-            description: `${games.length} jogos HTML disponíveis para jogar instantaneamente`,
-            icon: "🎮",
-            gameCount: games.length,
-            isFeatured: true,
-          },
-          {
-            id: "recent",
-            slug: "recent",
-            name: "Recém Adicionados",
-            description: "Jogos adicionados recentemente à plataforma",
-            icon: "🆕",
-            gameCount: games.filter(
-              (g) =>
-                new Date(g.createdAt).getTime() >
-                Date.now() - 7 * 24 * 60 * 60 * 1000,
-            ).length,
-            isFeatured: false,
-          },
-          {
-            id: "popular",
-            slug: "popular",
-            name: "Mais Jogados",
-            description: "Jogos com maior número de jogadas",
-            icon: "🔥",
-            gameCount: games.filter((g) => g.playCount > 0).length,
-            isFeatured: false,
-          },
-        ]
-      : [];
+  const categories = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const game of games) {
+      const cat = game.category || "Sem Categoria";
+      counts.set(cat, (counts.get(cat) || 0) + 1);
+    }
+    return Array.from(counts.entries())
+      .map(([name, gameCount]) => ({
+        id: name.toLowerCase().replace(/\s+/g, "-"),
+        slug: name.toLowerCase().replace(/\s+/g, "-"),
+        name,
+        description: `${gameCount} ${gameCount === 1 ? "jogo disponível" : "jogos disponíveis"}`,
+        icon: categoryIcons[name] || "🎮",
+        gameCount,
+        isFeatured: gameCount >= Math.max(3, Math.ceil(games.length / 3)),
+      }))
+      .sort((a, b) => b.gameCount - a.gameCount);
+  }, [games]);
 
   if (loading) {
     return (
@@ -95,7 +88,7 @@ export function CategoriesClient() {
             </h1>
             <p className="text-lg text-cyber-text-muted max-w-2xl mx-auto">
               {games.length > 0
-                ? `Explore nossos ${games.length} jogos disponíveis na plataforma`
+                ? `Explore nossos ${games.length} jogos organizados por categoria`
                 : "Explore nossa biblioteca de jogos organizada por categorias"}
             </p>
           </motion.div>
@@ -110,11 +103,7 @@ export function CategoriesClient() {
               {categories.map((category) => (
                 <motion.div key={category.id} variants={itemVariants}>
                   <Link
-                    href={
-                      category.slug === "all"
-                        ? "/games"
-                        : `/games?sort=${category.slug}`
-                    }
+                    href={`/games?category=${category.slug}`}
                     className="group block p-6 bg-cyber-dark-surface border border-cyber-dark-border rounded-xl hover:border-neon-green/50 hover:shadow-[0_0_30px_rgba(0,255,65,0.1)] transition-all duration-500"
                   >
                     <div className="flex items-start gap-4">

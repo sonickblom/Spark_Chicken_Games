@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
+    const category = formData.get("category") as string;
 
     if (!title || title.trim().length < 2) {
       return NextResponse.json(
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const game = createGameFromFiles(title.trim(), description || "", files);
+    const game = createGameFromFiles(title.trim(), description || "", files, category || undefined);
 
     return NextResponse.json({
       success: true,

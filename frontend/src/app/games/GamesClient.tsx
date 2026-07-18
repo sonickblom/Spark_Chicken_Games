@@ -1,10 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { GameGrid } from "@/components/GameGrid";
 import SearchBar from "@/components/ui/SearchBar";
 import { useUploadedGames } from "@/hooks/use-uploaded-games";
-import type { UploadedGameData } from "@/hooks/use-uploaded-games";
+import { mapUploadedGameToGame } from "@/lib/map-game";
 
 const sortOptions: Array<{
   value: "popularity" | "rating" | "newest" | "oldest" | "alphabetical";
@@ -16,49 +17,32 @@ const sortOptions: Array<{
   { value: "alphabetical", label: "A-Z" },
 ];
 
-function mapGame(game: UploadedGameData) {
-  return {
-    id: game.id,
-    slug: game.slug,
-    title: game.title,
-    description: game.description,
-    shortDescription: game.description,
-    thumbnail: "",
-    coverImage: "",
-    category: {
-      id: "upload",
-      slug: "upload",
-      name: "Upload",
-      description: "",
-      icon: "🎮",
-      gameCount: 0,
-    },
-    tags: ["HTML", "Web"],
-    rating: 0,
-    playCount: game.playCount,
-    releaseDate: game.createdAt,
-    developer: "Spark Chicken Games",
-    publisher: "Spark Chicken Games",
-    iframeUrl: game.embedUrl || game.url,
-    width: 800,
-    height: 600,
-    isFeatured: true,
-    isNew: false,
-    isPopular: game.playCount > 0,
-    createdAt: game.createdAt,
-    updatedAt: game.updatedAt,
-  };
-}
-
 export function GamesClient() {
+  const searchParams = useSearchParams();
+  const categorySlug = searchParams.get("category") || "";
+
   const { games, loading } = useUploadedGames();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<
     "popularity" | "rating" | "newest" | "oldest" | "alphabetical"
   >("popularity");
 
+  const categoryName = categorySlug
+    ? decodeURIComponent(categorySlug).replace(/-/g, " ")
+    : "";
+
+  const title = categoryName
+    ? `Jogos de ${categoryName.charAt(0).toUpperCase() + categoryName.slice(1)}`
+    : "Catálogo de Jogos";
+
   const filteredGames = useMemo(() => {
     let result = [...games];
+
+    if (categoryName) {
+      result = result.filter(
+        (g) => (g.category || "Sem Categoria").toLowerCase() === categoryName.toLowerCase(),
+      );
+    }
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
@@ -90,8 +74,8 @@ export function GamesClient() {
         break;
     }
 
-    return result.map(mapGame);
-  }, [searchQuery, sortBy, games]);
+    return result.map(mapUploadedGameToGame);
+  }, [categoryName, searchQuery, sortBy, games]);
 
   if (loading) {
     return (
@@ -110,12 +94,10 @@ export function GamesClient() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-6 mb-8 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-white">
-                Catálogo de Jogos
-              </h1>
+              <h1 className="text-4xl font-bold text-white">{title}</h1>
               <p className="text-cyber-text-muted mt-2">
                 {games.length > 0
-                  ? `${games.length} jogo(s) disponíveis`
+                  ? `${filteredGames.length} ${filteredGames.length === 1 ? "jogo" : "jogos"} encontrado(s)`
                   : "Explore nossa biblioteca completa de jogos"}
               </p>
             </div>

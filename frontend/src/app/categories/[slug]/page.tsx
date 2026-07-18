@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { GameGrid } from "@/components/GameGrid";
 import SearchBar from "@/components/ui/SearchBar";
 import { useUploadedGames } from "@/hooks/use-uploaded-games";
-import type { Game } from "@/types";
+import { mapUploadedGameToGame } from "@/lib/map-game";
 
 const sortOptions: Array<{
   value: "popularity" | "rating" | "newest" | "oldest" | "alphabetical";
@@ -19,47 +19,32 @@ const sortOptions: Array<{
   { value: "alphabetical", label: "A-Z" },
 ];
 
-function mapGame(game: {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  updatedAt?: string;
-  playCount: number;
-  createdAt: string;
-}): Game {
-  return {
-    id: game.id,
-    slug: game.slug,
-    title: game.title,
-    description: game.description,
-    shortDescription: game.description,
-    thumbnail: "",
-    coverImage: "",
-    category: {
-      id: "upload",
-      slug: "upload",
-      name: "Upload",
-      description: "",
-      icon: "🎮",
-      gameCount: 0,
-    },
-    tags: ["HTML", "Web"],
-    rating: 0,
-    playCount: game.playCount,
-    releaseDate: game.createdAt,
-    developer: "Spark Chicken Games",
-    publisher: "Spark Chicken Games",
-    iframeUrl: `/play/${game.slug}`,
-    width: 800,
-    height: 600,
-    isFeatured: true,
-    isNew: false,
-    isPopular: game.playCount > 0,
-    createdAt: game.createdAt,
-    updatedAt: game.updatedAt || game.createdAt,
-  };
-}
+const categoryIcons: Record<string, string> = {
+  "Ação": "🎯",
+  "Aventura": "🗺️",
+  "Arcade": "🕹️",
+  "Corrida": "🏎️",
+  "Estratégia": "🧠",
+  "Esporte": "⚽",
+  "Plataforma": "🏗️",
+  "Puzzle": "🧩",
+  "RPG": "⚔️",
+  "Simulação": "🌍",
+};
+
+const categoryNameMap: Record<string, string> = {
+  "acao": "Ação",
+  "aventura": "Aventura",
+  "arcade": "Arcade",
+  "corrida": "Corrida",
+  "estrategia": "Estratégia",
+  "esporte": "Esporte",
+  "plataforma": "Plataforma",
+  "puzzle": "Puzzle",
+  "rpg": "RPG",
+  "simulacao": "Simulação",
+  "sem-categoria": "Sem Categoria",
+};
 
 export default function CategoryPage() {
   const { slug } = useParams();
@@ -71,57 +56,16 @@ export default function CategoryPage() {
     "popularity" | "rating" | "newest" | "oldest" | "alphabetical"
   >("popularity");
 
-  const categories = useMemo(
-    () => [
-      {
-        id: "all",
-        slug: "all",
-        name: "Todos os Jogos",
-        description: `${games.length} jogos disponíveis`,
-        icon: "🎮",
-        gameCount: games.length,
-      },
-      {
-        id: "recent",
-        slug: "recent",
-        name: "Recém Adicionados",
-        description: "Jogos adicionados recentemente",
-        icon: "🆕",
-        gameCount: games.filter(
-          (g) =>
-            new Date(g.createdAt).getTime() >
-            Date.now() - 7 * 24 * 60 * 60 * 1000,
-        ).length,
-      },
-      {
-        id: "popular",
-        slug: "popular",
-        name: "Mais Jogados",
-        description: "Jogos com maior número de jogadas",
-        icon: "🔥",
-        gameCount: games.filter((g) => g.playCount > 0).length,
-      },
-    ],
-    [games],
-  );
-
-  const currentCategory = categories.find((c) => c.slug === resolvedSlug);
+  const categoryName = categoryNameMap[resolvedSlug] || resolvedSlug.replace(/-/g, " ");
+  const icon = categoryIcons[categoryName] || "🎮";
 
   const filteredGames = useMemo(() => {
     let result = [...games];
 
-    // Filter by category logic
-    if (resolvedSlug === "recent") {
-      result = result.filter(
-        (g) =>
-          new Date(g.createdAt).getTime() >
-          Date.now() - 7 * 24 * 60 * 60 * 1000,
-      );
-    } else if (resolvedSlug === "popular") {
-      result = result.filter((g) => g.playCount > 0);
-    }
+    result = result.filter(
+      (g) => (g.category || "Sem Categoria").toLowerCase() === categoryName.toLowerCase(),
+    );
 
-    // Search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
@@ -131,7 +75,6 @@ export default function CategoryPage() {
       );
     }
 
-    // Sort
     switch (sortBy) {
       case "popularity":
         result.sort((a, b) => b.playCount - a.playCount);
@@ -153,8 +96,8 @@ export default function CategoryPage() {
         break;
     }
 
-    return result.map(mapGame);
-  }, [resolvedSlug, searchQuery, sortBy, games]);
+    return result.map(mapUploadedGameToGame);
+  }, [searchQuery, sortBy, games, categoryName]);
 
   if (loading) {
     return (
@@ -171,7 +114,6 @@ export default function CategoryPage() {
     <div className="min-h-screen bg-cyber-dark">
       <section className="py-16 bg-cyber-dark border-b border-cyber-dark-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header with back button */}
           <div className="mb-8">
             <Link
               href="/categories"
@@ -179,34 +121,25 @@ export default function CategoryPage() {
             >
               ← Voltar para Categorias
             </Link>
-            {currentCategory ? (
-              <>
-                <h1 className="text-4xl font-bold text-white">
-                  {currentCategory.name}
-                </h1>
-                <p className="text-cyber-text-muted mt-2">
-                  {currentCategory.description}
-                </p>
-              </>
-            ) : (
-              <>
+            <div className="flex items-center gap-3">
+              <span className="text-4xl">{icon}</span>
+              <div>
                 <h1 className="text-4xl font-bold text-white capitalize">
-                  {resolvedSlug}
+                  {categoryName}
                 </h1>
                 <p className="text-cyber-text-muted mt-2">
-                  Jogos na categoria {resolvedSlug}
+                  {filteredGames.length} {filteredGames.length === 1 ? "jogo" : "jogos"} nesta categoria
                 </p>
-              </>
-            )}
+              </div>
+            </div>
           </div>
 
-          {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-4">
             <SearchBar
               value={searchQuery}
               onChange={setSearchQuery}
               onSubmit={setSearchQuery}
-              placeholder={`Buscar em ${currentCategory?.name || resolvedSlug}...`}
+              placeholder={`Buscar em ${categoryName}...`}
               className="flex-1"
             />
             <select
