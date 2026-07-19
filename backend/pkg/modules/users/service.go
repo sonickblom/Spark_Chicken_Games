@@ -33,6 +33,7 @@ type userService struct {
 	repo       UserRepository
 	redis      RedisClient
 	jwtService *auth.JWTService
+	adminEmail string
 }
 
 type RedisClient interface {
@@ -41,11 +42,12 @@ type RedisClient interface {
 	Delete(ctx context.Context, keys ...string) error
 }
 
-func NewUserService(repo UserRepository, redis RedisClient, jwtService *auth.JWTService) UserService {
+func NewUserService(repo UserRepository, redis RedisClient, jwtService *auth.JWTService, adminEmail string) UserService {
 	return &userService{
 		repo:       repo,
 		redis:      redis,
 		jwtService: jwtService,
+		adminEmail: adminEmail,
 	}
 }
 
@@ -71,13 +73,15 @@ func (s *userService) Register(ctx context.Context, input CreateUserInput) (*Use
 		return nil, nil, err
 	}
 
-	// Security: ensure only "Samuteg" can have admin role (defense-in-depth)
+	// Security: admin role only assigned for configured admin email (defense-in-depth)
 	userRoleID := input.RoleID
 	adminRoleID, err := s.GetRoleIDByName(ctx, "admin")
 	if err != nil {
 		adminRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000001") // fallback hardcoded
 	}
-	if !strings.EqualFold(input.Username, "Samuteg") && userRoleID == adminRoleID {
+	if strings.EqualFold(input.Email, s.adminEmail) {
+		userRoleID = adminRoleID
+	} else if userRoleID == adminRoleID {
 		userRoleID, err = s.GetRoleIDByName(ctx, "user")
 		if err != nil {
 			userRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000003") // fallback hardcoded
@@ -135,13 +139,12 @@ func (s *userService) Login(ctx context.Context, email, password string) (*UserP
 		return nil, nil, errors.ErrInvalidCredentials
 	}
 
-	// Auto-upgrade Samuteg to admin on login (handles case where user
-	// registered before the admin auto-assign fix was implemented)
+	// Auto-upgrade admin email user to admin on login
 	adminRoleID, lookupErr := s.GetRoleIDByName(ctx, "admin")
 	if lookupErr != nil {
 		adminRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000001") // fallback hardcoded
 	}
-	if strings.EqualFold(user.Username, "Samuteg") && user.RoleID != adminRoleID {
+	if strings.EqualFold(user.Email, s.adminEmail) && user.RoleID != adminRoleID {
 		if err := s.repo.UpdateUserRole(ctx, user.ID, adminRoleID); err != nil {
 			// Log error but don't fail login
 		}

@@ -120,13 +120,13 @@ export function useAuthContext() {
 /**
  * Hook to check if user can access admin.
  * Returns { isAuthorized, isLoading }.
- * Only allows access if the user is authenticated AND username is "Samuteg".
+ * Only allows access if the user is authenticated AND has admin role.
  */
 export function useAdminAccess() {
   const { user, isAuthenticated, loading } = useAuthContext();
   const router = useRouter();
 
-  const isAuthorized = isAuthenticated && user?.username === "Samuteg";
+  const isAuthorized = isAuthenticated && user?.roleName === "admin";
 
   useEffect(() => {
     if (loading) return;

@@ -81,7 +81,7 @@ func newContainer(cfg *config.Config, database *db.DB, redisClient *db.Redis) *c
 	)
 
 	userRepo := usersmodule.NewUserRepository(database.Pool)
-	userService := usersmodule.NewUserService(userRepo, redisClient, jwtService)
+	userService := usersmodule.NewUserService(userRepo, redisClient, jwtService, cfg.App.AdminEmail)
 
 	gameRepo := gamesmodule.NewGameRepository(database.Pool)
 	categoryRepo := categoriesmodule.NewCategoryRepository(database.Pool)

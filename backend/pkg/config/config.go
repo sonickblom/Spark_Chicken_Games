@@ -25,6 +25,7 @@ type AppConfig struct {
 	Environment string `mapstructure:"environment"`
 	Debug       bool   `mapstructure:"debug"`
 	Version     string `mapstructure:"version"`
+	AdminEmail  string `mapstructure:"admin_email"`
 }
 
 type DatabaseConfig struct {
@@ -140,6 +141,7 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("app.environment", "development")
 	v.SetDefault("app.debug", true)
 	v.SetDefault("app.version", "1.0.0")
+	v.SetDefault("app.admin_email", "samuneveslopes@gmail.com")
 
 	// Database
 	v.SetDefault("database.host", "localhost")

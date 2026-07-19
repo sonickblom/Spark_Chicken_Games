@@ -1,8 +1,6 @@
 package auth
 
 import (
-	"strings"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kronos/spark-chicken-games/backend/pkg/modules/users"
@@ -56,25 +54,14 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
-	// Auto-assign admin role only if username is "Samuteg" (case-insensitive)
-	// Use dynamic role ID lookup from database for robustness
 	ctx := c.Request.Context()
 	userRoleID, err := h.userService.GetRoleIDByName(ctx, "user")
 	if err != nil {
 		userRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000003") // fallback hardcoded
 	}
 
-	roleID := userRoleID
-	if strings.EqualFold(req.Username, "Samuteg") {
-		adminRoleID, err := h.userService.GetRoleIDByName(ctx, "admin")
-		if err != nil {
-			adminRoleID = uuid.MustParse("00000000-0000-0000-0000-000000000001") // fallback hardcoded
-		}
-		roleID = adminRoleID
-	}
-
 	input := users.CreateUserInput{
-		RoleID:   roleID,
+		RoleID:   userRoleID,
 		Name:     req.Name,
 		Username: req.Username,
 		Email:    req.Email,

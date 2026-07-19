@@ -1,8 +1,23 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { api } from "@/services/api";
 import type { User } from "@/types";
+import { DataTable, Column } from "@/components/admin/DataTable";
+import { ConfirmModal } from "@/components/admin/ConfirmModal";
+import { Shield, ShieldOff } from "lucide-react";
+
+const ROLE_COLORS: Record<string, string> = {
+  admin: "bg-purple-500/10 text-purple-400 border-purple-500/30",
+  moderator: "bg-blue-500/10 text-blue-400 border-blue-500/30",
+  user: "bg-gray-500/10 text-cyber-text-muted border-gray-500/30",
+};
+
+const ROLE_LABELS: Record<string, string> = {
+  admin: "Admin",
+  moderator: "Moderador",
+  user: "Usuário",
+};
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -12,19 +27,7 @@ export default function AdminUsersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
-
-  // Role color map (by role name)
-  const ROLE_COLORS: Record<string, string> = {
-    admin: "bg-purple-500/10 text-purple-400 border-purple-500/30",
-    moderator: "bg-blue-500/10 text-blue-400 border-blue-500/30",
-    user: "bg-gray-500/10 text-cyber-text-muted border-gray-500/30",
-  };
-
-  const ROLE_LABELS: Record<string, string> = {
-    admin: "Admin",
-    moderator: "Moderador",
-    user: "Usuário",
-  };
+  const [confirmTarget, setConfirmTarget] = useState<User | null>(null);
 
   const fetchRoles = useCallback(async () => {
     try {
@@ -35,7 +38,6 @@ export default function AdminUsersPage() {
       }
       setRoles(roleMap);
     } catch {
-      // Fallback: keep roles empty, will use roleName from user profile
       setRoles({});
     }
   }, []);
@@ -47,9 +49,7 @@ export default function AdminUsersPage() {
       setUsers(result.users);
       setError(null);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Erro ao carregar usuários",
-      );
+      setError(err instanceof Error ? err.message : "Erro ao carregar usuários");
     } finally {
       setLoading(false);
     }
@@ -60,351 +60,225 @@ export default function AdminUsersPage() {
     fetchUsers();
   }, [fetchRoles, fetchUsers]);
 
-  const handleToggleAdmin = async (user: User) => {
-    if (!user.id) return;
+  const getRoleName = useCallback(
+    (user: User) => roles[user.roleId || ""] || user.roleName || "user",
+    [roles],
+  );
+
+  const filteredUsers = useMemo(() => {
+    if (!searchQuery) return users;
+    const q = searchQuery.toLowerCase();
+    return users.filter(
+      (u) =>
+        u.username?.toLowerCase().includes(q) ||
+        u.email?.toLowerCase().includes(q) ||
+        u.name?.toLowerCase().includes(q),
+    );
+  }, [searchQuery, users]);
+
+  const handleToggleAdmin = useCallback(
+    (user: User) => {
+      setConfirmTarget(user);
+    },
+    [],
+  );
+
+  const confirmToggleAdmin = useCallback(async () => {
+    if (!confirmTarget?.id) return;
 
     const adminRoleId = Object.keys(roles).find((k) => roles[k] === "admin");
     const userRoleId = Object.keys(roles).find((k) => roles[k] === "user");
 
     if (!adminRoleId || !userRoleId) {
-      setError(
-        "Não foi possível determinar os papéis disponíveis. Tente recarregar a página.",
-      );
+      setError("Não foi possível determinar os papéis disponíveis");
+      setConfirmTarget(null);
       return;
     }
 
-    const currentRoleName = roles[user.roleId || ""] || user.roleName || "user";
+    const currentRoleName = getRoleName(confirmTarget);
     const isCurrentlyAdmin = currentRoleName === "admin";
     const newRoleId = isCurrentlyAdmin ? userRoleId : adminRoleId;
     const action = isCurrentlyAdmin ? "remover" : "conceder";
 
-    if (
-      !window.confirm(
-        `Tem certeza que deseja ${action} acesso de admin para "${user.username}"?`,
-      )
-    ) {
-      return;
-    }
-
     try {
-      setUpdatingUserId(user.id);
+      setUpdatingUserId(confirmTarget.id);
       setSuccessMsg(null);
-      await api.updateUserRole(user.id, newRoleId);
-      setSuccessMsg(
-        `✅ Acesso de admin ${isCurrentlyAdmin ? "removido" : "concedido"} para ${user.username}!`,
-      );
+      setConfirmTarget(null);
+      await api.updateUserRole(confirmTarget.id, newRoleId);
+      setSuccessMsg(`Acesso de admin ${action} para ${confirmTarget.username}`);
       await fetchUsers();
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Erro ao atualizar papel do usuário",
-      );
+      setError(err instanceof Error ? err.message : "Erro ao atualizar papel");
     } finally {
       setUpdatingUserId(null);
     }
-  };
+  }, [confirmTarget, roles, getRoleName, fetchUsers]);
 
-  // Filter users by search
-  const filteredUsers = users.filter((u) => {
-    if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      u.username?.toLowerCase().includes(q) ||
-      u.email?.toLowerCase().includes(q) ||
-      u.name?.toLowerCase().includes(q)
-    );
-  });
+  const adminCount = users.filter((u) => getRoleName(u) === "admin").length;
+  const modCount = users.filter((u) => getRoleName(u) === "moderator").length;
+  const userCount = users.filter((u) => getRoleName(u) === "user").length;
+
+  const columns: Column<User>[] = [
+    {
+      key: "username",
+      header: "Usuário",
+      sortable: true,
+      render: (user) => (
+        <div className="flex items-center gap-3">
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-sm font-bold border border-white/[0.06]"
+            style={{
+              backgroundColor: `hsl(${(user.username?.charCodeAt(0) || 0) * 17 % 360}, 70%, 50%)`,
+              color: "white",
+            }}
+          >
+            {user.username?.charAt(0).toUpperCase() || "?"}
+          </div>
+          <div>
+            <p className="text-sm font-medium text-white">{user.username}</p>
+            {user.name && (
+              <p className="text-xs text-cyber-text-muted">{user.name}</p>
+            )}
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "email",
+      header: "Email",
+      sortable: true,
+      hideOn: "sm",
+      render: (user) => (
+        <span className="text-sm text-cyber-text-muted">{user.email}</span>
+      ),
+    },
+    {
+      key: "role",
+      header: "Papel",
+      sortable: false,
+      hideOn: "md",
+      render: (user) => {
+        const roleName = getRoleName(user);
+        const roleLabel = ROLE_LABELS[roleName] || roleName;
+        const roleColor = ROLE_COLORS[roleName] || ROLE_COLORS.user;
+        return (
+          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${roleColor}`}>
+            {roleLabel}
+          </span>
+        );
+      },
+    },
+    {
+      key: "createdAt",
+      header: "Criado em",
+      sortable: true,
+      hideOn: "lg",
+      render: (user) => (
+        <span className="text-sm text-cyber-text-muted">
+          {new Date(user.createdAt).toLocaleDateString("pt-BR")}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      header: "Ações",
+      render: (user) => {
+        const isSamuteg = user.username === "Samuteg";
+        const isUpdating = updatingUserId === user.id;
+        const roleName = getRoleName(user);
+
+        if (isSamuteg) {
+          return <span className="text-xs text-cyber-text-muted/50 italic">—</span>;
+        }
+
+        return (
+          <button
+            onClick={() => handleToggleAdmin(user)}
+            disabled={isUpdating}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-all disabled:opacity-50 ${
+              roleName === "admin"
+                ? "border-red-500/30 text-red-400 hover:bg-red-500/10"
+                : "border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+            }`}
+          >
+            {isUpdating ? (
+              <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin" />
+            ) : roleName === "admin" ? (
+              <ShieldOff size={14} />
+            ) : (
+              <Shield size={14} />
+            )}
+            {roleName === "admin" ? "Remover Admin" : "Tornar Admin"}
+          </button>
+        );
+      },
+    },
+  ];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white">
-          👥 Usuários
-        </h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-white">Usuários</h1>
         <p className="text-cyber-text-muted mt-1">
           Gerencie o acesso de administradores da plataforma
         </p>
       </div>
 
-      {/* Success message */}
       {successMsg && (
         <div className="p-4 rounded-lg bg-neon-green/10 border border-neon-green/30 text-neon-green text-sm">
           {successMsg}
+          <button onClick={() => setSuccessMsg(null)} className="ml-2 underline">Fechar</button>
         </div>
       )}
 
-      {/* Error message */}
       {error && (
         <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
           {error}
-          <button
-            onClick={() => setError(null)}
-            className="ml-2 underline hover:no-underline"
-          >
-            Fechar
-          </button>
+          <button onClick={() => setError(null)} className="ml-2 underline">Fechar</button>
         </div>
       )}
 
-      {/* Info card */}
-      <div className="rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border p-5">
+      <div className="rounded-xl bg-cyber-dark-surface/50 border border-cyber-dark-border p-5">
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400 shrink-0">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
+            <Shield size={20} />
           </div>
           <div>
             <p className="text-sm text-cyber-text">
-              <strong className="text-white">Apenas Samuteg</strong> pode
-              gerenciar administradores. Clique no botão ao lado do usuário para
-              conceder ou remover acesso de admin.
+              <strong className="text-white">Apenas Samuteg</strong> pode gerenciar administradores.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Search */}
-      <div className="relative">
-        <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyber-text-muted"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
-        <input
-          type="text"
-          placeholder="Buscar por nome, email ou usuário..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent text-sm transition-all"
-        />
-      </div>
-
-      {/* Users table */}
-      <div className="rounded-xl bg-cyber-dark-surface/30 border border-cyber-dark-border overflow-hidden">
-        <div className="overflow-x-auto">
-          {loading ? (
-            <div className="text-center py-16">
-              <div className="w-8 h-8 border-2 border-neon-green border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-              <p className="text-cyber-text-muted text-sm">Carregando usuários...</p>
-            </div>
-          ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-cyber-dark-border bg-cyber-dark-surface/50">
-                  <th className="text-left px-4 py-3 text-xs font-medium text-cyber-text-muted uppercase tracking-wider">
-                    Usuário
-                  </th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-cyber-text-muted uppercase tracking-wider hidden sm:table-cell">
-                    Email
-                  </th>
-                  <th className="text-center px-4 py-3 text-xs font-medium text-cyber-text-muted uppercase tracking-wider hidden md:table-cell">
-                    Papel
-                  </th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-cyber-text-muted uppercase tracking-wider">
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-800">
-                {filteredUsers.map((user) => {
-                  const isSamuteg = user.username === "Samuteg";
-                  const roleName =
-                    roles[user.roleId || ""] || user.roleName || "user";
-                  const roleLabel = ROLE_LABELS[roleName] || roleName;
-                  const roleColor =
-                    ROLE_COLORS[roleName] ||
-                    "bg-gray-500/10 text-cyber-text-muted border-gray-500/30";
-                  const isUpdating = updatingUserId === user.id;
-
-                  return (
-                    <tr
-                      key={user.id}
-                      className="hover:bg-cyber-dark-surface/20 transition-colors group"
-                    >
-                      <td className="px-4 py-3.5">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-cyber-dark-surface flex items-center justify-center shrink-0 text-sm font-bold text-cyber-text-muted">
-                            {user.username?.charAt(0).toUpperCase() || "?"}
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-white">
-                              {user.username}
-                              {isSamuteg && (
-                                <span className="ml-2 text-xs text-purple-400">
-                                  👑
-                                </span>
-                              )}
-                            </p>
-                            {user.name && (
-                              <p className="text-xs text-cyber-text-muted">
-                                {user.name}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3.5 hidden sm:table-cell">
-                        <span className="text-sm text-cyber-text-muted">
-                          {user.email}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3.5 hidden md:table-cell text-center">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${roleColor}`}
-                        >
-                          {roleLabel}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3.5 text-right">
-                        {isSamuteg ? (
-                          <span className="text-xs text-cyber-text-muted/70 italic">
-                            —
-                          </span>
-                        ) : (
-                          <button
-                            onClick={() => handleToggleAdmin(user)}
-                            disabled={isUpdating}
-                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
-                              roleName === "admin"
-                                ? "border-red-500/30 text-red-400 hover:bg-red-500/10"
-                                : "border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
-                            } disabled:opacity-50 disabled:cursor-not-allowed`}
-                          >
-                            {isUpdating ? (
-                              <>
-                                <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin" />
-                                Alterando...
-                              </>
-                            ) : roleName === "admin" ? (
-                              <>
-                                <svg
-                                  className="w-3.5 h-3.5"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                  strokeWidth={2}
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
-                                  />
-                                </svg>
-                                Remover Admin
-                              </>
-                            ) : (
-                              <>
-                                <svg
-                                  className="w-3.5 h-3.5"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                  strokeWidth={2}
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                                  />
-                                </svg>
-                                Tornar Admin
-                              </>
-                            )}
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
-        </div>
-
-        {/* Empty state */}
-        {!loading && filteredUsers.length === 0 && (
+      <DataTable
+        columns={columns}
+        data={filteredUsers}
+        loading={loading}
+        search={{
+          value: searchQuery,
+          onChange: setSearchQuery,
+          placeholder: "Buscar por nome, email ou usuário...",
+        }}
+        keyExtractor={(u) => u.id}
+        emptyState={
           <div className="text-center py-16">
-            <svg
-              className="w-16 h-16 mx-auto text-gray-700 mb-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
             <p className="text-cyber-text-muted text-lg font-medium">
-              {users.length === 0
-                ? "Nenhum usuário encontrado"
-                : "Nenhum resultado para sua busca"}
+              {users.length === 0 ? "Nenhum usuário encontrado" : "Nenhum resultado para sua busca"}
             </p>
           </div>
-        )}
-      </div>
+        }
+      />
 
-      {/* Summary */}
       {!loading && users.length > 0 && (
         <div className="text-sm text-cyber-text-muted">
-          Mostrando {filteredUsers.length} de {users.length} usuário(s)
-          {" · "}
-          <span className="text-purple-400">
-            {
-              users.filter((u) => {
-                const roleName = roles[u.roleId || ""] || u.roleName || "user";
-                return roleName === "admin";
-              }).length
-            }{" "}
-            admin(s)
-          </span>
-          {" · "}
-          <span className="text-blue-400">
-            {
-              users.filter((u) => {
-                const roleName = roles[u.roleId || ""] || u.roleName || "user";
-                return roleName === "moderator";
-              }).length
-            }{" "}
-            moderador(es)
-          </span>
-          {" · "}
-          <span className="text-cyber-text-muted">
-            {
-              users.filter((u) => {
-                const roleName = roles[u.roleId || ""] || u.roleName || "user";
-                return roleName === "user";
-              }).length
-            }{" "}
-            usuário(s)
-          </span>
+          {filteredUsers.length} de {users.length} usuário(s) ·{" "}
+          <span className="text-purple-400">{adminCount} admin(s)</span> ·{" "}
+          <span className="text-blue-400">{modCount} moderador(es)</span> ·{" "}
+          <span>{userCount} usuário(s)</span>
         </div>
       )}
 
-      {/* Refresh button */}
       <div className="flex justify-center">
         <button
           onClick={fetchUsers}
@@ -427,6 +301,25 @@ export default function AdminUsersPage() {
           Atualizar
         </button>
       </div>
+
+      <ConfirmModal
+        open={!!confirmTarget}
+        title={confirmTarget && (roles[confirmTarget.roleId || ""] || confirmTarget.roleName) === "admin" ? "Remover Admin" : "Tornar Admin"}
+        message={
+          confirmTarget
+            ? `Tem certeza que deseja ${
+                (roles[confirmTarget.roleId || ""] || confirmTarget.roleName) === "admin"
+                  ? "remover"
+                  : "conceder"
+              } acesso de admin para "${confirmTarget.username}"?`
+            : ""
+        }
+        confirmLabel="Confirmar"
+        cancelLabel="Cancelar"
+        variant="default"
+        onConfirm={confirmToggleAdmin}
+        onCancel={() => setConfirmTarget(null)}
+      />
     </div>
   );
 }

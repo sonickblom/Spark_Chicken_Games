@@ -3,6 +3,22 @@
 import React, { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useUploadedGames } from "@/hooks/use-uploaded-games";
+import { formatSize } from "@/lib/utils";
+import { Upload, FileText, X, ArrowUpFromLine } from "lucide-react";
+
+const CATEGORIES = [
+  "Ação", "Aventura", "Arcade", "Corrida", "Estratégia",
+  "Esporte", "Plataforma", "Puzzle", "RPG", "Simulação",
+];
+
+function getFileIcon(name: string) {
+  if (name.endsWith(".html")) return <span className="text-xs bg-green-500/10 text-green-400 px-1.5 py-0.5 rounded font-medium">HTML</span>;
+  if (name.endsWith(".js")) return <span className="text-xs bg-yellow-500/10 text-yellow-400 px-1.5 py-0.5 rounded font-medium">JS</span>;
+  if (name.endsWith(".css")) return <span className="text-xs bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded font-medium">CSS</span>;
+  if (/\.(png|jpg|jpeg|gif|svg|ico|webp)$/.test(name)) return <span className="text-xs bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded font-medium">IMG</span>;
+  if (/\.(mp3|wav|ogg)$/.test(name)) return <span className="text-xs bg-pink-500/10 text-pink-400 px-1.5 py-0.5 rounded font-medium">SOM</span>;
+  return <span className="text-xs bg-gray-500/10 text-gray-400 px-1.5 py-0.5 rounded font-medium">FILE</span>;
+}
 
 export default function AdminUploadPage() {
   const { uploadGame, games } = useUploadedGames();
@@ -57,12 +73,10 @@ export default function AdminUploadPage() {
       setError("Informe o título do jogo");
       return;
     }
-
     if (files.length === 0) {
       setError("Selecione pelo menos um arquivo HTML");
       return;
     }
-
     const hasHtml = files.some((f) => f.name.endsWith(".html"));
     if (!hasHtml) {
       setError("O jogo deve conter um arquivo HTML principal");
@@ -84,136 +98,153 @@ export default function AdminUploadPage() {
     }
   };
 
-  const formatSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  };
-
-  // Only show uploaded games (not API games)
-  const uploadedCount = games.length;
-
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      {/* Header */}
+    <div className="space-y-8">
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-white">
           Upload de Jogo
         </h1>
         <p className="text-cyber-text-muted mt-1">
-          Publique seu jogo HTML arrastando os arquivos ou colando o código
+          Publique seu jogo HTML arrastando arquivos ou colando o código
         </p>
       </div>
 
-      {/* Quick stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-cyber-dark-surface border border-cyber-dark-border rounded-xl p-4">
-          <div className="text-2xl font-bold text-neon-green">
-            {uploadedCount}
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left: Form */}
+        <div className="space-y-6">
+          <div className="rounded-xl bg-cyber-dark-surface/50 border border-cyber-dark-border p-6 space-y-5">
+            <h2 className="text-sm font-mono text-cyber-text-muted uppercase tracking-wider">
+              Informações do Jogo
+            </h2>
+
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">
+                Título <span className="text-neon-green">*</span>
+              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Ex: Meu Incrível Jogo"
+                className="w-full px-4 py-3 bg-cyber-dark border border-cyber-dark-border rounded-lg text-white placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent text-sm transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">
+                Descrição
+              </label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Descreva seu jogo..."
+                rows={3}
+                className="w-full px-4 py-3 bg-cyber-dark border border-cyber-dark-border rounded-lg text-white placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent text-sm transition-all resize-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">
+                Categoria
+              </label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full px-4 py-3 bg-cyber-dark border border-cyber-dark-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent text-sm transition-all"
+              >
+                <option value="">Sem categoria</option>
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
           </div>
-          <div className="text-sm text-cyber-text-muted">Jogos Publicados</div>
-        </div>
-        <div className="bg-cyber-dark-surface border border-cyber-dark-border rounded-xl p-4">
-          <div className="text-2xl font-bold text-neon-green">
-            {games.reduce((sum, g) => sum + g.playCount, 0)}
+
+          <div className="rounded-xl bg-cyber-dark-surface/50 border border-cyber-dark-border p-6 space-y-4">
+            <h2 className="text-sm font-mono text-cyber-text-muted uppercase tracking-wider">
+              Arquivos Selecionados
+            </h2>
+
+            {files.length > 0 ? (
+              <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                {files.map((file, index) => (
+                  <div
+                    key={`${file.name}-${index}`}
+                    className="flex items-center justify-between bg-cyber-dark/50 rounded-lg px-3 py-2"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <FileText size={16} className="text-cyber-text-muted shrink-0" />
+                      <span className="text-sm text-cyber-text truncate">{file.name}</span>
+                      {getFileIcon(file.name)}
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0 ml-3">
+                      <span className="text-xs text-cyber-text-muted">{formatSize(file.size)}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeFile(index)}
+                        className="text-cyber-text-muted hover:text-red-400 transition-colors p-1"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-cyber-text-muted">Nenhum arquivo selecionado</p>
+            )}
           </div>
-          <div className="text-sm text-cyber-text-muted">Total de Jogadas</div>
-        </div>
-        <div className="bg-cyber-dark-surface border border-cyber-dark-border rounded-xl p-4">
-          <div className="text-2xl font-bold text-neon-green">
-            {games.length > 0
-              ? games.reduce((sum, g) => sum + g.size, 0) > 1024 * 1024
-                ? `${(games.reduce((sum, g) => sum + g.size, 0) / (1024 * 1024)).toFixed(1)} MB`
-                : `${(games.reduce((sum, g) => sum + g.size, 0) / 1024).toFixed(0)} KB`
-              : "0 B"}
+
+          {error && (
+            <div className="bg-red-900/20 border border-red-500/30 rounded-lg px-4 py-3 text-red-400 text-sm">
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="bg-neon-green/10 border border-neon-green/30 rounded-lg px-4 py-3 text-neon-green text-sm">
+              {success}
+            </div>
+          )}
+
+          <div className="flex items-center gap-4">
+            <button
+              type="submit"
+              disabled={uploading || files.length === 0 || !title.trim()}
+              className="px-8 py-3 bg-neon-green text-black font-bold rounded-lg hover:bg-neon-green/80 hover:shadow-[0_0_20px_rgba(0,255,65,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none transition-all duration-300 flex items-center gap-2"
+            >
+              {uploading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  Publicando...
+                </>
+              ) : (
+                <>
+                  <ArrowUpFromLine size={18} />
+                  Publicar Jogo
+                </>
+              )}
+            </button>
+            <span className="text-sm text-cyber-text-muted">
+              {files.length} arquivo{files.length !== 1 ? "s" : ""} ·{" "}
+              {formatSize(files.reduce((sum, f) => sum + f.size, 0))}
+            </span>
           </div>
-          <div className="text-sm text-cyber-text-muted">Armazenamento</div>
-        </div>
-        <Link
-          href="/admin/games"
-          className="bg-cyber-dark-surface border border-cyber-dark-border rounded-xl p-4 hover:border-neon-green/50 transition-colors"
-        >
-          <div className="text-lg font-bold text-neon-green">Gerenciar →</div>
-          <div className="text-sm text-cyber-text-muted">Ver todos os jogos</div>
-        </Link>
-      </div>
-
-      {/* Upload form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Title */}
-        <div>
-          <label className="block text-sm font-medium text-cyber-text mb-2">
-            Título do Jogo <span className="text-red-400">*</span>
-          </label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Ex: Meu Incrível Jogo"
-            className="w-full px-4 py-3 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white
-                       placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green
-                       focus:border-transparent transition-all duration-200"
-          />
         </div>
 
-        {/* Description */}
-        <div>
-          <label className="block text-sm font-medium text-cyber-text mb-2">
-            Descrição
-          </label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Descreva seu jogo..."
-            rows={3}
-            className="w-full px-4 py-3 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white
-                       placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green
-                       focus:border-transparent transition-all duration-200 resize-none"
-          />
-        </div>
-
-        {/* Category */}
-        <div>
-          <label className="block text-sm font-medium text-cyber-text mb-2">
-            Categoria
-          </label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full px-4 py-3 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white
-                       focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent transition-all duration-200"
-          >
-            <option value="">Sem categoria</option>
-            <option value="Ação">Ação</option>
-            <option value="Aventura">Aventura</option>
-            <option value="Arcade">Arcade</option>
-            <option value="Corrida">Corrida</option>
-            <option value="Estratégia">Estratégia</option>
-            <option value="Esporte">Esporte</option>
-            <option value="Plataforma">Plataforma</option>
-            <option value="Puzzle">Puzzle</option>
-            <option value="RPG">RPG</option>
-            <option value="Simulação">Simulação</option>
-          </select>
-        </div>
-
-        {/* File drop zone */}
-        <div>
-          <label className="block text-sm font-medium text-cyber-text mb-2">
-            Arquivos do Jogo <span className="text-red-400">*</span>
-          </label>
+        {/* Right: Drop Zone */}
+        <div className="space-y-6">
           <div
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
             className={`
-              relative border-2 border-dashed rounded-xl p-12 text-center cursor-pointer
-              transition-all duration-200
+              relative border-2 border-dashed rounded-xl p-16 text-center cursor-pointer transition-all duration-200
               ${
                 dragOver
                   ? "border-neon-green bg-neon-green/5 shadow-[0_0_30px_rgba(0,255,65,0.1)]"
-                  : "border-cyber-dark-border hover:border-gray-600 bg-cyber-dark-surface/50"
+                  : "border-cyber-dark-border hover:border-gray-600 bg-cyber-dark-surface/30"
               }
             `}
           >
@@ -226,229 +257,59 @@ export default function AdminUploadPage() {
               className="hidden"
             />
             <div className="space-y-3">
-              <div className="flex justify-center">
-                <svg
-                  className={`w-12 h-12 ${dragOver ? "text-neon-green" : "text-cyber-text-muted/70"}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-                  />
-                </svg>
-              </div>
-              <div>
-                <p className="text-cyber-text font-medium">
-                  Arraste seus arquivos aqui
-                </p>
-                <p className="text-cyber-text-muted text-sm mt-1">
-                  ou clique para selecionar (HTML, JS, CSS, imagens, sons...)
-                </p>
-              </div>
-              <p className="text-cyber-text-muted/70 text-xs">
-                O arquivo <strong>index.html</strong> será usado como ponto de
-                entrada
+              <Upload
+                size={48}
+                className={dragOver ? "text-neon-green mx-auto" : "text-cyber-text-muted/70 mx-auto"}
+              />
+              <p className="text-white font-medium">Arraste seus arquivos aqui</p>
+              <p className="text-cyber-text-muted text-sm">ou clique para selecionar</p>
+              <p className="text-cyber-text-muted/50 text-xs">
+                HTML, JS, CSS, imagens, sons...
               </p>
             </div>
           </div>
-        </div>
 
-        {/* File list */}
-        {files.length > 0 && (
-          <div className="bg-cyber-dark-surface border border-cyber-dark-border rounded-xl p-4">
-            <h3 className="text-sm font-medium text-cyber-text-muted mb-3">
-              Arquivos selecionados ({files.length})
-            </h3>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              {files.map((file, index) => (
-                <div
-                  key={`${file.name}-${index}`}
-                  className="flex items-center justify-between bg-cyber-dark-surface/50 rounded-lg px-3 py-2"
+          {games.length > 0 && (
+            <div className="rounded-xl bg-cyber-dark-surface/50 border border-cyber-dark-border p-6">
+              <h2 className="text-sm font-mono text-cyber-text-muted uppercase tracking-wider mb-4">
+                Últimos Jogos
+              </h2>
+              <div className="space-y-2">
+                {games.slice(0, 5).map((game) => (
+                  <div
+                    key={game.id}
+                    className="flex items-center justify-between bg-cyber-dark/30 rounded-lg px-3 py-2"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm text-white truncate">{game.title}</p>
+                      <p className="text-xs text-cyber-text-muted">
+                        {game.files.length} arquivo{game.files.length !== 1 ? "s" : ""} · {game.playCount} jogada{game.playCount !== 1 ? "s" : ""}
+                      </p>
+                    </div>
+                    <a
+                      href={game.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1 text-xs text-neon-green border border-neon-green/30 rounded-lg hover:bg-neon-green/10 transition-colors shrink-0 ml-3"
+                    >
+                      Jogar
+                    </a>
+                  </div>
+                ))}
+              </div>
+              {games.length > 5 && (
+                <Link
+                  href="/admin/games"
+                  className="block text-center text-sm text-neon-green hover:underline mt-4"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    {/* File icon */}
-                    <svg
-                      className="w-5 h-5 text-cyber-text-muted shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={1.5}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                      />
-                    </svg>
-                    <span className="text-sm text-cyber-text truncate">
-                      {file.name}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs text-cyber-text-muted">
-                      {formatSize(file.size)}
-                    </span>
-                    {file.name.endsWith(".html") && (
-                      <span className="text-xs bg-neon-green/10 text-neon-green px-2 py-0.5 rounded-full">
-                        HTML
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeFile(index);
-                      }}
-                      className="text-cyber-text-muted hover:text-red-400 transition-colors"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ))}
+                  Ver Todos →
+                </Link>
+              )}
             </div>
-          </div>
-        )}
-
-        {/* Error & Success messages */}
-        {error && (
-          <div className="bg-red-900/20 border border-red-500/30 rounded-lg px-4 py-3 text-red-400 text-sm">
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="bg-green-900/20 border border-green-500/30 rounded-lg px-4 py-3 text-green-400 text-sm">
-            {success}
-          </div>
-        )}
-
-        {/* Submit */}
-        <div className="flex items-center gap-4">
-          <button
-            type="submit"
-            disabled={uploading || files.length === 0 || !title.trim()}
-            className="px-8 py-3 bg-neon-green text-black font-bold rounded-lg
-                       hover:bg-neon-green/80 hover:shadow-[0_0_20px_rgba(0,255,65,0.4)]
-                       disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none
-                       transition-all duration-300 flex items-center gap-2"
-          >
-            {uploading ? (
-              <>
-                <svg
-                  className="animate-spin w-5 h-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
-                </svg>
-                Publicando...
-              </>
-            ) : (
-              <>
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                Publicar Jogo
-              </>
-            )}
-          </button>
-          <span className="text-sm text-cyber-text-muted">
-            {files.length} arquivo(s) —{" "}
-            {formatSize(files.reduce((sum, f) => sum + f.size, 0))}
-          </span>
+          )}
         </div>
       </form>
 
-      {/* Latest uploaded games preview */}
-      {games.length > 0 && (
-        <div className="border-t border-cyber-dark-border pt-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-white">
-              Jogos Publicados Recentemente
-            </h2>
-            <Link
-              href="/admin/games"
-              className="text-sm text-neon-green hover:underline"
-            >
-              Ver Todos →
-            </Link>
-          </div>
-
-          <div className="grid gap-3">
-            {games.slice(0, 5).map((game) => (
-              <div
-                key={game.id}
-                className="flex items-center justify-between bg-cyber-dark-surface border border-cyber-dark-border rounded-xl px-5 py-3 hover:border-cyber-dark-border transition-colors"
-              >
-                <div className="min-w-0">
-                  <h3 className="text-white font-medium truncate">
-                    {game.title}
-                  </h3>
-                  <p className="text-sm text-cyber-text-muted truncate">
-                    /play/{game.slug} · {game.files.length} arquivo(s) ·{" "}
-                    {game.playCount} jogada(s)
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <a
-                    href={game.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-3 py-1.5 text-sm text-neon-green border border-neon-green/30 rounded-lg
-                               hover:bg-neon-green/10 transition-colors"
-                  >
-                    Jogar
-                  </a>
-                  <span className="text-xs text-cyber-text-muted/70">
-                    {new Date(game.createdAt).toLocaleDateString("pt-BR")}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* HTML paste alternative */}
       <div className="border-t border-cyber-dark-border pt-8">
         <details className="group">
           <summary className="text-sm text-cyber-text-muted cursor-pointer hover:text-cyber-text transition-colors">
@@ -456,8 +317,7 @@ export default function AdminUploadPage() {
           </summary>
           <div className="mt-4">
             <p className="text-sm text-cyber-text-muted mb-3">
-              Cole o HTML completo do seu jogo abaixo. Use &lt;style&gt; para
-              CSS e &lt;script&gt; para JS.
+              Cole o HTML completo do seu jogo. Use &lt;style&gt; para CSS e &lt;script&gt; para JS.
             </p>
             <HtmlPasteForm />
           </div>
@@ -488,7 +348,6 @@ function HtmlPasteForm() {
       setError("Cole o código HTML do jogo");
       return;
     }
-
     if (!htmlCode.includes("<html") && !htmlCode.includes("<!DOCTYPE")) {
       setError("O código precisa ser um HTML válido");
       return;
@@ -496,7 +355,6 @@ function HtmlPasteForm() {
 
     setUploading(true);
     try {
-      // Create a File from the HTML string
       const blob = new Blob([htmlCode], { type: "text/html" });
       const file = new File([blob], "index.html", { type: "text/html" });
       await uploadGame(title, "", [file]);
@@ -517,18 +375,14 @@ function HtmlPasteForm() {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Título do jogo"
-        className="w-full px-4 py-3 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white
-                   placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green
-                   focus:border-transparent transition-all duration-200"
+        className="w-full px-4 py-3 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent text-sm transition-all"
       />
       <textarea
         value={htmlCode}
         onChange={(e) => setHtmlCode(e.target.value)}
         placeholder="Cole o HTML completo do seu jogo aqui..."
         rows={12}
-        className="w-full px-4 py-3 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white font-mono text-sm
-                   placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green
-                   focus:border-transparent transition-all duration-200 resize-none"
+        className="w-full px-4 py-3 bg-cyber-dark-surface border border-cyber-dark-border rounded-lg text-white font-mono text-sm placeholder:text-cyber-text-muted focus:outline-none focus:ring-2 focus:ring-neon-green focus:border-transparent transition-all resize-none"
       />
       {error && (
         <div className="bg-red-900/20 border border-red-500/30 rounded-lg px-4 py-3 text-red-400 text-sm">
@@ -536,17 +390,14 @@ function HtmlPasteForm() {
         </div>
       )}
       {success && (
-        <div className="bg-green-900/20 border border-green-500/30 rounded-lg px-4 py-3 text-green-400 text-sm">
+        <div className="bg-neon-green/10 border border-neon-green/30 rounded-lg px-4 py-3 text-neon-green text-sm">
           {success}
         </div>
       )}
       <button
         type="submit"
         disabled={uploading || !htmlCode.trim() || !title.trim()}
-        className="px-6 py-2.5 bg-neon-green text-black font-bold rounded-lg
-                   hover:bg-neon-green/80 hover:shadow-[0_0_20px_rgba(0,255,65,0.4)]
-                   disabled:opacity-50 disabled:cursor-not-allowed
-                   transition-all duration-300"
+        className="px-6 py-2.5 bg-neon-green text-black font-bold rounded-lg hover:bg-neon-green/80 hover:shadow-[0_0_20px_rgba(0,255,65,0.4)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
       >
         {uploading ? "Publicando..." : "Publicar HTML"}
       </button>

@@ -51,10 +51,14 @@ export function ProfileEditClient() {
     setSuccess(null);
 
     try {
+      const avatar_url =
+        avatarPreview && !avatarPreview.startsWith("data:")
+          ? avatarPreview
+          : undefined;
       const updatedUser = await api.updateProfile({
         username: username !== user.username ? username : undefined,
         bio: bio !== user.bio ? bio : undefined,
-        avatar: avatarPreview || undefined,
+        avatar_url,
       });
       localStorage.setItem("user", JSON.stringify(updatedUser));
       await checkAuth();

@@ -9,7 +9,9 @@ import type {
   Review,
 } from "@/types";
 
-const API_BASE_URL = "https://spark-chicken-gamesbackend-production.up.railway.app/api/v1";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://spark-chicken-gamesbackend-production.up.railway.app/api/v1";
 
 /**
  * Backend response wrapper shape:
@@ -308,8 +310,8 @@ class ApiService {
     return extractEntity<User>(res, "user");
   }
 
-  async updateProfile(data: { username?: string; bio?: string; avatar?: string }): Promise<User> {
-    const res = await this.client.patch("/auth/me", data);
+  async updateProfile(data: { username?: string; bio?: string; avatar_url?: string }): Promise<User> {
+    const res = await this.client.patch("/users/me", data);
     return extractEntity<User>(res, "user");
   }
 

@@ -2,81 +2,60 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Sparkline } from "./Sparkline";
+import { TrendingUp, TrendingDown } from "lucide-react";
 
 interface StatCardProps {
   title: string;
   value: string | number;
-  description?: string;
   icon: React.ReactNode;
   trend?: {
     value: number;
     isPositive: boolean;
   };
+  sparklineData?: number[];
   className?: string;
 }
 
 export function StatCard({
   title,
   value,
-  description,
   icon,
   trend,
+  sparklineData,
   className,
 }: StatCardProps) {
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-xl bg-cyber-dark-surface/50 border border-cyber-dark-border p-6 hover:border-neon-green/30 transition-all duration-300 group",
+        "relative overflow-hidden rounded-xl bg-cyber-dark-surface/50 border border-cyber-dark-border p-5 hover:border-neon-green/30 transition-all duration-300 group",
         className,
       )}
     >
-      <div className="flex items-start justify-between">
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-cyber-text-muted">{title}</p>
-          <p className="text-3xl font-bold text-white tracking-tight">
-            {value}
-          </p>
-          {description && (
-            <p className="text-xs text-cyber-text-muted">{description}</p>
-          )}
-          {trend && (
-            <div className="flex items-center gap-1.5 mt-2">
-              <span
-                className={cn(
-                  "inline-flex items-center gap-0.5 text-xs font-medium px-1.5 py-0.5 rounded-full",
-                  trend.isPositive
-                    ? "text-neon-green bg-neon-green/10"
-                    : "text-red-400 bg-red-400/10",
-                )}
-              >
-                <svg
-                  className={cn(
-                    "w-3 h-3",
-                    trend.isPositive ? "" : "rotate-180",
-                  )}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 10l7-7m0 0l7 7m-7-7v18"
-                  />
-                </svg>
-                {Math.abs(trend.value)}%
-              </span>
-              <span className="text-xs text-cyber-text-muted">vs mês anterior</span>
-            </div>
-          )}
-        </div>
-        <div className="p-3 rounded-lg bg-neon-green/5 text-neon-green group-hover:bg-neon-green/10 transition-colors">
+      <div className="flex items-start justify-between mb-3">
+        <div className="p-2.5 rounded-lg bg-neon-green/10 text-neon-green shrink-0">
           {icon}
         </div>
+        {sparklineData && <Sparkline data={sparklineData} />}
       </div>
-
-      {/* Decorative gradient */}
+      <div>
+        <p className="text-2xl font-bold text-white tracking-tight">{value}</p>
+        <p className="text-xs text-cyber-text-muted mt-0.5">{title}</p>
+      </div>
+      {trend && (
+        <div className="flex items-center gap-1.5 mt-3">
+          <span
+            className={cn(
+              "inline-flex items-center gap-0.5 text-xs font-medium",
+              trend.isPositive ? "text-neon-green" : "text-red-400",
+            )}
+          >
+            {trend.isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+            {Math.abs(trend.value)}%
+          </span>
+          <span className="text-xs text-cyber-text-muted">vs mês anterior</span>
+        </div>
+      )}
       <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-neon-green/5 rounded-full blur-2xl group-hover:bg-neon-green/10 transition-all duration-500" />
     </div>
   );
