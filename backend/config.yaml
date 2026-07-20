@@ -42,7 +42,7 @@ cors:
   allowed_origins:
     - "http://localhost:3000"
     - "http://localhost:3001"
-    - "https://spark-chicken-games-jg8o.vercel.app"
+    - "https://spark-chicken-games.vercel.app"
   allowed_methods:
     - "GET"
     - "POST"
